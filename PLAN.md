@@ -1,283 +1,581 @@
-# Target-Conditional Capacity Recycling for Static Bash Synthesis
+# Capability-Budgeted Dense Specialization for Unix Terminal Models
 
 ## Summary and claim boundary
 
-Develop and test **Target-Conditional Capacity Recycling (TCCR)**: identify structured FFN channels associated with an empirically interfering programming capability, retire them, reinitialize the same fixed parameter budget, and train those channels for executable Bash synthesis.
+This project studies how to improve executable Unix-terminal performance per
+unit of model capacity in dense language models with fewer than one billion
+physical parameters. It has two independent confirmatory goals:
 
-The primary model will be `SmolLM2-135M-Instruct`; the winning result will be repeated on `SmolLM2-135M` base. `SmolLM3-3B` will be a secondary offline teacher, not required by the main method.
+1. Improve terminal performance without changing architecture, parameter
+   count, serialized precision, or deployed size.
+2. Improve the terminal-performance Pareto frontier with respect to physical
+   parameters and deployed weight bytes.
 
-The study will target **static Bash program synthesis**, not general interactive Linux use. “Unlearning” will mean measurable functional de-specialization, not certified deletion of training data. A strong “pretraining capacity competition” claim will require the controlled from-scratch experiment below.
+The first goal is fixed-size specialization. The second includes structural
+compression, vocabulary compression, distillation, and quantization.
+Quantization counts as byte and memory compression, not parameter reduction.
+Every result must report physical parameters, serialized bytes, average weight
+precision, peak memory, and measured inference performance separately; no
+single score-per-megabyte ratio will replace the Pareto analysis.
 
-## Literature verdict and novelty
+Safety or alignment changes are not successes unless they improve the target
+or reduce the deployed footprint. Ability loss is neither required nor
+valuable by itself. The words *forget*, *sacrifice*, and *dispensable* may be
+used only when an above-floor behavior measurably declines while the target
+tradeoff improves. Do not claim certified data deletion.
+
+The final deployed model must be dense and contain fewer than one billion total
+physical parameters, including embeddings and output weights. A larger dense
+teacher is permitted during training, but its inference and data-generation
+cost must be reported. Mixture-of-experts models are excluded from the main
+study and may appear only in the triggered appendix defined below.
+
+## Literature verdict and novelty boundary
 
 Search cutoff: **2026-07-14**.
 
-- The broad thesis is not novel. [Forget-to-Focus](https://openreview.net/forum?id=vGkXf8nvt9), an ICLR 2026 submission, already applies unlearning before domain fine-tuning and reports downstream gains. [Exclusive Unlearning](https://arxiv.org/abs/2604.06154) suppresses everything outside a retained domain.
-- Structured specialization is also established. [Cus-Prun](https://aclanthology.org/2025.findings-acl.1201/) prunes target-irrelevant neurons; [Neuron Specialization](https://aclanthology.org/2024.emnlp-main.374/) uses language-specific FFN masks; [post-pruning recovery](https://arxiv.org/abs/2604.27115), [PAC-Net](https://proceedings.mlr.press/v162/myung22a.html), [FOMO](https://proceedings.iclr.cc/paper_files/paper/2024/hash/a439259e78294c38d157a51a2c40486b-Abstract-Conference.html), and recent [EPnG](https://arxiv.org/abs/2607.01789) cover prune/reset/regrow ideas in adjacent settings. “Capacity recycling” also appears in continual-unlearning work such as the unpublished [AmnesiacHAT draft](https://pengxiang-wang.com/unlisted/paper-draft-amnesiachat).
-- Gradient- or Fisher-based forget/retain parameter selection is close prior art, including [Selective Synaptic Dampening](https://ojs.aaai.org/index.php/AAAI/article/view/29092), [selective LLM pruning](https://arxiv.org/abs/2403.01267), and [PerTA](https://arxiv.org/abs/2601.22030).
-- Programming abilities are entangled. A controlled study across programming languages found cross-language effects after unlearning, including interactions among Shell, Python, and C++ knowledge; therefore no language may be declared irrelevant in advance. [Findings ACL 2024](https://aclanthology.org/2024.findings-acl.559/)
-- Unlearning evaluations are fragile: TOFU found that its tested baselines did not reproduce retraining behavior; localized parameters need not be uniquely causal; apparently forgotten knowledge can often be recovered by benign fine-tuning. [TOFU](https://arxiv.org/abs/2401.06121), [localization study](https://aclanthology.org/2025.emnlp-main.1109/), [robust evaluation](https://arxiv.org/abs/2402.16835), [relearning attacks](https://openreview.net/forum?id=fMNRYBvcQN)
-- Training-time removable modules are a strong alternative. The July 2026 [GRAM preprint](https://arxiv.org/abs/2607.08077) routes capabilities into removable modules during pretraining and approximates filtered-data retraining.
+Target-aware specialization and compression are already established:
 
-The defensible novelty is therefore:
+- [D-Pruner](https://aclanthology.org/2024.findings-naacl.91/) performs
+  domain-specific unstructured pruning while preserving general capabilities.
+- [TrimLLM](https://aclanthology.org/2025.acl-long.33/) and
+  [TALE](https://aclanthology.org/2026.findings-acl.1136/) remove layers for
+  target domains or tasks.
+- [Cus-Prun](https://aclanthology.org/2025.findings-acl.1201/) extracts smaller
+  language-, domain-, and task-specific expert models.
+- [MixCal](https://aclanthology.org/2026.eacl-long.347/) uses mixed generic and
+  target calibration for specialized pruning and quantization.
+- [GISP](https://aclanthology.org/2026.acl-long.1653/) uses global target-loss
+  scores to prune heads and MLP channels.
+- [TAQ](https://arxiv.org/abs/2511.06516) and
+  [TASA](https://arxiv.org/abs/2607.00908) allocate mixed precision using
+  task-conditioned sensitivity.
+- [LangCompress](https://aclanthology.org/2025.ijcnlp-long.112/) combines
+  target-language calibration with vocabulary simplification.
+- [UniComp](https://arxiv.org/abs/2602.09130) compares pruning, quantization,
+  and distillation and reports capability-dependent compression effects.
 
-> Post-hoc recycling of existing dense-LM SwiGLU channels, selected using both measured source–target interference and prospective Bash learnability, followed by execution-grounded training and channel-level causal mediation tests.
+Consequently, the project will not claim the first task-aware pruning,
+quantization, layer removal, vocabulary trimming, parameter recycling, or
+specialization method. The defensible contribution is a preregistered,
+execution-grounded study that:
 
-Do not claim the first use of forgetting for specialization, pruning followed by recovery, or capacity recycling generally.
+1. Searches for the smallest empirically sufficient capability support set for
+   Unix-terminal work.
+2. Compares distinct capacity-reallocation and compression operators at matched
+   data and compute.
+3. Tests whether allowing non-support capabilities to degrade causally improves
+   terminal performance or footprint.
+4. Produces portable sub-1B dense artifacts and reports actual deployment
+   behavior rather than proxy compression alone.
 
-## Experimental assets and feasibility gates
+SwiGLU-channel recycling is one candidate, not the starting assumption. A
+SwiGLU intermediate channel is an attractive atomic unit because it can be
+removed or replaced through matched gate/up rows and a down-projection column,
+but there is no prior reason to assume that this granularity dominates layer,
+head, hidden-width, vocabulary, low-rank, distillation, or precision choices.
+The operator funnel below makes that decision empirically.
 
-### Models and capabilities
+If an established method wins, report the comparative result rather than
+renaming it. If no method wins, report a null result. Name a new method only if
+a preregistered operator or two-operator hybrid beats the strongest close
+baseline in fresh confirmation runs.
 
-The [SmolLM2-135M-Instruct model](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct) has 30 layers, hidden width 576, FFN width 1,536, and was pretrained on 2T tokens. Its “15 programming languages” describe Stack-Edu data buckets, not demonstrated mastery.
+## Models and feasibility pilot
 
-Protect these prerequisites throughout:
+### Backbone shortlist
 
-- English instruction following and basic reasoning
-- Bash, Unix concepts, regex and text processing
-- Python
-- Markdown, JSON, YAML and structured output
-- Control flow, algorithms and numeracy
+Pilot three Apache-licensed dense base checkpoints:
 
-Audit these candidate capabilities without assuming they are harmful:
+- [`Qwen/Qwen3-0.6B-Base`](https://huggingface.co/Qwen/Qwen3-0.6B-Base)
+- [`Qwen/Qwen2.5-0.5B`](https://huggingface.co/Qwen/Qwen2.5-0.5B)
+- [`HuggingFaceTB/SmolLM2-360M`](https://huggingface.co/HuggingFaceTB/SmolLM2-360M)
 
-- C, C++, Java, JavaScript, TypeScript, C#, PHP
-- SQL, Go, Rust, Ruby and Swift
+Use
+[`Qwen/Qwen2.5-Coder-0.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-Coder-0.5B-Instruct)
+only as a native-specialist reference. It is not eligible as the primary
+backbone because prior code specialization weakens the ability-reallocation
+question.
 
-A candidate is eligible only if the original model achieves at least 20% compile/syntax success and 5% functional pass@1 with at least 20 successes on 400 calibration tasks. Candidates at behavioral floor cannot support an “unlearning” claim.
+Give each base checkpoint the same terminal data order, optimizer schedule,
+and 2M optimizer-visible token micro-SFT. A checkpoint is eligible only if it:
 
-### Sealed executable Bash suite
+- Reaches 5–80% pass@1 on method-development static tasks.
+- Solves at least 10 bounded-terminal development tasks.
+- Has at least three audited non-target capability families above behavioral
+  floor before terminal post-training.
+- Fits the training and deterministic evaluation pipelines without
+  architecture-specific correctness exceptions.
 
-Create a generator-backed benchmark with:
+Select the model with the highest lower bound of the 95% semantic-task
+bootstrap interval for static pass@1. If candidates are within two absolute
+points, break the tie by bounded-terminal success and then by smaller BF16
+weight bytes. Freeze this choice before operator screening. Repeat promoted
+arms on the runner-up; if fewer than two checkpoints are eligible, report the
+replication limitation.
 
-- 12,000 training specifications
-- 1,000 cross-fitted mask-selection specifications
-- 500 method-development specifications
-- 500 shadow-validation specifications
-- 1,000 sealed in-distribution test specifications
-- 500 sealed compositional-OOD specifications
+### Teacher
 
-Each specification is a distinct semantic operator/dependency graph, not a repeated textual template. Split by normalized program graph, utility composition, filesystem-state schema, and output contract. Report prompt, AST, command-graph, and execution-trace nearest-neighbor leakage.
+Use the dense
+[`HuggingFaceTB/SmolLM3-3B`](https://huggingface.co/HuggingFaceTB/SmolLM3-3B)
+as the only offline teacher. For each training prompt, generate two candidates
+and expand to four only if neither passes. Retain the shortest candidate that:
 
-Cover file operations, search, pipelines, regex/text transformation, permissions, processes, archives/checksums, JSON/CSV, quoting, error handling, functions and short control-flow scripts. The Bash-native primary track permits Bash built-ins plus a pinned allowlist of GNU utilities and `jq`; it disallows Python, Perl, compilers and network tools. A Python-permitted track is secondary.
+- Passes every visible training fixture.
+- Is syntactically valid.
+- Has no serious static-analysis diagnostic.
+- Uses only the task's allowed tools.
 
-For each scored specification, run the single generated program against at least five hidden fixtures, including spaces, leading dashes, globs, empty input, symlinks, duplicate records, permission failures and ordering variation. A task passes only if all fixtures satisfy property/state-based checks.
+The teacher may see training prompts and training fixtures, but never sealed
+prompts, hidden fixtures, reference solutions, verifier source, or benchmark
+failure reports. Distill verified sequences with the student tokenizer. All
+comparable arms receive the identical teacher corpus. Report a teacher-free
+ablation, but allow the main result to use the teacher.
 
-Execution must use a fresh rootless container with:
+## Terminal target and data
 
-- Pinned Bash/coreutils/findutils/grep/sed/gawk/jq versions and image digest
-- No network, host mounts, container socket or extra capabilities
-- Read-only root, isolated writable workspace and `no-new-privileges`
-- PID, CPU, memory, output and timeout limits
-- Fixed locale, timezone, umask, UID/GID and shell options
+### Protected Unix-toolbox capability
 
-Freeze the response parser before evaluation: accept raw Bash or one optional Markdown code fence, and separately report extraction failures, truncation, syntax failure, timeout and functional failure. Validate verifiers with mutation testing, an independent reference implementation and a stratified human audit of at least 100 tasks.
+The target encompasses:
 
-Use [NL2SH](https://arxiv.org/abs/2502.06858) training data alongside the generated training set, sampled 50/50 by source. Its 600-item test and NL2Bash are diagnostic because of possible pretraining exposure. Independently confirm on [BashBench](https://arxiv.org/abs/2606.27733); use 50 items to audit its harness and exclude those items from the scored subset.
+- Bash and POSIX shell syntax, quoting, functions, pipelines, conditionals,
+  loops, traps, exit status, and error handling.
+- Core file, search, archive, checksum, permission, process, and text utilities.
+- `awk`, `sed`, `grep`, `find`, `jq`, regular expressions, JSON, CSV, and
+  structured tool output.
+- Python 3 standard-library scripting when the task allows it.
+- Filesystem and process-state reasoning, including symlinks, permissions,
+  races, empty inputs, leading dashes, globs, and unusual filenames.
+- English instruction comprehension, control flow, basic numeracy, and error
+  interpretation needed to perform those tasks.
+- Arbitrary Unicode filenames and file contents even if vocabulary trimming is
+  applied.
 
-Before sealing tests:
+This is broader than Bash-only synthesis and narrower than a general software
+engineering agent. Compilers, package installation, remote services, SSH,
+containers, and network access are outside the primary target unless a sealed
+task explicitly supplies an offline local substitute.
 
-- Ordinary dense SFT must achieve 5–85% pass@1 on development data, preserving room above floor and below ceiling.
-- At least one candidate capability must pass the competence and interference gates.
-- Otherwise report a principled null or redesign task difficulty before any final evaluation.
+### Static executable suite
 
-## TCCR method
+Create a generator-backed suite with:
 
-### Atomic recyclable unit
+| Split | Specifications |
+|---|---:|
+| Training | 12,000 |
+| Operator selection | 1,000 |
+| Method development | 500 |
+| Shadow validation | 500 |
+| Sealed in-distribution test | 1,000 |
+| Sealed compositional-OOD test | 500 |
 
-Use one SwiGLU intermediate channel:
+Each specification must have a distinct normalized operator/dependency graph.
+Split jointly by normalized program graph, utility composition, filesystem
+schema, Python-versus-shell solution family, and output contract. Report
+nearest-neighbor leakage for prompt text, AST, command graph, and execution
+trace.
 
-- One row of `gate_proj`
-- The matching row of `up_proj`
-- The matching column of `down_proj`
+Generate one program per prompt with deterministic decoding. Execute it on at
+least five hidden fixtures; the semantic task passes only when every fixture
+passes state- and property-based checks. Fixtures must cover spaces, Unicode,
+leading dashes, glob characters, empty data, duplicate records, symlinks,
+ordering variation, partial failure, and permission errors.
 
-SmolLM2 therefore has 46,080 candidate units. A 5% intervention recycles 2,304 channels, approximately 3.98M weights. Keep attention unchanged in the main study.
+Freeze one response parser before sealed evaluation. Accept raw code or one
+optional Markdown code fence. Separately record extraction failure,
+truncation, syntax failure, disallowed-tool use, timeout, runtime failure, and
+functional failure.
 
-Implement recycling as a temporary side branch:
+### Bounded interactive suite
 
-1. Mask the selected old channel activations to zero while retaining their archived weights.
-2. Add the same number of fresh SwiGLU channels.
-3. Initialize new gate/up rows with the checkpoint initializer and the new down matrix to zero. The initial model is therefore exactly the retired model rather than a randomly perturbed model.
-4. Train only the new down matrix for 100 optimizer steps, then all three new matrices.
-5. Merge the trained side branch into the selected positions for an unchanged 135M exported architecture.
+Create a second suite with:
 
-This prevents optimizer state or weight decay from modifying supposedly frozen tensor slices and enables exact swap-back experiments.
+| Split | Tasks |
+|---|---:|
+| Training | 3,000 |
+| Operator selection | 500 |
+| Method development | 250 |
+| Shadow validation | 250 |
+| Sealed in-distribution test | 500 |
+| Sealed compositional-OOD test | 250 |
 
-### Skill and channel selection
+Use one fixed agent loop for every model. At each turn the model emits one shell
+action through a frozen schema, receives bounded stdout/stderr and exit status,
+and may stop with a final answer. Limit each task to eight actions, a fixed
+context window, a fixed generated-token budget, and deterministic decoding.
+Score final filesystem/process state, not textual resemblance to a reference
+trajectory.
 
-For each eligible candidate skill \(F\), Bash target \(T\), and protected mixture \(R\):
+The primary endpoint remains static functional pass@1. Bounded-terminal
+success is a required external-validity and non-inferiority endpoint, not a
+co-primary endpoint.
 
-1. Compute channel Taylor saliency \(A_s(u)=E|h_u\,\partial L_s/\partial h_u|\).
-2. Compute per-channel gradient conflict
-   \(C_F(u)=\max(0,-\cos(\nabla_uL_F,\nabla_uL_T))\).
-3. Convert saliencies to within-layer percentiles and rank with
-   \(S(u)=A_F(u)C_F(u)[1-\max(A_T(u),A_R(u))]\).
-4. Require conflict direction and ranking to replicate across two calibration halves and three sampling seeds.
-5. Treat short positive/negative task-vector probes only as eligibility evidence; they do not by themselves prove that pretrained skill capacity harms Bash.
-6. Rank eligible skills and use at most the top three, equally weighted after per-skill percentile normalization. Evaluate nested one-skill, two-skill and three-skill forget sets on development data.
+### Independent diagnostics
 
-Add prospective Bash learnability:
+- Use [NL2SH](https://aclanthology.org/2025.naacl-long.555/) and NL2Bash as
+  exposure-prone command-generation diagnostics.
+- Use [BashBench](https://arxiv.org/abs/2606.27733) as an independent static
+  executable benchmark after auditing and excluding 50 harness-development
+  items.
+- Use [InterCode-Bash](https://intercode-benchmark.github.io/) as an
+  independent bounded-interaction diagnostic.
+- Run [Terminal-Bench 2](https://arxiv.org/abs/2601.11868) only as a broad floor
+  diagnostic. Do not use it for model or method selection because its tasks and
+  agent harness extend well beyond the protected target and are likely too hard
+  for sub-1B models.
 
-- Within every layer, divide the top 20% static candidates into deterministic 32-channel blocks.
-- For each block, retire it, initialize its replacement, perform 16 fixed Bash inner updates, and measure held-out Bash improvement relative to retirement-only.
-- Rank blocks by prospective improvement while enforcing immediate forget-skill damage and protected-skill constraints.
-- Construct layer-stratified masks at approximately 1%, 2.5%, 5% and 10%.
-- Run the same 1M-token micro-adaptation for each dose and choose exactly one dose on method-development data.
+### Execution isolation
 
-A **target-only prospective selector** receives the same number of evaluated blocks and updates but no forget-skill signal. It is a mandatory control for determining whether TCCR gains come from selective forgetting or merely finding plastic Bash-friendly channels.
+Run every scored task in a fresh rootless container with pinned image digest
+and utility versions. Disable network, host mounts, the container socket,
+setuid, added capabilities, and privilege escalation. Use a read-only root,
+isolated writable workspace, fixed UID/GID, locale, timezone, umask, shell
+options, PID limit, CPU quota, memory limit, output limit, and timeout.
 
-### Training
+Validate every verifier with mutation testing, an independently implemented
+reference checker, and a stratified human audit of at least 100 tasks before
+sealing.
 
-Use 20M optimizer-visible tokens per main arm, sampled 80% Bash and 20% protected replay. Apply cross-entropy on Bash and KL anchoring to the frozen original model on protected data.
+## Capability-support audit
 
-- Side-only learning-rate grid: `{1e-4, 3e-4, 1e-3}`
-- Full-model learning-rate grid: `{1e-5, 3e-5}`
-- AdamW β=`(0.9, 0.95)`, gradient clipping 1.0, 5% warmup, cosine decay
-- At most six development configurations per arm, with equal tuning budgets
-- Checkpoint selection only on shadow validation
+### Candidate families
 
-The confirmatory mechanism model keeps the nonselected backbone frozen throughout. A separate practical `TCCR-Joint` variant trains the side branch for the first 80% of tokens and jointly unfreezes the preserved backbone at low learning rate for the final 20%.
+Protect only the target and prerequisite abilities above. Audit these families
+without declaring them irrelevant in advance:
 
-## Baselines and causal tests
+- Korean, Mandarin, and Spanish language use.
+- C/C++, Java, JavaScript/TypeScript, and Rust programming.
+- SQL execution and database reasoning.
+- Advanced mathematics beyond terminal-task numeracy.
+- Biomedical, legal, and geographic factual knowledge.
+- Creative and long-form prose.
 
-### Required screening matrix
+Use executable or objective tests wherever possible, with multiple prompt and
+prefix variants. A family is eligible for a sacrifice claim only if the
+unmodified selected checkpoint records at least 20 successes on 400 executable
+items or scores at least 10 absolute points above chance on a validated
+objective benchmark. Behaviors at floor may be reported but cannot count as
+forgotten.
 
-Run three paired seeds for:
+### Minimal-support and add-back design
 
-- Original checkpoint and ordinary dense Bash SFT
-- Dense SFT with extra steps matched to TCCR’s total measured selection/training FLOPs
-- Forget-to-Focus gradient ascent plus retain descent, followed by identical Bash SFT
-- Exclusive-Unlearning-style entropy suppression plus retain training
-- Cus-Prun-style target-low-importance pruning and recovery
-- Layer-matched random reset-and-regrow
-- Target-low-saliency reset-and-regrow
-- Target-only prospective recycle
-- Forget-high/target-low static selection without prospective scoring
-- A competent but nonnegative-transfer “wrong skill” recycle
-- TCCR-selected channels trained from their original weights without reset
-- TCCR retirement with no regrowth
-- Full frozen-backbone TCCR and `TCCR-Joint`
-- An equal-width added side branch that does not retire old channels, reported as a capacity-expansion ceiling
+Train an all-retain counterpart and a minimal-support counterpart at identical
+target tokens, total tokens, teacher data, optimizer schedule, and FLOPs:
 
-All structured controls use identical channel counts, per-layer quotas, data, steps and optimizer schedules.
+- Both use 80% target data and 20% replay.
+- All-retain replay covers every above-floor audited family and the target
+  prerequisites.
+- Minimal-support replay reallocates the same 20% only among target
+  prerequisites; it does not receive extra target tokens.
+- KL anchoring, when used, follows the same all-retain versus minimal-support
+  boundary.
 
-Promote dense SFT, random recycle, target-only prospective recycle, TCCR, and the strongest established targeted baseline to eight fresh confirmation seeds. Repeat dense, random and TCCR with five seeds on SmolLM2-135M base.
+For each audited family that declines in a winning model, run a one-family
+add-back with the same total replay tokens. A family is *dispensable* only if:
 
-Report both equal-target-token and equal-total-FLOP comparisons, including selection and look-ahead computation.
+1. Its score falls by at least 3 absolute points and 20% relative, with a paired
+   interval excluding zero.
+2. Static and bounded-terminal scores satisfy their non-inferiority margins.
+3. Adding the family back significantly restores its behavior.
+4. Restoration either lowers terminal performance at fixed footprint or
+   requires a larger artifact to recover the same terminal score.
 
-### Mechanism interventions
+If target performance improves without measurable ability loss, describe the
+result as specialization or compression, not capability sacrifice. If an
+ability declines without the add-back tradeoff, describe it as collateral
+degradation, not recycled capacity.
 
-Evaluate immediately after retirement, after Bash regrowth and after the complete training schedule.
+## Preregistered operator funnel
 
-- **Swap-back:** remove learned replacement channels and restore the archived originals. The candidate skill should recover and TCCR’s incremental Bash gain should decline.
-- **Re-zero:** disable learned replacement channels while keeping originals retired. The TCCR-specific Bash gain should decline.
-- **Attribution:** measure Bash gradient energy and activation/ablation attribution moving into recycled channels.
-- **Relearning:** apply a fixed 250k-token benign fine-tune for each forgotten skill and measure recovery using normal prompts, partial programs and prefix completions.
-- **Selectivity:** compare the chosen capability’s degradation with matched nonselected programming languages.
+Run two paired screening seeds for every configuration. Pair model
+initialization, data order, teacher sequences, decoding, task, and fixture. Use
+2M optimizer-visible adaptation tokens per screening configuration. Use only
+operator-selection and method-development data for promotion, and shadow
+validation for checkpoint selection.
 
-If the preserved backbone is jointly unfrozen, mechanism conclusions must come from the separate frozen-backbone experiment.
+Promoted arms receive 20M optimizer-visible tokens and five fresh confirmation
+seeds. Repeat promoted winners and their direct baselines on the runner-up
+backbone with five fresh seeds. Give each operator one preregistered recipe and
+at most three dose points; do not grant the proposed method a larger
+hyperparameter budget than a baseline.
 
-## Evaluation and statistical acceptance
+### Fixed-size lane
 
-### Metrics
+Screen:
+
+1. Ordinary dense terminal SFT with full-capability replay.
+2. Dense SFT plus verified sequence distillation.
+3. Minimal-support dense SFT plus the identical verified teacher corpus.
+4. Target-aware reset/regrow with minimal-support replay.
+5. The same selected weights trained from their pretrained values without
+   reset.
+6. A layer-matched random reset/regrow control.
+
+Before reset/regrow, compare these atomic or grouped units under equal probe
+budgets:
+
+- Whole residual branches.
+- Attention-head groups compatible with grouped-query attention.
+- Deterministic FFN blocks of 64 intermediate channels.
+- Hidden-dimension groups that can be exported as a standard dense model.
+- Embedding/output token groups.
+
+For each unit group, mask it, apply 16 fixed target look-ahead updates to a
+temporary replacement, and measure held-out target improvement over masking
+alone while enforcing target-prerequisite constraints. Use cross-fitted data
+and require rank stability across both screening seeds.
+
+If FFN blocks win, implement replacement through side tensors: archive the old
+rows/columns, mask old activations, initialize fresh gate/up rows and a
+zero-initialized down matrix, train the new down matrix for the first 100
+steps, then train all replacement matrices. Merge only at export. This is the
+only circumstance in which the original SwiGLU-channel mechanism becomes the
+main fixed-size candidate.
+
+Promote a fixed-size arm only if it beats the strongest dense matched-compute
+baseline by at least 2 absolute development pass@1 points while losing no more
+than 2 bounded-terminal points.
+
+### Compression lane
+
+Screen these single-operator families:
+
+1. Task-aware layer removal, with TALE/TrimLLM-style baselines.
+2. Global structured attention-head and FFN pruning, with GISP and Cus-Prun
+   style baselines.
+3. Globally consistent hidden-width reduction.
+4. Vocabulary trimming with a derived tokenizer that retains every special
+   token and all 256 byte-fallback values.
+5. Task-aware mixed-precision weight quantization, with uniform GPTQ/AWQ and
+   TAQ/TASA/MixCal-style baselines.
+6. Low-rank matrix factorization with dense exported factors.
+7. Sequence distillation into a smaller native dense architecture.
+
+Evaluate structural targets near 90%, 75%, and 50% of the original physical
+parameters. Evaluate quantization near 8, 4, and 3 average weight bits,
+including scales, zero points, codebooks, and padding in serialized-byte
+accounting. Report embeddings, output head, attention, FFN, norms, and metadata
+separately.
+
+Unstructured and semi-structured sparsity are diagnostic unless a supported
+runtime demonstrates smaller resident memory and lower latency using the same
+artifact. A nonzero-count proxy alone is not eligible for promotion.
+
+At each development budget, retain nondominated configurations in static
+pass@1 versus serialized weight bytes. Break equivalent points by bounded
+terminal score, then physical parameters, then measured batch-1 decode
+latency. Promote the best single operator. Also evaluate exactly one hybrid:
+the best non-quantization architectural operator followed by the best
+quantizer. Do not search three-operator combinations.
+
+### Training controls
+
+Use:
+
+- 80% target tokens and 20% replay tokens.
+- AdamW with β=`(0.9, 0.95)`, gradient clipping 1.0, 5% warmup, and cosine
+  decay.
+- Side-only learning rates `{1e-4, 3e-4, 1e-3}` where applicable.
+- Full-model learning rates `{1e-5, 3e-5}`.
+- BF16 training, packed 1–2k-token sequences, SDPA/FlashAttention where exact,
+  and gradient checkpointing where needed.
+
+Report both equal-target-token and equal-total-FLOP contrasts. Include
+selection probes, quantization calibration, teacher inference, distillation,
+recovery, and hardware conversion in measured compute. A faster or cheaper
+method may be reported as such, but compute mismatch cannot support a
+performance claim.
+
+Required direct baselines are:
+
+- Original checkpoint and ordinary dense SFT.
+- Dense SFT with extra steps matched to total method FLOPs.
+- Full-retain and minimal-support replay.
+- Uniform quantization at the same average bits.
+- Task-agnostic structural pruning at the same architecture size.
+- Layer-matched random removal/reset.
+- A native smaller dense model at comparable serialized bytes.
+- The Qwen coder specialist reference.
+- The strongest close established targeted baseline from screening.
+
+## Evaluation and acceptance
+
+### Target and capability metrics
 
 Primary target endpoint:
 
-- Macro-averaged deterministic functional pass@1 across the 1,000 sealed semantic specifications
+- Macro-averaged deterministic functional pass@1 over the 1,000 sealed static
+  semantic specifications.
 
-Secondary endpoints:
+Required secondary endpoints:
 
-- Sealed compositional-OOD pass@1
-- BashBench functionality and full-pass rates
-- Syntax validity, ShellCheck diagnostics, AST similarity and output length
-- NL2SH/NL2Bash diagnostic scores
-- Single-line versus multi-line and difficulty-stratified results
+- Sealed compositional-OOD static pass@1.
+- Bounded-terminal semantic success rate.
+- Independent NL2SH, BashBench, and InterCode-Bash results.
+- Syntax validity, static diagnostics, disallowed-tool rate, timeouts, output
+  length, action count, and failure taxonomy.
+- Single- versus multi-step tasks and difficulty strata.
+- Every above-floor target-support and audited capability family.
 
-Forgotten capabilities:
+Deployment endpoints:
 
-- Language-specific executable beginner/idiom tasks
-- MultiPL-E where supported
-- Compile/syntax rate and held-out code likelihood
-- SQL execution rather than string matching
-- Multiple prompt and prefix variants
+- Total physical and active parameters.
+- Serialized artifact bytes and bytes by component.
+- Average weight bits including quantization metadata.
+- Peak resident memory/VRAM.
+- Load, first-token, prefill, and decode measurements from the hardware
+  protocol.
 
-Protected capabilities:
+### Statistical analysis
 
-- FineWeb-Edu validation perplexity
-- IFEval, PIQA and HellaSwag
-- Python executable/compile tests
-- Structured-format and Unix-concept probes
+- Pair arms by seed, data order, teacher corpus, task, and fixture.
+- Bootstrap semantic specifications, nesting fixtures within specification and
+  crossing training seed with task.
+- Use paired randomization tests for target contrasts.
+- Apply Holm adjustment across the two independent confirmatory lane contrasts.
+- Freeze decoding, extraction, timeout, rerun, exclusion, checkpoint, and
+  analysis policies before opening sealed data.
+- Run each sealed suite once after method and analysis lock.
 
-### Statistics
+The lanes are independently confirmatory: either may succeed while the other
+is reported as a null.
 
-- Pair arms by training seed, data order, task and fixture.
-- Bootstrap at the semantic-specification level, nesting fixtures within specifications and crossing training seed with task.
-- Use paired randomization tests and Holm-adjusted 95% confidence intervals for primary contrasts.
-- Freeze failure, timeout, rerun, exclusion, decoding and checkpoint policies before opening the sealed test.
-- Run the sealed suite once after method and analysis lock.
+Fixed-size success requires all of:
 
-TCCR succeeds only if all conditions hold:
+1. At least +3 absolute sealed static pass@1 points over the strongest
+   matched-data, matched-FLOP dense baseline.
+2. Holm-adjusted lower confidence bound above zero.
+3. Identical architecture, physical parameters, serialized precision, and
+   artifact bytes within metadata tolerance.
+4. Bounded-terminal decline no greater than 2 points under a simultaneous
+   non-inferiority interval.
+5. Replication on the runner-up backbone and the independent static and
+   interactive benchmarks.
 
-1. `TCCR-Joint` exceeds dense SFT and frozen TCCR exceeds target-only prospective recycling, with adjusted lower confidence bounds above zero and point estimates of at least +3 absolute pass@1 points.
-2. Frozen TCCR also exceeds random and static skill-only recycling in the predicted direction.
-3. An above-floor selected capability falls by at least 3 absolute points and 20% relative, significantly more than matched nonselected languages.
-4. FineWeb perplexity increases no more than 5%; English accuracy declines no more than 2 points; Python and structured/Unix probes decline no more than 3 points under simultaneous non-inferiority intervals.
-5. Swap-back and re-zero effects have paired confidence intervals excluding zero in their predicted directions.
-6. The result survives fresh seeds, equal-compute controls, the base checkpoint and at least one independent Bash benchmark.
-7. The main effect exists without a teacher.
+Compression success requires all of:
 
-Interpret failures explicitly:
+1. Either at least 25% fewer serialized bytes with static non-inferiority within
+   1 point, or at least +3 static points at matched serialized bytes.
+2. At least +3 static points over the strongest task-agnostic compression
+   baseline at comparable bytes, with adjusted lower bound above zero.
+3. Bounded-terminal decline no greater than 2 points under a simultaneous
+   non-inferiority interval.
+4. A measured peak-memory reduction.
+5. Replication on the runner-up backbone and independent benchmarks.
 
-- Random recycle matches TCCR: generic plasticity or regularization.
-- Target-only selection matches TCCR: prospective sparse specialization.
-- No-reset sparse tuning matches TCCR: parameter-efficient specialization without forgetting.
-- Target gain occurs without selective skill loss: targeted reinitialization.
-- Skill loss occurs without swap mediation: correlated suppression, not demonstrated recycling.
-- No capable, negatively transferring skill is found: a valuable null result against the initial premise.
+An architectural compression claim additionally requires at least 20% fewer
+physical parameters. A quantization-only winner is a valid
+deployment-footprint result but must not be described as a smaller-parameter
+network. RTX 5090 latency is descriptive, not a portable success condition.
 
-## Teacher and controlled-pretraining studies
+### Interpretation rules
 
-### Secondary teacher factorial
+- Random reset matches selected reset: generic regularization or plasticity.
+- No-reset tuning matches reset/regrow: parameter-efficient specialization,
+  not capacity recycling.
+- Minimal-support dense SFT matches the structured method: selective replay or
+  ordinary specialization explains the result.
+- Uniform quantization matches target-aware quantization: no evidence that
+  capability-aware bit allocation matters.
+- Vocabulary trimming wins alone: lexical/output capacity, not FFN capacity,
+  was the useful tradeoff.
+- Target improves without audited ability loss: specialization, not
+  sacrifice.
+- Ability loss has no add-back mediation: collateral degradation.
+- No above-floor capability can be dropped beneficially: a null result against
+  the capability-competition premise.
 
-After freezing the teacher-free method, run a 2×2 comparison:
+## Reproducibility interfaces
 
-- Dense SFT versus TCCR
-- Oracle-only data versus oracle plus SmolLM3-3B data
+The implementation must expose manifest-driven `prepare`, `train`, `compress`,
+`evaluate`, `bench-hardware`, and `merge-results` commands. The concrete CLI
+may be Python, but each command must consume an immutable YAML or JSON manifest
+and write machine-readable outputs without hidden defaults.
 
-For each training prompt, have [SmolLM3-3B](https://huggingface.co/HuggingFaceTB/SmolLM3-3B) generate two `/no_think` candidates, expanding to four only when neither passes. Execute them and keep the shortest candidate that passes all training fixtures and has no serious ShellCheck error.
+Experiment manifests must contain:
 
-The teacher receives only training prompts—not sealed prompts, fixtures, reference programs, verifier code or benchmark failure reports. Use sequence distillation tokenized by the student tokenizer; do not use naïve logit distillation because teacher and student vocabularies differ. Both dense and TCCR arms receive the identical verified teacher corpus.
+- Model repository and immutable revision.
+- Tokenizer revision and any derived-vocabulary mapping.
+- Data, semantic-graph, fixture, and split hashes.
+- Container image digest and verifier revision.
+- Target/support capability mixture and teacher provenance.
+- Operator, structural indices, dose, bit allocation, and archived weights.
+- Optimizer settings, seeds, token counts, measured FLOPs, and checkpoint rule.
+- Export format, runtime compatibility, and artifact hashes.
 
-### Triggered 27M controlled study
+Per-task outputs must retain the prompt identifier, generated text hash,
+extraction result, syntax result, tool-policy result, fixture outcomes,
+resource use, action trace, and terminal status. Sealed prompt text and fixtures
+must remain outside training manifests.
 
-If the 135M study meets target-superiority and mechanism criteria, run a preregistered from-scratch confirmation before claiming genuine pretraining-capacity competition.
+## Portable hardware protocol
 
-Train a roughly 27M-parameter, 12-layer SwiGLU Llama-style model with hidden size 384, FFN size 1,024, six attention heads and a fixed 16k tokenizer. Use 600M tokens per run and three seeds.
+Use the RTX 5090 as the controlled development device, not as evidence of
+portable speed. A sub-1B model may be too small to saturate it, so record GPU
+utilization and separate CPU tokenization, launch overhead, prefill, and decode.
 
-Compare:
+The complete cross-device procedure is in [HARDWARE.md](HARDWARE.md), and every
+result must validate against
+[hardware-result.schema.json](hardware-result.schema.json). At minimum measure:
 
-1. Full English/Bash/Python/candidate-language mixture
-2. Candidate languages removed and replaced by length-matched retained English, keeping Bash/Python exposure and total tokens fixed
-3. Candidate languages replaced by extra Bash data, reported separately as practical target-data reallocation
-4. Full mixture with GRAM-style removable modules
-5. Full mixture followed by TCCR
+- Five cold process starts for artifact load time.
+- Ten warmup iterations followed by 30 measured repetitions.
+- Batch size one.
+- Token-controlled prefill at 128, 512, and 2,048 tokens.
+- Token-controlled decode at 64 and 256 generated tokens.
+- A fixed real-terminal prompt subset.
+- Median and p95 first-token latency, prefill throughput, decode throughput,
+  wall time, peak device memory, and peak host RSS.
 
-Use identical initializations, data ordering where applicable, compute and downstream Bash SFT. This determines whether filtered pretraining genuinely helps at fixed target exposure and whether post-hoc TCCR approaches the filtered-data model. Without this stage, limit the conclusion to behavior-guided post-hoc capacity reallocation.
+Compare models only within the same engine, backend, compiler flags, precision
+path, and power state. Custom-kernel results form a separate runtime stratum.
+Later Intel iGPU, AMD APU, and CPU runs must reuse the exact artifact and
+workload hashes where the backend supports them. Until those results exist,
+state explicitly that latency conclusions are RTX-5090-specific and may reverse
+on memory-bandwidth-limited or shared-memory devices.
 
-## Reproducibility, compute and schedule
+## Triggered sub-1B expert appendix
 
-Store immutable manifests containing model revisions, data hashes, semantic-graph hashes, container digest, mask indices, archived and replacement channel weights, hyperparameters, seeds, measured FLOPs, teacher provenance and per-task outputs.
+Do not implement an MoE arm during the main campaign. Trigger it only if dense
+experiments reveal at least two capability clusters whose selected component
+masks reproduce across seeds, have within-cluster Jaccard overlap at least
+0.50, and cross-cluster overlap no greater than 0.25.
 
-The RTX 5090 has [32GB VRAM](https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/). Full BF16 AdamW for 135M parameters should fit comfortably; a 5% side branch adds only about 4M trainable weights. SmolLM3-3B BF16 inference requires roughly 6GB for weights. Use BF16, packed 1–2k sequences, SDPA/FlashAttention, gradient checkpointing and an initial microbatch of 8 with accumulation adjusted after a two-hour throughput pilot.
+Any triggered expert model must:
 
-Expected campaign:
+- Remain below 1B total physical parameters including shared weights, every
+  expert, router, embeddings, and output head.
+- Contain at least two experts with distinct evaluated capability families.
+- Route held-out family labels with at least 80% accuracy without being given
+  the label explicitly.
+- Lose at least 5 points on an expert's own family and no more than 2 points on
+  other families when that expert is ablated.
+- Beat an equal-total-parameter dense baseline on the target-versus-footprint
+  frontier.
 
-- Days 1–3: generator, sandbox, verifier mutation tests, data splits and hashes
-- Day 4: throughput, floor/ceiling and candidate-competence gates
-- Days 5–6: signed-transfer audit, saliency/conflict collection and prospective mask search
-- Days 7–10: three-seed screening matrix
-- Days 11–14: eight-seed confirmation, causal swaps and base-model replication
-- Days 15–16: secondary teacher factorial
-- Additional 4–7 GPU-days: triggered controlled 27M pretraining study
+If any condition fails, report the exploratory result without claiming
+meaningfully separate expertise.
 
-Actual wall time will be recalibrated from measured training and sandbox-evaluation throughput. The student experiments should be memory-light; executable evaluation, mask search and the number of controlled arms will dominate runtime.
+## Campaign order
+
+1. Build generators, containers, response parsers, verifiers, manifests, and
+   the portable hardware harness.
+2. Validate leakage controls, mutation tests, reference checkers, and human
+   audit; then seal evaluation data.
+3. Run the three-backbone feasibility pilot and freeze the primary and
+   runner-up.
+4. Establish dense SFT, teacher-distillation, native-specialist, and
+   task-agnostic compression baselines.
+5. Run the two-seed fixed-size and compression operator funnels.
+6. Freeze one promoted arm per lane and at most one two-operator hybrid.
+7. Train five fresh confirmation seeds, run capability add-backs, and replicate
+   on the runner-up backbone.
+8. Lock methods and analysis, open sealed suites once, then run independent
+   benchmarks.
+9. Benchmark artifacts on the RTX 5090 and export the portable bundle for later
+   laptop, Intel iGPU, AMD APU, and CPU measurements.
+10. Consider the expert appendix only if its preregistered trigger fires.
+
+Actual wall time must be recalibrated after the backbone pilot and first
+2M-token screening run. No positive result may be inferred from the schedule,
+and no sealed evaluation may be repeated to repair an unfavorable outcome.

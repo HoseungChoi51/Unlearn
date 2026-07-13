@@ -1,0 +1,539 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/hardware-result.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Hardware Result",
+  "description": "One validated workload result for one artifact, machine, and runtime stratum.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "created_at",
+    "git_revision",
+    "artifact",
+    "hardware",
+    "software",
+    "workload",
+    "protocol",
+    "measurements",
+    "correctness",
+    "raw_samples_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "git_revision": {
+      "$ref": "#/$defs/sha1"
+    },
+    "dirty_worktree": {
+      "type": "boolean",
+      "default": false
+    },
+    "artifact": {
+      "$ref": "#/$defs/artifact"
+    },
+    "hardware": {
+      "$ref": "#/$defs/hardware"
+    },
+    "software": {
+      "$ref": "#/$defs/software"
+    },
+    "workload": {
+      "$ref": "#/$defs/workload"
+    },
+    "protocol": {
+      "$ref": "#/$defs/protocol"
+    },
+    "measurements": {
+      "$ref": "#/$defs/measurements"
+    },
+    "correctness": {
+      "$ref": "#/$defs/correctness"
+    },
+    "raw_samples_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 4096
+    }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableNumber": {
+      "type": ["number", "null"]
+    },
+    "nullableInteger": {
+      "type": ["integer", "null"]
+    },
+    "summary": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["sample_count", "median", "p95", "minimum", "maximum"],
+      "properties": {
+        "sample_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "median": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p95": {
+          "type": "number",
+          "minimum": 0
+        },
+        "minimum": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maximum": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "format",
+        "sha256",
+        "bundle_sha256",
+        "tokenizer_sha256",
+        "weight_bytes",
+        "bundle_bytes",
+        "physical_parameters",
+        "active_parameters",
+        "nonzero_parameters",
+        "average_weight_bits",
+        "method",
+        "source_manifest_sha256"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "format": {
+          "enum": ["safetensors", "gguf", "onnx", "other"]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bundle_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "tokenizer_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "weight_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bundle_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "physical_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "active_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "nonzero_parameters": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999999
+        },
+        "average_weight_bits": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 32
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "dose": {
+          "type": ["string", "null"],
+          "maxLength": 128
+        },
+        "source_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machine_id",
+        "class",
+        "device_name",
+        "cpu_model",
+        "physical_cores",
+        "logical_threads",
+        "system_ram_bytes",
+        "shared_memory",
+        "driver",
+        "power_mode",
+        "temperature_start_c",
+        "temperature_end_c",
+        "throttling_observed"
+      ],
+      "properties": {
+        "machine_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{8,128}$"
+        },
+        "class": {
+          "enum": ["nvidia_gpu", "intel_igpu", "amd_apu", "cpu", "other"]
+        },
+        "device_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "cpu_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "physical_cores": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "logical_threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "system_ram_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "device_memory_bytes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "shared_memory": {
+          "type": "boolean"
+        },
+        "driver": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "firmware_or_runtime": {
+          "type": ["string", "null"],
+          "maxLength": 256
+        },
+        "power_mode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "power_limit_watts": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "temperature_start_c": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "temperature_end_c": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "throttling_observed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "software": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operating_system",
+        "kernel",
+        "engine",
+        "engine_revision",
+        "backend",
+        "compiler",
+        "build_flags",
+        "threads",
+        "device_offload",
+        "kv_cache_precision",
+        "context_size"
+      ],
+      "properties": {
+        "operating_system": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "kernel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "engine": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "engine_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "backend": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "compiler": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "build_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "maxItems": 128
+        },
+        "threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "thread_affinity": {
+          "type": ["string", "null"],
+          "maxLength": 256
+        },
+        "device_offload": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "kv_cache_precision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "context_size": {
+          "type": "integer",
+          "minimum": 2048
+        },
+        "memory_mapping": {
+          "type": ["boolean", "null"]
+        }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite_sha256",
+        "workload_id",
+        "kind",
+        "batch_size",
+        "prompt_tokens",
+        "generated_tokens",
+        "seed",
+        "deterministic"
+      ],
+      "properties": {
+        "suite_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "workload_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$"
+        },
+        "kind": {
+          "enum": ["cold_load", "token_controlled", "real_terminal"]
+        },
+        "batch_size": {
+          "const": 1
+        },
+        "prompt_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "generated_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deterministic": {
+          "const": true
+        },
+        "prompt_sha256": {
+          "anyOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cold_start",
+        "warmups",
+        "repetitions",
+        "temperature",
+        "synchronized_timing",
+        "randomized_workload_order"
+      ],
+      "properties": {
+        "cold_start": {
+          "type": "boolean"
+        },
+        "warmups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repetitions": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "temperature": {
+          "const": 0
+        },
+        "synchronized_timing": {
+          "type": "boolean"
+        },
+        "randomized_workload_order": {
+          "type": "boolean"
+        },
+        "filesystem_cache_controlled": {
+          "type": ["boolean", "null"]
+        }
+      }
+    },
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "load_time_ms",
+        "first_token_ms",
+        "prefill_tokens_per_second",
+        "decode_tokens_per_second",
+        "wall_time_ms",
+        "peak_host_rss_bytes",
+        "peak_device_memory_bytes",
+        "peak_framework_reserved_bytes",
+        "mean_device_utilization_percent",
+        "energy_joules"
+      ],
+      "properties": {
+        "load_time_ms": {
+          "$ref": "#/$defs/summary"
+        },
+        "first_token_ms": {
+          "$ref": "#/$defs/summary"
+        },
+        "prefill_tokens_per_second": {
+          "$ref": "#/$defs/summary"
+        },
+        "decode_tokens_per_second": {
+          "$ref": "#/$defs/summary"
+        },
+        "wall_time_ms": {
+          "$ref": "#/$defs/summary"
+        },
+        "peak_host_rss_bytes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "peak_device_memory_bytes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "peak_framework_reserved_bytes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "mean_device_utilization_percent": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "energy_joules": {
+          "$ref": "#/$defs/nullableNumber"
+        }
+      }
+    },
+    "correctness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_passed",
+        "model_loaded",
+        "accounting_matched",
+        "token_hash_matched",
+        "executable_outcome_matched",
+        "unicode_fallback_passed",
+        "errors"
+      ],
+      "properties": {
+        "gate_passed": {
+          "type": "boolean"
+        },
+        "model_loaded": {
+          "type": "boolean"
+        },
+        "accounting_matched": {
+          "type": "boolean"
+        },
+        "token_hash_matched": {
+          "type": ["boolean", "null"]
+        },
+        "executable_outcome_matched": {
+          "type": ["boolean", "null"]
+        },
+        "unicode_fallback_passed": {
+          "type": ["boolean", "null"]
+        },
+        "functional_successes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "functional_tasks": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "maxItems": 128
+        }
+      }
+    }
+  }
+}
