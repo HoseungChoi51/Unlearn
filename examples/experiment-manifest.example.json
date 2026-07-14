@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_id": "example-dense-sft-0001",
+  "created_at": "2026-07-14T12:00:00+09:00",
+  "git_revision": "0000000000000000000000000000000000000000",
+  "model": {
+    "repository": "Qwen/Qwen3-0.6B-Base",
+    "revision": "1111111111111111111111111111111111111111",
+    "architecture": "dense",
+    "physical_parameters": 600000000
+  },
+  "tokenizer": {
+    "repository": "Qwen/Qwen3-0.6B-Base",
+    "revision": "1111111111111111111111111111111111111111",
+    "source_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "derived_vocabulary_mapping_sha256": null
+  },
+  "data": {
+    "manifest_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "semantic_graph_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "fixtures_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "splits": [
+      {
+        "name": "training",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "sealed": false
+      },
+      {
+        "name": "shadow-validation",
+        "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+        "sealed": false
+      }
+    ]
+  },
+  "execution": {
+    "container_image_digest": "example.invalid/cbds/runtime@sha256:8888888888888888888888888888888888888888888888888888888888888888",
+    "verifier_revision": "9999999999999999999999999999999999999999",
+    "verifier_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "capability_mixture": {
+    "target": [
+      {
+        "name": "unix_terminal",
+        "fraction": 0.8,
+        "data_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ],
+    "support": [
+      {
+        "name": "instruction_and_unix_support",
+        "fraction": 0.2,
+        "data_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    ]
+  },
+  "teacher": {
+    "enabled": false,
+    "repository": null,
+    "revision": null,
+    "verified_corpus_sha256": null,
+    "generation_flops": 0
+  },
+  "operator": {
+    "family": "dense_sft",
+    "dose": null,
+    "structural_indices": [],
+    "bit_allocation": [],
+    "selection_manifest_sha256": null,
+    "archived_weights_sha256": null
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "parameter_groups": [
+      {
+        "name": "all_parameters",
+        "learning_rate": 0.00003,
+        "weight_decay": 0.1
+      }
+    ],
+    "betas": [0.9, 0.95],
+    "epsilon": 0.00000001,
+    "gradient_clip": 1.0,
+    "warmup_fraction": 0.05,
+    "schedule": "cosine"
+  },
+  "seeds": {
+    "model_initialization": 2026071401,
+    "data_order": 2026071402,
+    "training": 2026071403,
+    "operator_selection": 2026071404,
+    "evaluation": 2026071405
+  },
+  "tokens": {
+    "optimizer_visible": 2000000,
+    "target": 1600000,
+    "replay": 400000,
+    "teacher_derived": 0
+  },
+  "flops": {
+    "selection": 0,
+    "teacher_generation": 0,
+    "training": 200,
+    "compression": 0,
+    "export": 5,
+    "total": 205
+  },
+  "checkpoint": {
+    "selection_split": "shadow-validation",
+    "metric": "static_pass_at_1",
+    "mode": "max",
+    "tie_breakers": [
+      "bounded_terminal_success",
+      "weight_bytes"
+    ],
+    "rule": "Maximize static pass@1; break ties in the listed order."
+  },
+  "export": {
+    "format": "safetensors",
+    "runtime_compatibility": [
+      "transformers-sdpa"
+    ],
+    "physical_parameters": 600000000,
+    "active_parameters": 600000000,
+    "nonzero_parameters": 600000000,
+    "average_weight_bits": 16,
+    "weight_bytes": 1200000000,
+    "bundle_bytes": 1210000000,
+    "artifact_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "bundle_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "tokenizer_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "notes": "Synthetic validation-only example. Every revision, hash, byte count, and FLOP value must be replaced by measured provenance before a real run."
+}

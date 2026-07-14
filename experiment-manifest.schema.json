@@ -1,0 +1,424 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/experiment-manifest.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Experiment Manifest",
+  "description": "Completed inputs, measured accounting, and export identity for one experiment run. This is not a prospective run specification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "created_at",
+    "git_revision",
+    "model",
+    "tokenizer",
+    "data",
+    "execution",
+    "capability_mixture",
+    "teacher",
+    "operator",
+    "optimizer",
+    "seeds",
+    "tokens",
+    "flops",
+    "checkpoint",
+    "export"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "experiment_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "git_revision": { "$ref": "#/$defs/sha1" },
+    "model": { "$ref": "#/$defs/model" },
+    "tokenizer": { "$ref": "#/$defs/tokenizer" },
+    "data": { "$ref": "#/$defs/data" },
+    "execution": { "$ref": "#/$defs/execution" },
+    "capability_mixture": { "$ref": "#/$defs/capabilityMixture" },
+    "teacher": { "$ref": "#/$defs/teacher" },
+    "operator": { "$ref": "#/$defs/operator" },
+    "optimizer": { "$ref": "#/$defs/optimizer" },
+    "seeds": { "$ref": "#/$defs/seeds" },
+    "tokens": { "$ref": "#/$defs/tokens" },
+    "flops": { "$ref": "#/$defs/flops" },
+    "checkpoint": { "$ref": "#/$defs/checkpoint" },
+    "export": { "$ref": "#/$defs/export" },
+    "notes": { "type": "string", "maxLength": 4096 }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "anyOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "null" }
+      ]
+    },
+    "immutableRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "revision", "architecture", "physical_parameters"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revision": { "$ref": "#/$defs/immutableRevision" },
+        "architecture": { "const": "dense" },
+        "physical_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        }
+      }
+    },
+    "tokenizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "revision",
+        "source_sha256",
+        "derived_vocabulary_mapping_sha256"
+      ],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revision": { "$ref": "#/$defs/immutableRevision" },
+        "source_sha256": { "$ref": "#/$defs/sha256" },
+        "derived_vocabulary_mapping_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "sha256", "sealed"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "sealed": { "type": "boolean" }
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_sha256",
+        "semantic_graph_sha256",
+        "fixtures_sha256",
+        "splits"
+      ],
+      "properties": {
+        "manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "semantic_graph_sha256": { "$ref": "#/$defs/sha256" },
+        "fixtures_sha256": { "$ref": "#/$defs/sha256" },
+        "splits": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/split" }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["container_image_digest", "verifier_revision", "verifier_sha256"],
+      "properties": {
+        "container_image_digest": {
+          "type": "string",
+          "pattern": "^(?:[^\\s@]+@)?sha256:[0-9a-f]{64}$"
+        },
+        "verifier_revision": { "$ref": "#/$defs/immutableRevision" },
+        "verifier_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "capabilityEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "fraction", "data_sha256"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "fraction": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "data_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "capabilityMixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "support"],
+      "properties": {
+        "target": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/capabilityEntry" }
+        },
+        "support": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/capabilityEntry" }
+        }
+      }
+    },
+    "teacher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "repository",
+        "revision",
+        "verified_corpus_sha256",
+        "generation_flops"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "repository": { "type": ["string", "null"], "maxLength": 256 },
+        "revision": {
+          "anyOf": [
+            { "$ref": "#/$defs/immutableRevision" },
+            { "type": "null" }
+          ]
+        },
+        "verified_corpus_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "generation_flops": { "type": "number", "minimum": 0 }
+      }
+    },
+    "structuralIndexGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "layer", "indices"],
+      "properties": {
+        "component": {
+          "enum": [
+            "residual_branch",
+            "attention_head",
+            "ffn_channel",
+            "hidden_dimension",
+            "embedding_token",
+            "layer"
+          ]
+        },
+        "layer": { "type": ["integer", "null"], "minimum": 0 },
+        "indices": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "bitAllocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "bits"],
+      "properties": {
+        "component": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "bits": { "type": "number", "exclusiveMinimum": 0, "maximum": 32 }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "dose",
+        "structural_indices",
+        "bit_allocation",
+        "selection_manifest_sha256",
+        "archived_weights_sha256"
+      ],
+      "properties": {
+        "family": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "dose": {
+          "anyOf": [
+            { "type": "number", "minimum": 0 },
+            { "type": "string", "minLength": 1, "maxLength": 128 },
+            { "type": "null" }
+          ]
+        },
+        "structural_indices": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": { "$ref": "#/$defs/structuralIndexGroup" }
+        },
+        "bit_allocation": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": { "$ref": "#/$defs/bitAllocation" }
+        },
+        "selection_manifest_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "archived_weights_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "parameterGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "learning_rate", "weight_decay"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "learning_rate": { "type": "number", "exclusiveMinimum": 0 },
+        "weight_decay": { "type": "number", "minimum": 0 }
+      }
+    },
+    "optimizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "parameter_groups",
+        "betas",
+        "epsilon",
+        "gradient_clip",
+        "warmup_fraction",
+        "schedule"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "parameter_groups": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/parameterGroup" }
+        },
+        "betas": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 }
+        },
+        "epsilon": { "type": "number", "exclusiveMinimum": 0 },
+        "gradient_clip": { "type": "number", "exclusiveMinimum": 0 },
+        "warmup_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
+        "schedule": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "seeds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_initialization",
+        "data_order",
+        "training",
+        "operator_selection",
+        "evaluation"
+      ],
+      "properties": {
+        "model_initialization": { "type": "integer", "minimum": 0 },
+        "data_order": { "type": "integer", "minimum": 0 },
+        "training": { "type": "integer", "minimum": 0 },
+        "operator_selection": { "type": "integer", "minimum": 0 },
+        "evaluation": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["optimizer_visible", "target", "replay", "teacher_derived"],
+      "properties": {
+        "optimizer_visible": { "type": "integer", "minimum": 1 },
+        "target": { "type": "integer", "minimum": 0 },
+        "replay": { "type": "integer", "minimum": 0 },
+        "teacher_derived": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "flops": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection",
+        "teacher_generation",
+        "training",
+        "compression",
+        "export",
+        "total"
+      ],
+      "properties": {
+        "selection": { "type": "number", "minimum": 0 },
+        "teacher_generation": { "type": "number", "minimum": 0 },
+        "training": { "type": "number", "minimum": 0 },
+        "compression": { "type": "number", "minimum": 0 },
+        "export": { "type": "number", "minimum": 0 },
+        "total": { "type": "number", "minimum": 0 }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selection_split", "metric", "mode", "tie_breakers", "rule"],
+      "properties": {
+        "selection_split": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "mode": { "enum": ["min", "max"] },
+        "tie_breakers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "maxItems": 16
+        },
+        "rule": { "type": "string", "minLength": 1, "maxLength": 2048 }
+      }
+    },
+    "export": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "runtime_compatibility",
+        "physical_parameters",
+        "active_parameters",
+        "nonzero_parameters",
+        "average_weight_bits",
+        "weight_bytes",
+        "bundle_bytes",
+        "artifact_sha256",
+        "bundle_sha256",
+        "tokenizer_sha256"
+      ],
+      "properties": {
+        "format": { "enum": ["safetensors", "gguf", "onnx", "other"] },
+        "runtime_compatibility": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        },
+        "physical_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "active_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "nonzero_parameters": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999999
+        },
+        "average_weight_bits": { "type": "number", "exclusiveMinimum": 0, "maximum": 32 },
+        "weight_bytes": { "type": "integer", "minimum": 1 },
+        "bundle_bytes": { "type": "integer", "minimum": 1 },
+        "artifact_sha256": { "$ref": "#/$defs/sha256" },
+        "bundle_sha256": { "$ref": "#/$defs/sha256" },
+        "tokenizer_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

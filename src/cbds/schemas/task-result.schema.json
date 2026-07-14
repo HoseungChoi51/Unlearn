@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/task-result.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Task Result",
+  "description": "One content-safe terminal-task outcome. Prompt and generated program text are represented by identifiers and hashes, not embedded text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "benchmark_id",
+    "prompt_id",
+    "mode",
+    "split_id",
+    "sealed",
+    "attempt",
+    "action_limit",
+    "generated_text_sha256",
+    "generated_text_bytes",
+    "extraction",
+    "syntax",
+    "tool_policy",
+    "fixture_outcomes",
+    "resource_use",
+    "action_trace",
+    "terminal_status"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "run_id": { "$ref": "#/$defs/identifier" },
+    "benchmark_id": { "$ref": "#/$defs/identifier" },
+    "prompt_id": { "$ref": "#/$defs/identifier" },
+    "mode": { "enum": ["static", "interactive"] },
+    "split_id": { "$ref": "#/$defs/identifier" },
+    "sealed": { "type": "boolean" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "action_limit": { "type": "integer", "minimum": 0, "maximum": 8 },
+    "generated_text_sha256": { "$ref": "#/$defs/sha256" },
+    "generated_text_bytes": { "type": "integer", "minimum": 0 },
+    "extraction": { "$ref": "#/$defs/extraction" },
+    "syntax": { "$ref": "#/$defs/syntax" },
+    "tool_policy": { "$ref": "#/$defs/toolPolicy" },
+    "fixture_outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/fixtureOutcome" }
+    },
+    "resource_use": { "$ref": "#/$defs/resourceUse" },
+    "action_trace": {
+      "type": "array",
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/actionTraceEntry" }
+    },
+    "terminal_status": {
+      "enum": [
+        "passed",
+        "extraction_failure",
+        "truncation",
+        "syntax_failure",
+        "syntax_check_failure",
+        "disallowed_tool",
+        "tool_policy_check_failure",
+        "timeout",
+        "runtime_failure",
+        "functional_failure",
+        "resource_limit",
+        "verifier_failure",
+        "action_limit",
+        "internal_error"
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "anyOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "null" }
+      ]
+    },
+    "nullableInteger": {
+      "type": ["integer", "null"]
+    },
+    "nullableNumber": {
+      "type": ["number", "null"]
+    },
+    "nullableNonnegativeNumber": {
+      "anyOf": [
+        { "type": "number", "minimum": 0 },
+        { "type": "null" }
+      ]
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 192,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "detailCode": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        { "type": "null" }
+      ]
+    },
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "language",
+        "code_sha256",
+        "fenced",
+        "response_bytes",
+        "code_bytes",
+        "detail_code"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["ok", "extraction_failure", "truncation"]
+        },
+        "language": {
+          "type": ["string", "null"],
+          "enum": ["bash", "python", null]
+        },
+        "code_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "fenced": { "type": ["boolean", "null"] },
+        "response_bytes": { "type": "integer", "minimum": 0 },
+        "code_bytes": { "type": "integer", "minimum": 0 },
+        "detail_code": { "$ref": "#/$defs/detailCode" }
+      }
+    },
+    "syntax": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "return_code", "diagnostic_sha256"],
+      "properties": {
+        "status": {
+          "enum": ["not_run", "ok", "syntax_failure", "check_failure"]
+        },
+        "return_code": { "$ref": "#/$defs/nullableInteger" },
+        "diagnostic_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "toolPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "policy_sha256",
+        "observed_tools",
+        "disallowed_tools",
+        "diagnostic_sha256"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["not_run", "allowed", "disallowed_tool", "check_failure"]
+        },
+        "policy_sha256": { "$ref": "#/$defs/sha256" },
+        "observed_tools": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "disallowed_tools": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "diagnostic_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "fixtureOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_id",
+        "status",
+        "exit_code",
+        "stdout_sha256",
+        "stderr_sha256",
+        "wall_time_ms",
+        "verifier_result_sha256"
+      ],
+      "properties": {
+        "fixture_id": { "$ref": "#/$defs/identifier" },
+        "status": {
+          "enum": [
+            "not_run",
+            "passed",
+            "timeout",
+            "runtime_failure",
+            "functional_failure",
+            "resource_limit",
+            "verifier_failure"
+          ]
+        },
+        "exit_code": { "$ref": "#/$defs/nullableInteger" },
+        "stdout_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "stderr_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "wall_time_ms": { "$ref": "#/$defs/nullableNonnegativeNumber" },
+        "verifier_result_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "resourceUse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_started",
+        "wall_time_ms",
+        "cpu_time_ms",
+        "peak_rss_bytes",
+        "stdout_bytes",
+        "stderr_bytes",
+        "timed_out"
+      ],
+      "properties": {
+        "container_started": { "type": "boolean" },
+        "wall_time_ms": { "type": "number", "minimum": 0 },
+        "cpu_time_ms": { "$ref": "#/$defs/nullableNonnegativeNumber" },
+        "peak_rss_bytes": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "stdout_bytes": { "type": "integer", "minimum": 0 },
+        "stderr_bytes": { "type": "integer", "minimum": 0 },
+        "timed_out": { "type": "boolean" }
+      }
+    },
+    "actionTraceEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_index",
+        "action_sha256",
+        "status",
+        "exit_code",
+        "stdout_sha256",
+        "stderr_sha256",
+        "wall_time_ms"
+      ],
+      "properties": {
+        "action_index": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "action_sha256": { "$ref": "#/$defs/sha256" },
+        "status": {
+          "enum": [
+            "passed",
+            "extraction_failure",
+            "truncation",
+            "syntax_failure",
+            "syntax_check_failure",
+            "disallowed_tool",
+            "tool_policy_check_failure",
+            "timeout",
+            "runtime_failure",
+            "resource_limit"
+          ]
+        },
+        "exit_code": { "$ref": "#/$defs/nullableInteger" },
+        "stdout_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "stderr_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "wall_time_ms": { "$ref": "#/$defs/nullableNonnegativeNumber" }
+      }
+    }
+  }
+}

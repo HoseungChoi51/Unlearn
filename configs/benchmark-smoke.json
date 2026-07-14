@@ -1,0 +1,21 @@
+{
+  "family_size": 3,
+  "fixture_count": 5,
+  "interactive": {
+    "method_development": 1,
+    "operator_selection": 2,
+    "sealed_id": 2,
+    "sealed_ood": 1,
+    "shadow_validation": 1,
+    "train": 4
+  },
+  "seed": 20260714,
+  "static": {
+    "method_development": 2,
+    "operator_selection": 3,
+    "sealed_id": 3,
+    "sealed_ood": 2,
+    "shadow_validation": 2,
+    "train": 6
+  }
+}
