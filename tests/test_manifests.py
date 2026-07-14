@@ -163,6 +163,8 @@ def valid_experiment_manifest() -> dict:
             "attention_backend": "sdpa",
             "gradient_checkpointing": True,
             "deterministic_algorithms": True,
+            "scheduler_step_unit": "optimizer_update",
+            "final_partial_accumulation": "apply_with_actual_supervised_token_denominator",
             "packing": {
                 "enabled": True,
                 "strategy": "greedy",
@@ -171,7 +173,8 @@ def valid_experiment_manifest() -> dict:
             },
             "loss": {
                 "objective": "causal_cross_entropy",
-                "label_scope": "all_non_padding_tokens",
+                "label_scope": "assistant_response_tokens",
+                "normalization": "actual_supervised_tokens_per_optimizer_update",
                 "target_weight": 1.0,
                 "support_weight": 1.0,
                 "kl_weight": 0.0,
@@ -944,6 +947,8 @@ class ExperimentManifestTests(unittest.TestCase):
             "attention_backend": None,
             "gradient_checkpointing": False,
             "deterministic_algorithms": True,
+            "scheduler_step_unit": None,
+            "final_partial_accumulation": None,
             "packing": {
                 "enabled": False,
                 "strategy": "none",
@@ -953,6 +958,7 @@ class ExperimentManifestTests(unittest.TestCase):
             "loss": {
                 "objective": "none",
                 "label_scope": "none",
+                "normalization": "none",
                 "target_weight": 0,
                 "support_weight": 0,
                 "kl_weight": 0,

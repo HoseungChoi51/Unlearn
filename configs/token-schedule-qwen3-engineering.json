@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "schedule_id": "qwen3-0.6b-engineering-pilot-v3",
+  "seed": 20260715,
+  "source_corpus": {
+    "corpus_sha256": "244e0499301f9f1189b5025de7c5bb4f97783b13c692a53574a1ab824c48dac9",
+    "manifest_sha256": "7490e16de469e1081213650345b688da38c1d02959ee47bee88e31ebadcd8068"
+  },
+  "corpus_eligibility": "engineering_only_unverified_not_target_policy_accepted",
+  "visible_token_budgets": {
+    "target": 1600000,
+    "support": 400000
+  },
+  "sequence_length": 1024,
+  "tail_selection": {
+    "reserve_visible_tokens": 65536,
+    "candidate_occurrences": 4096
+  },
+  "policies": {
+    "ordering": "sha256(seed,partition,cycle,record_id)_ascending",
+    "partition_interleave": "lowest_consumed_visible_fraction_target_tie",
+    "oversize_record": "fail_closed_no_truncation",
+    "tail_exactness": "deterministic_01_subset_sum_or_fail_closed",
+    "packing": "global_order_greedy_whole_record_no_cross_sequence_split",
+    "padding": "right_to_fixed_sequence_length_effective_pad_token",
+    "attention": "causal_cross_example_attention_binary_nonpadding_mask_eos_delimited",
+    "position_ids": "global_zero_based_monotonic_per_packed_sequence_not_reset_at_example_boundaries_including_padding",
+    "labels": "response_tokens_and_explicit_eos_only_prefix_and_padding_ignore_-100"
+  }
+}

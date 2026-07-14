@@ -102,6 +102,8 @@
         "enabled_required",
         "name",
         "betas",
+        "epsilon",
+        "parameter_group_weight_decay",
         "gradient_clip",
         "warmup_fraction",
         "schedule"
@@ -119,6 +121,11 @@
             "exclusiveMaximum": 1
           }
         },
+        "epsilon": { "type": "number", "exclusiveMinimum": 0 },
+        "parameter_group_weight_decay": {
+          "type": "number",
+          "minimum": 0
+        },
         "gradient_clip": { "type": "number", "exclusiveMinimum": 0 },
         "warmup_fraction": {
           "type": "number",
@@ -133,12 +140,26 @@
       "additionalProperties": false,
       "required": [
         "training_dtype",
+        "optimizer_state_dtype",
+        "label_scope",
+        "loss_normalization",
+        "scheduler_step_unit",
+        "final_partial_accumulation",
         "packing_enabled",
         "minimum_packed_sequence_length",
         "maximum_packed_sequence_length"
       ],
       "properties": {
         "training_dtype": { "enum": ["bf16", "fp16", "fp32"] },
+        "optimizer_state_dtype": { "const": "fp32" },
+        "label_scope": { "const": "assistant_response_tokens" },
+        "loss_normalization": {
+          "const": "actual_supervised_tokens_per_optimizer_update"
+        },
+        "scheduler_step_unit": { "const": "optimizer_update" },
+        "final_partial_accumulation": {
+          "const": "apply_with_actual_supervised_token_denominator"
+        },
         "packing_enabled": { "type": "boolean" },
         "minimum_packed_sequence_length": {
           "type": "integer",

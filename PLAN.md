@@ -156,6 +156,29 @@ engineering agent. Compilers, package installation, remote services, SSH,
 containers, and network access are outside the primary target unless a sealed
 task explicitly supplies an offline local substitute.
 
+### Training-source admission
+
+Treat every downloaded corpus as a content-addressed raw import, never as an
+automatically eligible training partition.  Before token scheduling, create a
+separate curated view with per-row acceptance/rejection reasons, Bash syntax
+and positive-tool-policy checks, exact and near deduplication, utility-balance
+statistics, and prompt/program-graph decontamination against every evaluation
+suite available at that time.  Bind the curated view to the raw-source hashes,
+transformation-code hash, policy hash, and evaluation-suite hashes.
+Group normalized prompts before admission and reject or explicitly repair
+under-specified prompts that map to multiple incompatible programs; report the
+collision and per-utility quota histograms rather than counting exact-pair
+deduplication as sufficient cleaning.
+
+In particular, NL2SH-ALFA train consists of unverified single-line strings,
+contains placeholders and out-of-target utilities, and merges NL2Bash,
+LinuxCommands, NL2CMD, InterCode-Bash, and tldr-pages without row-level source
+lineage.  Record its repository-level license declaration separately from the
+unresolved row-level lineage and component-license map.  Do not call raw rows
+executable commands or admit them directly to a claim-bearing run.  The main
+target corpus must also include execution-verified, generator-backed
+multiline/stateful tasks; raw NL2SH-derived text is at most one audited stratum.
+
 ### Static executable suite
 
 Create a generator-backed suite with:
@@ -217,8 +240,10 @@ co-primary endpoint.
 - Use [BashBench](https://arxiv.org/abs/2606.27733) as an independent static
   executable benchmark after auditing and excluding 50 harness-development
   items.
-- Use [InterCode-Bash](https://intercode-benchmark.github.io/) as an
-  independent bounded-interaction diagnostic.
+- Treat [InterCode-Bash](https://intercode-benchmark.github.io/) as
+  exposure-prone because NL2SH-ALFA train includes InterCode-Bash lineage.
+  It becomes an independent bounded-interaction diagnostic only after an
+  exact/fuzzy/program-graph decontamination audit bound to both corpora.
 - Run [Terminal-Bench 2](https://arxiv.org/abs/2601.11868) only as a broad floor
   diagnostic. Do not use it for model or method selection because its tasks and
   agent harness extend well beyond the protected target and are likely too hard
@@ -374,7 +399,15 @@ Use:
 
 - 80% target tokens and 20% replay tokens.
 - AdamW with β=`(0.9, 0.95)`, gradient clipping 1.0, 5% warmup, and cosine
-  decay.
+  decay. Use epsilon `1e-8`, weight decay `0.1` for every campaign parameter
+  group, and FP32 optimizer state.
+- Compute causal cross-entropy only on response tokens and each explicit EOS.
+  Normalize each optimizer update by its actual supervised-token count,
+  including the final partial accumulation; count the separate non-padding
+  input-token ledger as optimizer-visible tokens.
+- Step warmup/cosine scheduling once per optimizer update. Record the exact
+  learning rate, input/supervised token counts, gradient norm, and checkpoint
+  hash for every update in a hash-chained ledger.
 - Side-only learning rates `{1e-4, 3e-4, 1e-3}` where applicable.
 - Full-model learning rates `{1e-5, 3e-5}`.
 - BF16 training, packed 1–2k-token sequences, SDPA/FlashAttention where exact,

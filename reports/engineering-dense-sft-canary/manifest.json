@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "record_type": "cbds.engineering-dense-sft-canary-manifest",
+  "manifest_hash_scope": "canonical_json_excluding_manifest_sha256",
+  "created_date": "2026-07-15",
+  "claim_scope": "none",
+  "purpose": "real_text_dense_training_export_and_ledger_pipeline_engineering",
+  "eligibility": {
+    "source_target_policy_accepted": false,
+    "campaign_eligible": false,
+    "model_selection_eligible": false,
+    "benchmark_result": false,
+    "research_claim_authorized": false
+  },
+  "source_model": {
+    "model_id": "Qwen/Qwen3-0.6B-Base",
+    "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+    "inspection_report_sha256": "e3d821157bd7888906ae0fda459d523712ab743bd9edf9fb79728123f9782319",
+    "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+    "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8",
+    "physical_parameters": 596049920,
+    "architecture": "dense"
+  },
+  "source_schedule": {
+    "schedule_id": "qwen3-0.6b-engineering-pilot-v3",
+    "schedule_sha256": "f17a8a8d9e4a1cf150e770b0e08591b5a4f90e4e31f25767f5ea6aa17a601942",
+    "manifest_sha256": "b691430e1a4887695db60196990d40c45f6f35791dcb57104d59cbd92393b700",
+    "corpus_sha256": "244e0499301f9f1189b5025de7c5bb4f97783b13c692a53574a1ab824c48dac9",
+    "target_visible_tokens": 1600000,
+    "support_visible_tokens": 400000,
+    "total_visible_tokens": 2000000,
+    "supervised_tokens": 769470,
+    "packed_sequences": 2007,
+    "target_policy_accepted": false
+  },
+  "training": {
+    "seed": 20260715,
+    "precision": "bfloat16_parameters_and_forward",
+    "full_model_trainable": true,
+    "microbatch_sequences": 8,
+    "accumulation_microbatches": 1,
+    "optimizer_updates": 251,
+    "optimizer": "AdamW",
+    "optimizer_state_dtype": "float32",
+    "optimizer_state_parameter_tensors": 310,
+    "base_learning_rate": 1e-05,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.1,
+    "gradient_clip_norm": 1.0,
+    "label_scope": "response_tokens_and_explicit_eos_only",
+    "loss_normalization": "actual_supervised_tokens_per_optimizer_update",
+    "gradient_checkpointing": true,
+    "analytical_flops": 7349896331919360,
+    "flops_hardware_measured": false
+  },
+  "export": {
+    "layout": "model_subdirectory_plus_root_ledger_and_completion",
+    "physical_parameters": 596049920,
+    "stored_tensor_elements": 596049920,
+    "safetensors_payload_bytes": 1192099840,
+    "exported_model_serialized_bytes": 1203564114,
+    "checkpoint_serialized_bytes_excluding_completion": 1203804940,
+    "complete_artifact_serialized_bytes": 1203822206,
+    "completion_file_bytes": 17266,
+    "completion_file_sha256": "f90351e0561081de6ad9175cfff45694b80006bdddc9f4f76e646389e2056870",
+    "completion_sha256": "6d6cb413bcecc65108aed8257c8df8177c53ae7aba9f6d9231e6aeadf6208cfc",
+    "checkpoint_content_sha256": "35ca02b6523c87856c81c68bafd3b0092369057e08923fc145989aa0bfc8d1fd",
+    "checkpoint_tensor_sha256": "514a03d392451802fdc7b54696877ee7fadf8cfcd93aa48b4e324a568a0ebdb8",
+    "ledger_payload_sha256": "d882fd948d382fce6a55f32c94c2134ac53fb1890421527b5d93ed8058c9661c",
+    "training_summary_sha256": "8c347abccb44e2f71f250cb19e627d16bce37d3d78a4f6a08c4738497712953a",
+    "model_inspection_report_sha256": "a05ff3a9954f95061224ae8ed770ea7c27d9c7477e070b3b3699b8672ae75154",
+    "model_bundle_manifest_sha256": "e996596c752016c33bf89343995fd55e54d55620572008244b239c5461d1bc95",
+    "model_weight_set_sha256": "737577d8dce2813ba797ec1df44a4337ed6f9f712bb98b9e1b9b62c87b415345",
+    "model_config_sha256": "6ba7a56b6c4418c028e9d88a78d3f6489640c5303730ade066b21784caed6e12",
+    "model_safetensors_file_sha256": "0a1ffd433e1770566da866d92576003f6ccc87a75a99743a1c9ae862eb474ef9",
+    "retained_location": "ignored_local_artifact_not_versioned"
+  },
+  "measurements": {
+    "scope": "descriptive_engineering_pilot_recalibration_only",
+    "training_wall_seconds_monotonic": 149.23759715900815,
+    "visible_tokens_per_second": 13401.448683665554,
+    "supervised_tokens_per_second": 5156.006359310067,
+    "milliseconds_per_optimizer_update": 594.5721002350922,
+    "peak_cuda_memory_allocated_bytes": 23953326592,
+    "peak_cuda_memory_reserved_bytes": 29376905216,
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "device_total_memory_bytes": 33667612672,
+    "trajectory_determinism_guaranteed": false,
+    "selection_use_prohibited": true
+  },
+  "runtime": {
+    "python": "3.12.13",
+    "torch": "2.11.0+cu128",
+    "transformers": "5.13.1",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.8.0",
+    "cuda_runtime": "12.8",
+    "compute_capability": [
+      12,
+      0
+    ],
+    "tf32_enabled": false,
+    "huggingface_offline_local_only_requested": true,
+    "os_socket_isolation_provided": false
+  },
+  "code_sources": {
+    "scripts/dense_sft_canary.py": "d8ed0457f60624c4f84c6d54955f97f94d87a4cbf1246471bd9014af8cbe3e27",
+    "src/cbds/dense_training.py": "0720b6ff996cfc68fa8522448edd9b99b691e5e0f8fc0c8d187f3625c384a8de",
+    "src/cbds/manifests.py": "b5083c702d7f18049c34c528bd60c883085128f5eb98ee47977c3e16279fb6f2",
+    "src/cbds/model_artifacts.py": "70fa1a385d1dcbb972dca78d5ba88d57443200ea5039091eb9c5ee99504ebf36",
+    "src/cbds/token_schedule.py": "15f412f3c5908db80b77f06bb0d3192edcf8e4205270ee406fe27f49a964190f",
+    "src/cbds/training_corpus.py": "babefd270b3e8465bf7baa335c8ce9feedec86aed26838a1a42d30baad98c5f4"
+  },
+  "verification": {
+    "source_model_stable_before_after": true,
+    "schedule_reconstructed_before_after": true,
+    "step_ledger_chain_reopened": true,
+    "serialized_file_inventory_reopened": true,
+    "logical_tensor_hash_recomputed": true,
+    "exported_model_reinspected": true,
+    "atomic_no_replace_publication": true
+  },
+  "limitations": [
+    "The target data is an authenticated but upstream-unverified raw import and is not target-policy accepted.",
+    "The canary measures no terminal behavior, protected capability, model quality, compression, or benchmark endpoint.",
+    "The analytical 6N packed-token FLOP estimate is not a hardware FLOP measurement.",
+    "CUDA deterministic algorithms were requested, but bitwise training-trajectory reproducibility is not guaranteed.",
+    "Hugging Face offline and local-only controls were requested without process-level socket isolation.",
+    "The exported checkpoint cannot be used for model selection or a research claim."
+  ],
+  "manifest_sha256": "de61ed40bf1fec6646d851426729fae30821fdc2743fdca79006f37718d0d506"
+}

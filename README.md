@@ -20,6 +20,8 @@ improves.
 - [Prospective evaluation-spec JSON Schema](evaluation-spec.schema.json)
 - [Per-task result JSON Schema](task-result.schema.json)
 - [Non-claiming GPU engineering pilot](reports/engineering-pilot/manifest.json)
+- [Non-claiming corpus/token-schedule pilot](reports/engineering-data-pilot/manifest.json)
+- [Non-claiming dense-SFT canary](reports/engineering-dense-sft-canary/manifest.json)
 
 ## Quick start
 
@@ -48,6 +50,67 @@ cbds validate-run-spec \
   --run-spec examples/run-spec.example.json
 ```
 
+The logical-corpus commands authenticate a pinned raw import and replay its
+deterministic transformation. They deliberately do not imply that rows are
+safe, correct, executable, licensed at row level, decontaminated, or admitted
+for a research run:
+
+```bash
+cbds prepare-training-corpus \
+  --config configs/training-corpus-pilot.json \
+  --source-root /path/to/pinned/NL2SH-ALFA/snapshot \
+  --output-dir data/generated/backbone-pilot-corpus
+cbds verify-training-corpus \
+  --corpus-dir data/generated/backbone-pilot-corpus \
+  --source-root /path/to/pinned/NL2SH-ALFA/snapshot \
+  --expected-corpus-sha256 CORPUS_SHA256 \
+  --expected-manifest-sha256 MANIFEST_SHA256 \
+  --require-authenticated
+cbds prepare-training-source-audit \
+  --audit-id nl2sh-alfa-lexical-v1 \
+  --corpus-dir data/generated/backbone-pilot-corpus \
+  --source-root /path/to/pinned/NL2SH-ALFA/snapshot \
+  --expected-corpus-sha256 CORPUS_SHA256 \
+  --expected-corpus-manifest-sha256 CORPUS_MANIFEST_SHA256 \
+  --output-dir data/generated/training-source-audits/nl2sh-lexical
+cbds verify-training-source-audit \
+  --audit-dir data/generated/training-source-audits/nl2sh-lexical \
+  --expected-audit-sha256 AUDIT_SHA256 \
+  --expected-audit-manifest-sha256 AUDIT_MANIFEST_SHA256 \
+  --raw-corpus-dir data/generated/backbone-pilot-corpus \
+  --raw-source-root /path/to/pinned/NL2SH-ALFA/snapshot \
+  --expected-corpus-sha256 CORPUS_SHA256 \
+  --expected-corpus-manifest-sha256 CORPUS_MANIFEST_SHA256
+cbds prepare-token-schedule \
+  --config configs/token-schedule-qwen3-engineering.json \
+  --corpus-dir data/generated/backbone-pilot-corpus \
+  --corpus-source-root /path/to/pinned/NL2SH-ALFA/snapshot \
+  --tokenizer-root /path/to/pinned/Qwen3-0.6B-Base/snapshot \
+  --model-embedding-rows 151936 \
+  --output-dir data/generated/token-schedules/qwen3-engineering
+cbds verify-token-schedule \
+  --schedule-dir data/generated/token-schedules/qwen3-engineering \
+  --corpus-dir data/generated/backbone-pilot-corpus \
+  --corpus-source-root /path/to/pinned/NL2SH-ALFA/snapshot \
+  --tokenizer-root /path/to/pinned/Qwen3-0.6B-Base/snapshot \
+  --model-embedding-rows 151936 \
+  --expected-schedule-sha256 SCHEDULE_SHA256 \
+  --expected-manifest-sha256 MANIFEST_SHA256
+```
+
+The tokenizer-aware scheduling commands require the optional `runtime` extra.
+They additionally reconstruct every selected
+occurrence and fixed-length pack, use response-plus-EOS labels, and prove
+exact non-padding input-token budgets. The checked-in Qwen3 engineering
+record contains 1.6M target and 0.4M support tokens in 2,007 1,024-token
+packs. It is an engineering canary input only: `target_policy_accepted`,
+`research_training_authorized`, and `research_claim_authorized` are all false.
+The source-audit command never invokes a shell or candidate utility. Even audit
+pins are insufficient for authenticated consumption: verification must rebuild
+the complete artifact from the doubly pinned raw source. On the current raw
+import, 4,748/40,533 rows survive the conservative lexical prefilter and remain
+non-executed static candidates; no survivor is admitted for research training.
+
 Install the optional local model runtime only on a reviewed ML host:
 
 ```bash
@@ -74,6 +137,17 @@ module or console command. Its synthetic token IDs are reproducible from the
 recorded seed, but it does not enforce bitwise-deterministic CUDA optimization
 and its Hugging Face offline/local-only settings do not provide OS-level socket
 isolation.
+
+`scripts/dense_sft_canary.py` is the corresponding real-text, full-model
+engineering runner. It accepts only an externally pinned model inspection and
+an exact source-replayed token schedule; caller-supplied examples, token IDs,
+labels, or data order are not accepted. It normalizes accumulated gradients by
+the actual supervised-token count, writes a hash-chained update ledger, exports
+the dense model under a separate `model/` directory, and reopens every file,
+logical tensor, model inspection identity, and source pin before and after
+atomic no-replace publication. The source schedule must retain its explicit
+engineering-only status, and every completion hard-codes campaign, selection,
+and claim eligibility to false.
 
 Use `configs/benchmark-plan.json` only when the full 20,250-record semantic
 scaffold is wanted. Generated data, run outputs, and model artifacts are
@@ -203,7 +277,8 @@ until a separate calibration profile and token/provenance ledger are frozen.
 
 ## Status
 
-Executable-foundation plus model-fit-pilot stage. Deterministic benchmark
+Executable-foundation plus authenticated-data/schedule pilot stage.
+Deterministic benchmark
 scaffolding and artifact verification, frozen response extraction, local
 Safetensors inspection, sandbox command construction and read-only runtime
 preflight, prospective run and scored-evaluation specifications,
@@ -214,8 +289,14 @@ fail-closed claim-policy evaluation, and four public-development static
 fixture/verifier families are implemented. Evaluation specs validate and hash
 prospective contracts; they do not open benchmark assets or execute
 candidates. The development fixtures are test assets, not sealed evaluation
-data. Candidate execution, complete semantic-family coverage, real-data
-training backends, and research results are not yet present.
+data. A bounded public-development namespace/cgroup preflight and candidate
+launch-plan builder are implemented, but candidate execution remains
+unconditionally blocked until the trusted supervisor, child seccomp, CPU-time
+watcher, bounded capture, quiescence, and exact-tool-policy gates exist.
+Complete semantic-family coverage, claim-eligible curated data, research
+training runs, and research results are not yet present. A 2M-visible-token
+Qwen3 dense-SFT canary has completed solely to qualify the training/export
+plumbing; it is not a backbone score or campaign run.
 
 The four public-development verifier families are a narrow executable-fixture
 exception to the bulk semantic scaffold: their trusted APIs materialize
@@ -233,6 +314,27 @@ capability score has been measured, so no backbone has been selected. The
 versioned pilot report therefore has `claim_scope: none` and
 `selection_authorized: false`; no experimental result is claimed in this
 repository.
+
+The pinned NL2SH-ALFA training import has also been reproduced into a
+content-addressed two-partition logical corpus, and a Qwen3 tokenizer schedule
+has been reconstructed to exact token and pack hashes. Authentication means
+only that the bytes and deterministic transformation match their pins. The raw
+target is a mixture with unresolved row-level lineage, placeholders,
+out-of-policy utilities, and no execution oracle; it is not accepted training
+data. The versioned data-pilot report therefore has `claim_scope: none` and
+forbids model selection or research training.
+The authenticated lexical audit rejects 35,785/40,533 rows and identifies 681
+normalized-prompt collision groups covering 2,326 rows. Because Bash parsing,
+fixture execution, policy admission, row-level license resolution, and all
+evaluation-overlap bindings remain absent, the 4,748 lexical survivors cannot
+feed a campaign run.
+
+The real-text dense canary consumed the exact 1.6M/0.4M target/support
+engineering schedule in 251 updates, exported the same 596,049,920-parameter
+dense architecture, and passed independent serialized-file, logical-tensor,
+model-inspection, source-pin, and ledger-chain verification. Its 149.24-second
+training time and memory/throughput figures are descriptive host diagnostics;
+the checked-in report forbids model selection and research claims.
 
 The dependency-free local inspector validates Safetensors storage and reports
 conservative dense/MoE evidence, stored tensor elements, component bytes, and

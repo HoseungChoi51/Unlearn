@@ -258,6 +258,170 @@ def _cmd_prepare(args: argparse.Namespace) -> None:
     _emit(result, args.summary)
 
 
+def _cmd_prepare_training_corpus(args: argparse.Namespace) -> None:
+    from .training_corpus import (
+        load_training_corpus_config,
+        prepare_training_corpus,
+    )
+
+    if _path_within(args.config, args.output_dir):
+        raise CliError("--config must not be inside --output-dir")
+    if _path_within(args.output_dir, args.source_root):
+        raise CliError("--output-dir must be outside --source-root")
+    if args.summary is not None:
+        if _paths_alias(args.config, args.summary):
+            raise CliError("--summary must not resolve to --config or its inode")
+        if _path_within(args.summary, args.output_dir):
+            raise CliError("--summary must be outside --output-dir")
+        if _path_within(args.summary, args.source_root):
+            raise CliError("--summary must be outside --source-root")
+    config = load_training_corpus_config(args.config)
+    result = prepare_training_corpus(
+        config,
+        source_root=args.source_root,
+        output_dir=args.output_dir,
+    )
+    _emit(result, args.summary)
+
+
+def _cmd_verify_training_corpus(args: argparse.Namespace) -> None:
+    from .training_corpus import validate_training_corpus_artifacts
+
+    if args.output is not None and _path_within(args.output, args.corpus_dir):
+        raise CliError("--output must be outside --corpus-dir")
+    result = validate_training_corpus_artifacts(
+        args.corpus_dir,
+        expected_corpus_sha256=args.expected_corpus_sha256,
+        expected_manifest_sha256=args.expected_manifest_sha256,
+        source_root=args.source_root,
+        require_authenticated=args.require_authenticated,
+    )
+    _emit(result, args.output)
+
+
+def _cmd_prepare_token_schedule(args: argparse.Namespace) -> None:
+    from .manifests import load_document
+    from .token_schedule import prepare_token_schedule
+
+    protected_roots = (
+        ("--corpus-dir", args.corpus_dir),
+        ("--corpus-source-root", args.corpus_source_root),
+        ("--tokenizer-root", args.tokenizer_root),
+    )
+    if _path_within(args.config, args.output_dir):
+        raise CliError("--config must not be inside --output-dir")
+    for label, source in protected_roots:
+        if _path_within(args.output_dir, source):
+            raise CliError(f"--output-dir must be outside {label}")
+    if args.summary is not None:
+        if _paths_alias(args.config, args.summary):
+            raise CliError("--summary must not resolve to --config or its inode")
+        if _path_within(args.summary, args.output_dir):
+            raise CliError("--summary must be outside --output-dir")
+        for label, source in protected_roots:
+            if _path_within(args.summary, source):
+                raise CliError(f"--summary must be outside {label}")
+    result = prepare_token_schedule(
+        load_document(args.config),
+        corpus_dir=args.corpus_dir,
+        corpus_source_root=args.corpus_source_root,
+        tokenizer_root=args.tokenizer_root,
+        output_dir=args.output_dir,
+        model_embedding_rows=args.model_embedding_rows,
+    )
+    _emit(result, args.summary)
+
+
+def _cmd_verify_token_schedule(args: argparse.Namespace) -> None:
+    from .token_schedule import validate_token_schedule_artifacts
+
+    if args.output is not None:
+        for label, source in (
+            ("--schedule-dir", args.schedule_dir),
+            ("--corpus-dir", args.corpus_dir),
+            ("--corpus-source-root", args.corpus_source_root),
+            ("--tokenizer-root", args.tokenizer_root),
+        ):
+            if _path_within(args.output, source):
+                raise CliError(f"--output must be outside {label}")
+    result = validate_token_schedule_artifacts(
+        args.schedule_dir,
+        corpus_dir=args.corpus_dir,
+        corpus_source_root=args.corpus_source_root,
+        tokenizer_root=args.tokenizer_root,
+        model_embedding_rows=args.model_embedding_rows,
+        expected_schedule_sha256=args.expected_schedule_sha256,
+        expected_manifest_sha256=args.expected_manifest_sha256,
+    )
+    _emit(result, args.output)
+
+
+def _cmd_prepare_training_source_audit(args: argparse.Namespace) -> None:
+    from .manifests import load_document
+    from .training_source_audit import prepare_training_source_audit
+
+    protected = (
+        ("--corpus-dir", args.corpus_dir),
+        ("--source-root", args.source_root),
+    )
+    for label, source in protected:
+        if _path_within(args.output_dir, source):
+            raise CliError(f"--output-dir must be outside {label}")
+    if args.evaluation_bindings is not None and _path_within(
+        args.evaluation_bindings, args.output_dir
+    ):
+        raise CliError("--evaluation-bindings must not be inside --output-dir")
+    if args.summary is not None:
+        if _path_within(args.summary, args.output_dir):
+            raise CliError("--summary must be outside --output-dir")
+        for label, source in protected:
+            if _path_within(args.summary, source):
+                raise CliError(f"--summary must be outside {label}")
+        if args.evaluation_bindings is not None and _paths_alias(
+            args.summary, args.evaluation_bindings
+        ):
+            raise CliError("--summary must not replace --evaluation-bindings")
+    bindings = (
+        None
+        if args.evaluation_bindings is None
+        else load_document(args.evaluation_bindings)
+    )
+    result = prepare_training_source_audit(
+        audit_id=args.audit_id,
+        corpus_dir=args.corpus_dir,
+        source_root=args.source_root,
+        output_dir=args.output_dir,
+        expected_corpus_sha256=args.expected_corpus_sha256,
+        expected_manifest_sha256=args.expected_corpus_manifest_sha256,
+        evaluation_bindings=bindings,
+    )
+    _emit(result, args.summary)
+
+
+def _cmd_verify_training_source_audit(args: argparse.Namespace) -> None:
+    from .training_source_audit import validate_training_source_audit_artifacts
+
+    if args.output is not None:
+        for label, source in (
+            ("--audit-dir", args.audit_dir),
+            ("--raw-corpus-dir", args.raw_corpus_dir),
+            ("--raw-source-root", args.raw_source_root),
+        ):
+            if _path_within(args.output, source):
+                raise CliError(f"--output must be outside {label}")
+    result = validate_training_source_audit_artifacts(
+        args.audit_dir,
+        expected_audit_sha256=args.expected_audit_sha256,
+        expected_manifest_sha256=args.expected_audit_manifest_sha256,
+        raw_corpus_dir=args.raw_corpus_dir,
+        raw_source_root=args.raw_source_root,
+        raw_expected_corpus_sha256=args.expected_corpus_sha256,
+        raw_expected_manifest_sha256=args.expected_corpus_manifest_sha256,
+        require_authenticated=True,
+    )
+    _emit(result, args.output)
+
+
 def _cmd_stage_plan(args: argparse.Namespace) -> None:
     if not args.dry_run:
         raise CliError(
@@ -710,6 +874,104 @@ def build_parser() -> argparse.ArgumentParser:
     prepare.add_argument("--output-dir", type=Path, required=True)
     prepare.add_argument("--summary", type=Path)
     prepare.set_defaults(handler=_cmd_prepare)
+
+    prepare_corpus = subparsers.add_parser(
+        "prepare-training-corpus",
+        help=(
+            "prepare a pinned logical target/replay corpus; the artifact is "
+            "explicitly non-claiming and stops before tokenization"
+        ),
+    )
+    prepare_corpus.add_argument("--config", type=Path, required=True)
+    prepare_corpus.add_argument("--source-root", type=Path, required=True)
+    prepare_corpus.add_argument("--output-dir", type=Path, required=True)
+    prepare_corpus.add_argument("--summary", type=Path)
+    prepare_corpus.set_defaults(handler=_cmd_prepare_training_corpus)
+
+    verify_corpus = subparsers.add_parser(
+        "verify-training-corpus",
+        help="verify a prepared logical training corpus without exposing its text",
+    )
+    verify_corpus.add_argument("--corpus-dir", type=Path, required=True)
+    verify_corpus.add_argument("--expected-corpus-sha256")
+    verify_corpus.add_argument("--expected-manifest-sha256")
+    verify_corpus.add_argument("--source-root", type=Path)
+    verify_corpus.add_argument("--require-authenticated", action="store_true")
+    verify_corpus.add_argument("--output", type=Path)
+    verify_corpus.set_defaults(handler=_cmd_verify_training_corpus)
+
+    prepare_schedule = subparsers.add_parser(
+        "prepare-token-schedule",
+        help=(
+            "prepare an exact tokenizer-specific engineering schedule from "
+            "an authenticated corpus; never authorizes training claims"
+        ),
+    )
+    prepare_schedule.add_argument("--config", type=Path, required=True)
+    prepare_schedule.add_argument("--corpus-dir", type=Path, required=True)
+    prepare_schedule.add_argument("--corpus-source-root", type=Path, required=True)
+    prepare_schedule.add_argument("--tokenizer-root", type=Path, required=True)
+    prepare_schedule.add_argument("--model-embedding-rows", type=int, required=True)
+    prepare_schedule.add_argument("--output-dir", type=Path, required=True)
+    prepare_schedule.add_argument("--summary", type=Path)
+    prepare_schedule.set_defaults(handler=_cmd_prepare_token_schedule)
+
+    verify_schedule = subparsers.add_parser(
+        "verify-token-schedule",
+        help=(
+            "source-replay and reconstruct every occurrence and packed tensor "
+            "hash in an engineering token schedule"
+        ),
+    )
+    verify_schedule.add_argument("--schedule-dir", type=Path, required=True)
+    verify_schedule.add_argument("--corpus-dir", type=Path, required=True)
+    verify_schedule.add_argument("--corpus-source-root", type=Path, required=True)
+    verify_schedule.add_argument("--tokenizer-root", type=Path, required=True)
+    verify_schedule.add_argument("--model-embedding-rows", type=int, required=True)
+    verify_schedule.add_argument("--expected-schedule-sha256", required=True)
+    verify_schedule.add_argument("--expected-manifest-sha256", required=True)
+    verify_schedule.add_argument("--output", type=Path)
+    verify_schedule.set_defaults(handler=_cmd_verify_token_schedule)
+
+    prepare_source_audit = subparsers.add_parser(
+        "prepare-training-source-audit",
+        help=(
+            "lexically prefilter a doubly authenticated raw target; survivors "
+            "remain non-executed, non-admitted static candidates"
+        ),
+    )
+    prepare_source_audit.add_argument("--audit-id", required=True)
+    prepare_source_audit.add_argument("--corpus-dir", type=Path, required=True)
+    prepare_source_audit.add_argument("--source-root", type=Path, required=True)
+    prepare_source_audit.add_argument("--expected-corpus-sha256", required=True)
+    prepare_source_audit.add_argument(
+        "--expected-corpus-manifest-sha256", required=True
+    )
+    prepare_source_audit.add_argument("--evaluation-bindings", type=Path)
+    prepare_source_audit.add_argument("--output-dir", type=Path, required=True)
+    prepare_source_audit.add_argument("--summary", type=Path)
+    prepare_source_audit.set_defaults(handler=_cmd_prepare_training_source_audit)
+
+    verify_source_audit = subparsers.add_parser(
+        "verify-training-source-audit",
+        help=(
+            "authenticate both audit pins and byte-replay the complete audit "
+            "from its doubly pinned raw source"
+        ),
+    )
+    verify_source_audit.add_argument("--audit-dir", type=Path, required=True)
+    verify_source_audit.add_argument("--expected-audit-sha256", required=True)
+    verify_source_audit.add_argument(
+        "--expected-audit-manifest-sha256", required=True
+    )
+    verify_source_audit.add_argument("--raw-corpus-dir", type=Path, required=True)
+    verify_source_audit.add_argument("--raw-source-root", type=Path, required=True)
+    verify_source_audit.add_argument("--expected-corpus-sha256", required=True)
+    verify_source_audit.add_argument(
+        "--expected-corpus-manifest-sha256", required=True
+    )
+    verify_source_audit.add_argument("--output", type=Path)
+    verify_source_audit.set_defaults(handler=_cmd_verify_training_source_audit)
 
     verify_benchmark = subparsers.add_parser(
         "verify-benchmark",

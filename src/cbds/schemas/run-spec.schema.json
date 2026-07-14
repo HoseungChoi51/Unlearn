@@ -572,6 +572,8 @@
         "attention_backend",
         "gradient_checkpointing",
         "deterministic_algorithms",
+        "scheduler_step_unit",
+        "final_partial_accumulation",
         "packing",
         "loss",
         "freezing"
@@ -601,6 +603,18 @@
         },
         "gradient_checkpointing": { "type": "boolean" },
         "deterministic_algorithms": { "type": "boolean" },
+        "scheduler_step_unit": {
+          "anyOf": [
+            { "const": "optimizer_update" },
+            { "type": "null" }
+          ]
+        },
+        "final_partial_accumulation": {
+          "anyOf": [
+            { "const": "apply_with_actual_supervised_token_denominator" },
+            { "type": "null" }
+          ]
+        },
         "packing": { "$ref": "#/$defs/packing" },
         "loss": { "$ref": "#/$defs/loss" },
         "freezing": { "$ref": "#/$defs/freezing" }
@@ -633,6 +647,7 @@
       "required": [
         "objective",
         "label_scope",
+        "normalization",
         "target_weight",
         "support_weight",
         "kl_weight",
@@ -644,6 +659,9 @@
         },
         "label_scope": {
           "enum": ["all_non_padding_tokens", "assistant_response_tokens", "none"]
+        },
+        "normalization": {
+          "enum": ["actual_supervised_tokens_per_optimizer_update", "none"]
         },
         "target_weight": { "type": "number", "minimum": 0 },
         "support_weight": { "type": "number", "minimum": 0 },

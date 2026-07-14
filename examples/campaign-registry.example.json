@@ -5,7 +5,7 @@
   "campaign_policy": {
     "policy_id": "cbds-plan-2026-07-14",
     "schema_version": "1.0.0",
-    "sha256": "7f6212d95cdbd45d7db0efbe90af43a03fb6221495d55237b91fdf6c6fc1c7fa"
+    "sha256": "f88fddcc824799b7ef639371c10a9b3c0a3cf9db7ff44d2e59420492feaff620"
   },
   "scope": {
     "arm_roster_authority": "registry_declaration",

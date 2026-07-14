@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "corpus_id": "cbds-backbone-pilot-2026-07-15",
+  "seed": 20260715,
+  "target_source": {
+    "repository": "westenfelder/NL2SH-ALFA",
+    "revision": "a99cb5784cf5c2a42b1cc26c1903d9c3b35206ba",
+    "relative_path": "train.csv",
+    "file_sha256": "f45ada6ba1f0f78c26a5859e827b27c12f17dd1fb131c783dd43ebc580a3afc0",
+    "dataset_card_relative_path": "README.md",
+    "dataset_card_sha256": "f4e2c20802b3071da1cf813d99ebf9c7fc9e043a9ddb1c9c5eb2d8c25c40a2b5",
+    "license_provenance": {
+      "upstream_declared_license": "MIT",
+      "declaration_scope": "dataset_repository_level",
+      "row_level_lineage": "unavailable",
+      "component_license_map": "not_verified",
+      "redistribution_clearance": "unresolved",
+      "upstream_components": [
+        "NL2Bash",
+        "LinuxCommands",
+        "NL2CMD",
+        "InterCode-Bash",
+        "tldr-pages"
+      ]
+    },
+    "split": "train",
+    "prompt_column": "nl",
+    "completion_column": "bash",
+    "expected_rows": 40639,
+    "expected_unique_pairs": 40533,
+    "duplicate_policy": "keep_first_exact_pair",
+    "verification_status": "unverified_upstream_pairs",
+    "excluded_relative_paths": [
+      "test.csv"
+    ]
+  },
+  "support_source": {
+    "generator": "cbds_prerequisite_replay",
+    "version": "1.0.0",
+    "license_provenance": {
+      "authorship": "generated_by_this_repository",
+      "project_license": "none_declared",
+      "redistribution_clearance": "unresolved"
+    },
+    "seed": 20260715,
+    "records_per_family": 512,
+    "families": [
+      "instruction_following",
+      "basic_numeracy",
+      "structured_json",
+      "structured_yaml",
+      "python_stdlib",
+      "unix_regex_concepts"
+    ],
+    "verification_status": "deterministic_reference_generator"
+  },
+  "formatting": {
+    "template": "### Instruction\n{prompt}\n\n### Response\n{completion}",
+    "separator": "tokenizer_eos_token",
+    "add_eos": true,
+    "text_normalization": "crlf_and_cr_to_lf_no_unicode_normalization",
+    "loss_scope": "assistant_response_tokens"
+  }
+}

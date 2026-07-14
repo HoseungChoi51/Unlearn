@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SHA1 = "1" * 40
 CAMPAIGN_POLICY = ROOT / "configs" / "campaign-policy.json"
 EXAMPLE_RUN_SPEC = ROOT / "examples" / "run-spec.example.json"
-CAMPAIGN_POLICY_SHA256 = "7f6212d95cdbd45d7db0efbe90af43a03fb6221495d55237b91fdf6c6fc1c7fa"
+CAMPAIGN_POLICY_SHA256 = "f88fddcc824799b7ef639371c10a9b3c0a3cf9db7ff44d2e59420492feaff620"
 
 
 def valid_train_spec() -> dict:
@@ -178,6 +178,8 @@ def valid_train_spec() -> dict:
             "attention_backend": "sdpa",
             "gradient_checkpointing": True,
             "deterministic_algorithms": True,
+            "scheduler_step_unit": "optimizer_update",
+            "final_partial_accumulation": "apply_with_actual_supervised_token_denominator",
             "packing": {
                 "enabled": True,
                 "strategy": "greedy",
@@ -186,7 +188,8 @@ def valid_train_spec() -> dict:
             },
             "loss": {
                 "objective": "causal_cross_entropy",
-                "label_scope": "all_non_padding_tokens",
+                "label_scope": "assistant_response_tokens",
+                "normalization": "actual_supervised_tokens_per_optimizer_update",
                 "target_weight": 1.0,
                 "support_weight": 1.0,
                 "kl_weight": 0.0,
@@ -286,6 +289,8 @@ def valid_compress_spec() -> dict:
         "attention_backend": None,
         "gradient_checkpointing": False,
         "deterministic_algorithms": True,
+        "scheduler_step_unit": None,
+        "final_partial_accumulation": None,
         "packing": {
             "enabled": False,
             "strategy": "none",
@@ -295,6 +300,7 @@ def valid_compress_spec() -> dict:
         "loss": {
             "objective": "none",
             "label_scope": "none",
+            "normalization": "none",
             "target_weight": 0,
             "support_weight": 0,
             "kl_weight": 0,

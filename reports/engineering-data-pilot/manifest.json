@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "record_type": "cbds.engineering-data-pipeline-manifest",
+  "manifest_hash_scope": "canonical_json_excluding_manifest_sha256",
+  "created_date": "2026-07-15",
+  "claim_scope": "none",
+  "purpose": "raw_corpus_authentication_and_exact_token_schedule_engineering",
+  "eligibility": {
+    "engineering_canary_only": true,
+    "research_training_authorized": false,
+    "target_policy_accepted": false,
+    "evaluation_executed": false,
+    "model_selection_authorized": false,
+    "research_claim_authorized": false
+  },
+  "source_model": {
+    "model_id": "Qwen/Qwen3-0.6B-Base",
+    "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+    "physical_parameters": 596049920,
+    "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8",
+    "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+    "tokenizer_set_sha256": "05e594677639907a002d6fe901a3ecae6daaabb21159181343c822b2efa6a002",
+    "input_embedding_rows": 151936
+  },
+  "raw_corpus": {
+    "corpus_id": "cbds-backbone-pilot-2026-07-15",
+    "corpus_sha256": "244e0499301f9f1189b5025de7c5bb4f97783b13c692a53574a1ab824c48dac9",
+    "manifest_sha256": "7490e16de469e1081213650345b688da38c1d02959ee47bee88e31ebadcd8068",
+    "config_sha256": "20fb11aa7d2d71f94db1243dbd4dc867d50ff6e556fc73e7ae0c6b83427f2178",
+    "authenticated_by_external_pin": true,
+    "authenticated_by_raw_source_replay": true,
+    "test_source_imported": false,
+    "target_records": 40533,
+    "support_records": 3072,
+    "total_records": 43605,
+    "target_quality": "unverified_upstream_pairs",
+    "support_quality": "deterministic_reference_generator_not_human_audited",
+    "row_level_license_clearance": "unresolved"
+  },
+  "token_schedule": {
+    "schedule_id": "qwen3-0.6b-engineering-pilot-v3",
+    "schedule_sha256": "f17a8a8d9e4a1cf150e770b0e08591b5a4f90e4e31f25767f5ea6aa17a601942",
+    "manifest_sha256": "b691430e1a4887695db60196990d40c45f6f35791dcb57104d59cbd92393b700",
+    "config_sha256": "352f0969611cb6eb5696a4dddc96ded1b9c7e67b696dcbd676a10d8cf5bc3802",
+    "tokenizer_files_sha256": "4ee1766e4cc00eafdb73c9f17345256fea71be49c688ff46d8e88f4370108922",
+    "sequence_length": 1024,
+    "target_visible_tokens": 1600000,
+    "support_visible_tokens": 400000,
+    "total_visible_tokens": 2000000,
+    "total_supervised_tokens": 769470,
+    "occurrences": 46252,
+    "packed_sequences": 2007,
+    "packed_token_slots": 2055168,
+    "padding_tokens": 55168,
+    "label_policy": "response_tokens_and_explicit_eos_only_prefix_and_padding_ignore_-100",
+    "packing_policy": "global_order_greedy_whole_record_no_cross_sequence_split"
+  },
+  "source_prefilter": {
+    "audit_id": "nl2sh-alfa-lexical-v1",
+    "audit_sha256": "db4a70c936d2d1c94e8d720dff279d3dd1018a18c02357ae8476796b2200b46e",
+    "manifest_sha256": "5ba5cd8b1215e81a268ca1313c4269c7bf07c5d858ce3ea2bd5b39817eda9ef8",
+    "artifact_pins_verified": true,
+    "raw_source_reverified": true,
+    "authenticated": true,
+    "source_records": 40533,
+    "static_candidates": 4748,
+    "rejected": 35785,
+    "static_candidate_fraction": {
+      "numerator": 4748,
+      "denominator": 40533
+    },
+    "normalized_prompt_collision_groups": 681,
+    "normalized_prompt_collision_records": 2326,
+    "evaluation_binding_slots_filled": 0,
+    "ast_parsed": false,
+    "execution_verified": false,
+    "training_eligible": false,
+    "target_policy_accepted": false,
+    "claim_authorized": false
+  },
+  "checked_in_inputs": {
+    "configs/training-corpus-pilot.json": {
+      "file_sha256": "2f8cd469d5ee1a6193e6ed96d2ac0ed60237cea4c7043fe07e823a1c3ac736bd",
+      "canonical_config_sha256": "20fb11aa7d2d71f94db1243dbd4dc867d50ff6e556fc73e7ae0c6b83427f2178"
+    },
+    "configs/token-schedule-qwen3-engineering.json": {
+      "file_sha256": "03048b2843394922dbd0559b8ed4bb9c95c65523db1e3dc0b42d51795f5aef59",
+      "canonical_config_sha256": "352f0969611cb6eb5696a4dddc96ded1b9c7e67b696dcbd676a10d8cf5bc3802"
+    }
+  },
+  "code_sources": {
+    "src/cbds/manifests.py": "b5083c702d7f18049c34c528bd60c883085128f5eb98ee47977c3e16279fb6f2",
+    "src/cbds/training_corpus.py": "babefd270b3e8465bf7baa335c8ce9feedec86aed26838a1a42d30baad98c5f4",
+    "src/cbds/token_schedule.py": "15f412f3c5908db80b77f06bb0d3192edcf8e4205270ee406fe27f49a964190f",
+    "src/cbds/training_source_audit.py": "88744acb55a93ebc52d792a9be9358899c470ccb63660acd693649793f86d2e2"
+  },
+  "limitations": [
+    "The target rows are authenticated as exact upstream bytes but have not been admitted by the target policy, executed, decontaminated, or independently verified.",
+    "The source combines multiple upstream datasets without row-level lineage; a repository-level MIT declaration is not row-level redistribution clearance.",
+    "The support generator is deterministic but has not received the required stratified human audit.",
+    "The schedule proves deterministic tokenization, labeling, ordering, exact visible-token budgets, and packing; it does not attest a trainer run.",
+    "Only 4,748 of 40,533 raw target rows survived a conservative lexical prefilter; these survivors have not passed Bash AST parsing, execution verification, target-policy admission, or evaluation decontamination.",
+    "No terminal behavior, protected capability, compression, model selection, or research endpoint was measured.",
+    "Generated corpus and schedule ledgers remain ignored local artifacts; this checked-in manifest records their content identities and aggregate accounting only."
+  ],
+  "manifest_sha256": "77c299dc111fad5bce84f71ce54fc260ee559e685e2d28c06f71f9fa6bfb8518"
+}

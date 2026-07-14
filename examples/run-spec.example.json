@@ -6,7 +6,7 @@
   "stage": "train",
   "campaign": {
     "policy_schema_version": "1.0.0",
-    "policy_sha256": "7f6212d95cdbd45d7db0efbe90af43a03fb6221495d55237b91fdf6c6fc1c7fa",
+    "policy_sha256": "f88fddcc824799b7ef639371c10a9b3c0a3cf9db7ff44d2e59420492feaff620",
     "profile": "screening",
     "contrast_role": null,
     "replicate_index": 0,
@@ -143,6 +143,8 @@
     "attention_backend": "sdpa",
     "gradient_checkpointing": true,
     "deterministic_algorithms": true,
+    "scheduler_step_unit": "optimizer_update",
+    "final_partial_accumulation": "apply_with_actual_supervised_token_denominator",
     "packing": {
       "enabled": true,
       "strategy": "greedy",
@@ -151,7 +153,8 @@
     },
     "loss": {
       "objective": "causal_cross_entropy",
-      "label_scope": "all_non_padding_tokens",
+      "label_scope": "assistant_response_tokens",
+      "normalization": "actual_supervised_tokens_per_optimizer_update",
       "target_weight": 1,
       "support_weight": 1,
       "kl_weight": 0,

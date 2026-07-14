@@ -681,6 +681,11 @@ def _training_protocol_errors(spec: Mapping[str, Any]) -> list[str]:
                 errors.append(
                     f"$.training_protocol.{field}: required when optimizer is enabled"
                 )
+        for field in ("scheduler_step_unit", "final_partial_accumulation"):
+            if protocol[field] is None:
+                errors.append(
+                    f"$.training_protocol.{field}: required when optimizer is enabled"
+                )
         for field in batch_fields:
             if protocol[field] <= 0:
                 errors.append(
@@ -700,6 +705,11 @@ def _training_protocol_errors(spec: Mapping[str, Any]) -> list[str]:
             errors.append(
                 "$.training_protocol.loss: optimizer-enabled runs require an explicit loss"
             )
+        if loss["normalization"] == "none":
+            errors.append(
+                "$.training_protocol.loss.normalization: optimizer-enabled runs "
+                "require an explicit normalization"
+            )
         if loss["target_weight"] <= 0 or loss["support_weight"] <= 0:
             errors.append(
                 "$.training_protocol.loss: target_weight and support_weight must be "
@@ -711,6 +721,11 @@ def _training_protocol_errors(spec: Mapping[str, Any]) -> list[str]:
             )
     else:
         for field in ("training_dtype", "optimizer_state_dtype", "attention_backend"):
+            if protocol[field] is not None:
+                errors.append(
+                    f"$.training_protocol.{field}: must be null when optimizer is disabled"
+                )
+        for field in ("scheduler_step_unit", "final_partial_accumulation"):
             if protocol[field] is not None:
                 errors.append(
                     f"$.training_protocol.{field}: must be null when optimizer is disabled"
@@ -728,6 +743,7 @@ def _training_protocol_errors(spec: Mapping[str, Any]) -> list[str]:
         if loss != {
             "objective": "none",
             "label_scope": "none",
+            "normalization": "none",
             "target_weight": 0,
             "support_weight": 0,
             "kl_weight": 0,
@@ -979,7 +995,7 @@ def _semantic_errors(spec: Mapping[str, Any]) -> list[str]:
 _CAMPAIGN_POLICY_ID = "cbds-plan-2026-07-14"
 _CAMPAIGN_CREATED_AT = "2026-07-14T00:00:00+09:00"
 _CAMPAIGN_SOURCE_PLAN_SHA256 = (
-    "72d07f7f7eceef6931b61fea6c2ae344f9d5c0db3e6cb65b0c28bd1d388d436b"
+    "b907788a93af17127152d4028f237e663b99d29b96604a54a60a8cb221abc172"
 )
 _CAMPAIGN_PROFILE_CONTRACTS: dict[str, dict[str, Any]] = {
     "screening": {
@@ -1017,12 +1033,19 @@ _CAMPAIGN_OPTIMIZER_CONTRACT: dict[str, Any] = {
     "enabled_required": True,
     "name": "AdamW",
     "betas": [0.9, 0.95],
+    "epsilon": 1e-8,
+    "parameter_group_weight_decay": 0.1,
     "gradient_clip": 1.0,
     "warmup_fraction": 0.05,
     "schedule": "cosine",
 }
 _CAMPAIGN_TRAINING_CONTRACT: dict[str, Any] = {
     "training_dtype": "bf16",
+    "optimizer_state_dtype": "fp32",
+    "label_scope": "assistant_response_tokens",
+    "loss_normalization": "actual_supervised_tokens_per_optimizer_update",
+    "scheduler_step_unit": "optimizer_update",
+    "final_partial_accumulation": "apply_with_actual_supervised_token_denominator",
     "packing_enabled": True,
     "minimum_packed_sequence_length": 1024,
     "maximum_packed_sequence_length": 2048,
@@ -1181,7 +1204,14 @@ def _campaign_run_errors(
     optimizer = spec["optimizer"]
     if optimizer["enabled"] is not optimizer_contract["enabled_required"]:
         errors.append("$.optimizer.enabled: violates campaign policy")
-    for field in ("name", "betas", "gradient_clip", "warmup_fraction", "schedule"):
+    for field in (
+        "name",
+        "betas",
+        "epsilon",
+        "gradient_clip",
+        "warmup_fraction",
+        "schedule",
+    ):
         if optimizer[field] != optimizer_contract[field]:
             errors.append(f"$.optimizer.{field}: violates campaign policy")
 
@@ -1199,11 +1229,36 @@ def _campaign_run_errors(
                 f"the campaign {grid_name!r} learning-rate grid for role "
                 f"{parameter_group['role']!r}"
             )
+        if (
+            parameter_group["weight_decay"]
+            != optimizer_contract["parameter_group_weight_decay"]
+        ):
+            errors.append(
+                f"$.optimizer.parameter_groups[{index}].weight_decay: must match "
+                "the campaign optimizer contract"
+            )
 
     protocol_contract = policy["training_protocol"]
     protocol = spec["training_protocol"]
     if protocol["training_dtype"] != protocol_contract["training_dtype"]:
         errors.append("$.training_protocol.training_dtype: violates campaign policy")
+    if protocol["optimizer_state_dtype"] != protocol_contract["optimizer_state_dtype"]:
+        errors.append(
+            "$.training_protocol.optimizer_state_dtype: violates campaign policy"
+        )
+    if protocol["loss"]["label_scope"] != protocol_contract["label_scope"]:
+        errors.append("$.training_protocol.loss.label_scope: violates campaign policy")
+    if protocol["loss"]["normalization"] != protocol_contract["loss_normalization"]:
+        errors.append("$.training_protocol.loss.normalization: violates campaign policy")
+    if protocol["scheduler_step_unit"] != protocol_contract["scheduler_step_unit"]:
+        errors.append("$.training_protocol.scheduler_step_unit: violates campaign policy")
+    if (
+        protocol["final_partial_accumulation"]
+        != protocol_contract["final_partial_accumulation"]
+    ):
+        errors.append(
+            "$.training_protocol.final_partial_accumulation: violates campaign policy"
+        )
     packing = protocol["packing"]
     for actual_field, policy_field in (
         ("enabled", "packing_enabled"),

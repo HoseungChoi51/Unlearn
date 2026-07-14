@@ -4,7 +4,7 @@
   "run_id": "example-train-run-0001",
   "stage": "train",
   "run_spec_schema_version": "2.0.0",
-  "run_spec_sha256": "49a0a7b25e0fbfaf9fceb4598495f4e41dd76660ad50d555e4c4be1279983982",
+  "run_spec_sha256": "310d6c96490c282da83f8078c06a00e7b1c52a3d65185f5228176e865d7d1b4c",
   "created_at": "2026-07-14T12:00:00+09:00",
   "git_revision": "1111111111111111111111111111111111111111",
   "model": {
@@ -121,6 +121,8 @@
     "attention_backend": "sdpa",
     "gradient_checkpointing": true,
     "deterministic_algorithms": true,
+    "scheduler_step_unit": "optimizer_update",
+    "final_partial_accumulation": "apply_with_actual_supervised_token_denominator",
     "packing": {
       "enabled": true,
       "strategy": "greedy",
@@ -129,7 +131,8 @@
     },
     "loss": {
       "objective": "causal_cross_entropy",
-      "label_scope": "all_non_padding_tokens",
+      "label_scope": "assistant_response_tokens",
+      "normalization": "actual_supervised_tokens_per_optimizer_update",
       "target_weight": 1,
       "support_weight": 1,
       "kl_weight": 0,
