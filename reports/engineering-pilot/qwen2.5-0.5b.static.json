@@ -1,0 +1,347 @@
+{
+  "architecture": {
+    "classification": "dense_consistent",
+    "config_moe_evidence": {
+      "count": 0,
+      "markers_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "samples": []
+    },
+    "config_quantization_evidence": {
+      "count": 0,
+      "markers_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "samples": []
+    },
+    "declared_layer_count": 24,
+    "dense_signals": {
+      "attention_and_dense_ffn_tensor_ranks_at_most_two": true,
+      "attention_tensor": true,
+      "dense_ffn_tensor": true,
+      "embedding_tensor": true,
+      "every_declared_layer_has_attention": true,
+      "every_declared_layer_has_dense_ffn": true,
+      "indexed_transformer_layer": true,
+      "no_custom_code_auto_map": true,
+      "observed_layers_match_declared_count": true,
+      "positive_hidden_size": true,
+      "positive_layer_count": true,
+      "positive_vocab_size": true,
+      "recognized_dense_architecture_marker": true
+    },
+    "expert_tensor_evidence": {
+      "count": 0,
+      "names_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sample_name_hashes": []
+    },
+    "observed_layer_index_evidence": {
+      "count": 24,
+      "maximum": 23,
+      "minimum": 0,
+      "samples": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "values_sha256": "2643659e4e20637a8ef2e12565ea16f87db9bf6267d9538fd69a2701df186d04"
+    },
+    "ordinary_gate_proj_is_router_evidence": false,
+    "reason": "observed config and tensor families are consistent with a dense transformer; checkpoint completeness is not proven",
+    "recognized_dense_architecture_marker_evidence": {
+      "count": 2,
+      "samples": [
+        "Qwen2ForCausalLM",
+        "qwen2"
+      ],
+      "values_sha256": "f68c279ff648b4bcf80bb9fd149c0b8cf25b7742b8ad40553bbcfa9366dec002"
+    },
+    "router_tensor_evidence": {
+      "count": 0,
+      "names_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sample_name_hashes": []
+    }
+  },
+  "bundle_manifest_hash_scope": "domain-separated canonical JSON of all path/bytes/sha256 records sorted by UTF-8 path",
+  "bundle_manifest_sha256": "d586a66bdb618c1faee778022aa26dec279dcaab993b72afded9718c5acd0307",
+  "claim_qualification": {
+    "architecture_specific_tensor_inventory_verified": false,
+    "caveats": [
+      "stored_tensor_element_count counts every serialized tensor element, including buffers, scales, and packing tensors; it is not a trainable-parameter count",
+      "header inspection does not prove runtime loadability, forward correctness, or exporter completeness",
+      "shared, tied, omitted, and auxiliary tensors follow the exporter representation"
+    ],
+    "dense_consistency_evidence_present": true,
+    "dense_consistent_with_below_one_billion_stored_elements": true,
+    "logical_parameter_count_reconstructed": false,
+    "packed_logical_count_ambiguous": false,
+    "physical_network_parameter_count_qualified": false,
+    "scope": "stored Safetensors tensor elements only; no runtime parameter graph was reconstructed",
+    "stored_tensor_element_count_below_one_billion": true
+  },
+  "config": {
+    "bytes": 681,
+    "declared": {
+      "architectures": [
+        "Qwen2ForCausalLM"
+      ],
+      "hidden_size": 896,
+      "intermediate_size": 4864,
+      "model_type": "qwen2",
+      "num_attention_heads": 14,
+      "num_hidden_layers": 24,
+      "num_key_value_heads": 2,
+      "tie_word_embeddings": true,
+      "vocab_size": 151936
+    },
+    "path": "config.json",
+    "sha256": "479dcf0c5286339e41ad3992cd08ae88a467c4187587936248e2b7c96283484b"
+  },
+  "files": [
+    {
+      "bytes": 1519,
+      "path": ".gitattributes",
+      "role": "other",
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "bytes": 11343,
+      "path": "LICENSE",
+      "role": "other",
+      "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+    },
+    {
+      "bytes": 3850,
+      "path": "README.md",
+      "role": "other",
+      "sha256": "3c93cbc9f60417337fcbf093da872007586b9d886b0f0187f21aec35b869616a"
+    },
+    {
+      "bytes": 681,
+      "path": "config.json",
+      "role": "config",
+      "sha256": "479dcf0c5286339e41ad3992cd08ae88a467c4187587936248e2b7c96283484b"
+    },
+    {
+      "bytes": 138,
+      "path": "generation_config.json",
+      "role": "other",
+      "sha256": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8"
+    },
+    {
+      "bytes": 1671839,
+      "path": "merges.txt",
+      "role": "tokenizer_vocabulary",
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+    },
+    {
+      "bytes": 988097824,
+      "path": "model.safetensors",
+      "role": "weights",
+      "sha256": "88c142557820ccad55bb59756bfcfcf891de9cc6202816bd346445188a0ed342"
+    },
+    {
+      "bytes": 7031645,
+      "path": "tokenizer.json",
+      "role": "tokenizer_definition",
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    {
+      "bytes": 7228,
+      "path": "tokenizer_config.json",
+      "role": "tokenizer_configuration",
+      "sha256": "c91efca15ceff6e9ee9424db58a6f59cd41294e550a86cbd07e3c1fb500b34f9"
+    },
+    {
+      "bytes": 2776833,
+      "path": "vocab.json",
+      "role": "tokenizer_vocabulary",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  ],
+  "inspector_version": "1.1.0",
+  "quantization": {
+    "config_quantization_evidence_present": false,
+    "logical_count_from_stored_elements_ambiguous": false,
+    "low_precision_tensor_evidence": {
+      "count": 0,
+      "names_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sample_name_hashes": []
+    },
+    "packed_or_quantized_tensor_evidence": {
+      "count": 0,
+      "names_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sample_name_hashes": []
+    }
+  },
+  "report_hash_scope": "canonical_json_excluding_report_sha256",
+  "report_sha256": "485a6ddf01ff0a40341673f12d7d4d9956cdc4e15c0033a125599e3909444031",
+  "resource_limits": {
+    "max_config_bytes": 4194304,
+    "max_dimension": 9223372036854775807,
+    "max_files": 4096,
+    "max_index_bytes": 33554432,
+    "max_model_layers": 16384,
+    "max_safetensors_header_bytes": 25000000,
+    "max_stored_elements": 2000000000000,
+    "max_tensor_name_bytes": 16384,
+    "max_tensor_rank": 32,
+    "max_tensors": 1000000,
+    "max_tokenizer_json_bytes": 268435456,
+    "max_total_artifact_bytes": 137438953472,
+    "max_total_header_bytes": 100000000
+  },
+  "schema_version": "1.0.0",
+  "tokenizer": {
+    "config_vocab_size": 151936,
+    "evidence": [
+      "tokenizer.json:model.vocab mapping",
+      "tokenizer.json:added_tokens",
+      "tokenizer_config.json added_tokens_decoder IDs"
+    ],
+    "locally_inspected_vocab_size": 151665,
+    "matches_config_vocab_size": false,
+    "observed_unique_token_ids": 151665,
+    "source_file_count": 4,
+    "source_files": [
+      {
+        "bytes": 1671839,
+        "path": "merges.txt",
+        "role": "tokenizer_vocabulary",
+        "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+      },
+      {
+        "bytes": 7031645,
+        "path": "tokenizer.json",
+        "role": "tokenizer_definition",
+        "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+      },
+      {
+        "bytes": 7228,
+        "path": "tokenizer_config.json",
+        "role": "tokenizer_configuration",
+        "sha256": "c91efca15ceff6e9ee9424db58a6f59cd41294e550a86cbd07e3c1fb500b34f9"
+      },
+      {
+        "bytes": 2776833,
+        "path": "vocab.json",
+        "role": "tokenizer_vocabulary",
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    ],
+    "status": "json_inspected",
+    "token_ids_contiguous_from_zero": true,
+    "tokenizer_hash_scope": "domain cbds.model_artifact.tokenizer_prompt_set.v2 over canonical ordered records containing exactly path, role, bytes, and sha256 for each recognized top-level tokenizer, prompt-template, or conventional custom-tokenizer implementation source",
+    "tokenizer_identity_scope": {
+      "content_treatment": "file bytes are hashed exactly; recognized .json files may also be parsed for bounded vocabulary evidence, while non-JSON sources are never parsed as JSON",
+      "directory_scope": "top-level regular artifact files only",
+      "other_top_level_files": "excluded from tokenizer_set_sha256 but retained in the separate whole-bundle manifest identity",
+      "recognized_exact_filenames": [
+        "added_tokens.json",
+        "chat_template.jinja",
+        "merges.txt",
+        "sentencepiece.bpe.model",
+        "sentencepiece.model",
+        "special_tokens_map.json",
+        "spiece.model",
+        "spm.model",
+        "tekken.json",
+        "tokenizer.json",
+        "tokenizer.model",
+        "tokenizer_config.json",
+        "vocab.json",
+        "vocab.txt"
+      ],
+      "recognized_filename_patterns": [
+        "^tokenization_[A-Za-z0-9_]+\\.py$"
+      ],
+      "record_fields": [
+        "path",
+        "role",
+        "bytes",
+        "sha256"
+      ],
+      "subdirectory_policy": "subdirectories are rejected by the enclosing flat-artifact inspector, including multi-template chat_templates directories"
+    },
+    "tokenizer_set_sha256": "403cf63497a7251688e30a967f63248741ee687c5982716c612f5f50ee826ba2"
+  },
+  "weight_set_hash_scope": "domain-separated canonical JSON of Safetensors and index path/bytes/sha256 records",
+  "weight_set_sha256": "a5211dcbd45f61dd41c04ac85d3434b0b6962be991a28ce649dee0185464f89d",
+  "weights": {
+    "average_stored_bits_per_element": 16.0,
+    "component_accounting": [
+      {
+        "component": "embedding",
+        "payload_bytes": 272269312,
+        "stored_elements": 136134656,
+        "tensor_count": 1
+      },
+      {
+        "component": "attention",
+        "payload_bytes": 88178688,
+        "stored_elements": 44089344,
+        "tensor_count": 192
+      },
+      {
+        "component": "ffn",
+        "payload_bytes": 627572736,
+        "stored_elements": 313786368,
+        "tensor_count": 72
+      },
+      {
+        "component": "normalization",
+        "payload_bytes": 44800,
+        "stored_elements": 22400,
+        "tensor_count": 25
+      }
+    ],
+    "declared_total_size": null,
+    "dtype_accounting": [
+      {
+        "bits_per_element": 16,
+        "dtype": "BF16",
+        "payload_bytes": 988065536,
+        "stored_elements": 494032768,
+        "tensor_count": 290
+      }
+    ],
+    "index_path": null,
+    "index_sha256": null,
+    "mode": "single_file",
+    "safetensors_file_bytes": 988097824,
+    "safetensors_header_json_bytes": 32280,
+    "safetensors_header_prefix_bytes": 8,
+    "safetensors_payload_bytes": 988065536,
+    "shards": [
+      {
+        "file_bytes": 988097824,
+        "file_sha256": "88c142557820ccad55bb59756bfcfcf891de9cc6202816bd346445188a0ed342",
+        "header_json_bytes": 32280,
+        "header_prefix_bytes": 8,
+        "header_sha256": "bd808652be103f0e4e29786b9aa8829e0f38607880486926c7246ee2de577a76",
+        "metadata_entry_count": 1,
+        "metadata_sha256": "4284105d58c01b44e8c1e37cc90ed3a873e625d8b74bcebe9e529448fc08a0fd",
+        "path": "model.safetensors",
+        "payload_bytes": 988065536,
+        "tensor_count": 290
+      }
+    ],
+    "stored_bits_numerator": 7904524288,
+    "stored_elements_denominator": 494032768,
+    "stored_tensor_element_count": 494032768,
+    "tensor_count": 290,
+    "tensor_layout_hash_scope": "canonical_json_of_name_sorted_exact_tensor_layout_records",
+    "tensor_layout_sha256": "7979b6933a1a87dced915035cd838a5204dbd80669820956ee5fe455ded67f8b",
+    "weight_map_entries": null
+  }
+}

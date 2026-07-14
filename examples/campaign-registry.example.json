@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "synthetic-screening-registry-0001",
+  "created_at": "2026-07-14T20:00:00+09:00",
+  "campaign_policy": {
+    "policy_id": "cbds-plan-2026-07-14",
+    "schema_version": "1.0.0",
+    "sha256": "7f6212d95cdbd45d7db0efbe90af43a03fb6221495d55237b91fdf6c6fc1c7fa"
+  },
+  "scope": {
+    "arm_roster_authority": "registry_declaration",
+    "contrast_role_authority": "prospective_run_spec_campaign_fields",
+    "promotion_validation": "declared_link_integrity_only",
+    "backbone_selection_validation": "declared_identity_only",
+    "evaluation_suite_roster_authority": "registry_declaration",
+    "training_seed_set_hash_algorithm": "canonical-json-sha256-of-replicate-index-and-all-run-seeds"
+  },
+  "arms": [
+    {
+      "arm_id": "dense-sft",
+      "label": "Dense terminal SFT",
+      "operator": {
+        "mechanism": "baseline",
+        "family": "dense_sft",
+        "configuration_sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      "run_protocols": [
+        {
+          "profile": "screening",
+          "run_protocol_sha256": "4141414141414141414141414141414141414141414141414141414141414141"
+        }
+      ],
+      "source_arm_id": null
+    },
+    {
+      "arm_id": "recycle-ffn",
+      "label": "Target-aware FFN recycle",
+      "operator": {
+        "mechanism": "recycle",
+        "family": "ffn_reset_regrow",
+        "configuration_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "run_protocols": [
+        {
+          "profile": "screening",
+          "run_protocol_sha256": "5151515151515151515151515151515151515151515151515151515151515151"
+        }
+      ],
+      "source_arm_id": "dense-sft"
+    }
+  ],
+  "cohorts": [
+    {
+      "cohort_id": "screen-primary",
+      "profile": "screening",
+      "analysis_lane": null,
+      "backbone_role": "primary",
+      "backbone_label": "synthetic dense primary",
+      "backbone_identity_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "pairing_commitments_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "completed_pairing_sha256": "7878787878787878787878787878787878787878787878787878787878787878",
+      "arm_ids": ["dense-sft", "recycle-ffn"],
+      "contrast": null,
+      "source_cohort_id": null,
+      "promotion_links": [],
+      "evaluation_cubes": []
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "screen-dense-0000",
+      "arm_id": "dense-sft",
+      "cohort_id": "screen-primary",
+      "profile": "screening",
+      "replicate_index": 0,
+      "run_spec_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "completed_record_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "evaluations": []
+    },
+    {
+      "run_id": "screen-dense-0001",
+      "arm_id": "dense-sft",
+      "cohort_id": "screen-primary",
+      "profile": "screening",
+      "replicate_index": 1,
+      "run_spec_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "completed_record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evaluations": []
+    },
+    {
+      "run_id": "screen-recycle-0000",
+      "arm_id": "recycle-ffn",
+      "cohort_id": "screen-primary",
+      "profile": "screening",
+      "replicate_index": 0,
+      "run_spec_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "completed_record_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "evaluations": []
+    },
+    {
+      "run_id": "screen-recycle-0001",
+      "arm_id": "recycle-ffn",
+      "cohort_id": "screen-primary",
+      "profile": "screening",
+      "replicate_index": 1,
+      "run_spec_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "completed_record_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "evaluations": []
+    }
+  ]
+}

@@ -12,14 +12,20 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 from enum import Enum
+from hashlib import sha256
 import math
 import os
+from pathlib import Path
 import re
+import shutil
+import stat
 import subprocess
 
 
 DEFAULT_MAX_RESPONSE_BYTES = 64 * 1024
 DEFAULT_SYNTAX_TIMEOUT_SECONDS = 5.0
+MAX_SYNTAX_TIMEOUT_SECONDS = 300.0
+PYTHON_FEATURE_VERSION = (3, 11)
 
 
 class ProgramLanguage(str, Enum):
@@ -68,6 +74,46 @@ class SyntaxResult:
     @property
     def ok(self) -> bool:
         return self.status is ResponseStatus.OK
+
+
+@dataclass(frozen=True, slots=True)
+class BashCheckerIdentity:
+    """Best-effort identity of the host Bash diagnostic executable."""
+
+    requested: str
+    resolved_path: str | None
+    executable_sha256: str | None
+
+
+def identify_bash_checker(bash_executable: str = "bash") -> BashCheckerIdentity:
+    """Resolve and hash Bash without claiming the host runtime is pinned.
+
+    The digest is diagnostic provenance only: dynamic libraries and the host
+    kernel remain outside it. Scored evaluation must perform this check in the
+    digest-pinned evaluation image.
+    """
+
+    if not isinstance(bash_executable, str) or not bash_executable:
+        raise ValueError("bash_executable must be a non-empty string")
+    candidate = (
+        shutil.which(bash_executable, path=os.defpath)
+        if os.sep not in bash_executable
+        else bash_executable
+    )
+    if candidate is None:
+        return BashCheckerIdentity(bash_executable, None, None)
+    try:
+        resolved = Path(candidate).resolve(strict=True)
+        metadata = resolved.stat()
+        if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 512 * 1024 * 1024:
+            return BashCheckerIdentity(bash_executable, None, None)
+        digest = sha256()
+        with resolved.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except (OSError, RuntimeError):
+        return BashCheckerIdentity(bash_executable, None, None)
+    return BashCheckerIdentity(bash_executable, str(resolved), digest.hexdigest())
 
 
 _OPENING_FENCE = re.compile(r"^[ \t]{0,3}```[ \t]*([A-Za-z0-9_+.-]*)[ \t]*$")
@@ -257,9 +303,10 @@ def check_syntax(
 ) -> SyntaxResult:
     """Check syntax without executing the extracted program.
 
-    Python uses :func:`ast.parse`; Bash is passed on standard input to
-    ``bash --noprofile --norc -n`` with a fixed locale.  ``subprocess`` is
-    invoked with an argv sequence and never through a shell.
+    Python uses :func:`ast.parse` with the frozen Python 3.11 feature grammar;
+    Bash is passed on standard input to ``bash --noprofile --norc -n`` with a
+    fixed locale. ``subprocess`` is invoked with an argv sequence and never
+    through a shell.
     """
 
     if not isinstance(parsed, ParsedResponse):
@@ -268,8 +315,15 @@ def check_syntax(
         raise ValueError("bash_executable must be a non-empty string")
     if isinstance(timeout_seconds, bool) or not isinstance(timeout_seconds, (int, float)):
         raise ValueError("timeout_seconds must be a positive number")
-    if not math.isfinite(float(timeout_seconds)) or timeout_seconds <= 0:
-        raise ValueError("timeout_seconds must be a positive number")
+    if (
+        not math.isfinite(float(timeout_seconds))
+        or timeout_seconds <= 0
+        or timeout_seconds > MAX_SYNTAX_TIMEOUT_SECONDS
+    ):
+        raise ValueError(
+            "timeout_seconds must be positive and at most "
+            f"{MAX_SYNTAX_TIMEOUT_SECONDS:g}"
+        )
 
     if not parsed.ok or parsed.code is None:
         return SyntaxResult(
@@ -281,7 +335,12 @@ def check_syntax(
 
     if parsed.language is ProgramLanguage.PYTHON:
         try:
-            ast.parse(parsed.code, filename="<response>", mode="exec")
+            ast.parse(
+                parsed.code,
+                filename="<response>",
+                mode="exec",
+                feature_version=PYTHON_FEATURE_VERSION,
+            )
         except (MemoryError, RecursionError):
             return SyntaxResult(
                 status=ResponseStatus.CHECK_FAILURE,
@@ -365,12 +424,16 @@ def _format_python_syntax_error(exc: BaseException) -> str:
 
 
 __all__ = [
+    "BashCheckerIdentity",
     "DEFAULT_MAX_RESPONSE_BYTES",
     "DEFAULT_SYNTAX_TIMEOUT_SECONDS",
+    "MAX_SYNTAX_TIMEOUT_SECONDS",
+    "PYTHON_FEATURE_VERSION",
     "ParsedResponse",
     "ProgramLanguage",
     "ResponseStatus",
     "SyntaxResult",
     "check_syntax",
+    "identify_bash_checker",
     "parse_response",
 ]

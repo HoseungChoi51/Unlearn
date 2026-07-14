@@ -5,10 +5,12 @@ import shutil
 import unittest
 
 from cbds.response import (
+    PYTHON_FEATURE_VERSION,
     ParsedResponse,
     ProgramLanguage,
     ResponseStatus,
     check_syntax,
+    identify_bash_checker,
     parse_response,
 )
 
@@ -139,6 +141,25 @@ class SyntaxCheckTests(unittest.TestCase):
         self.assertEqual(result.status, ResponseStatus.CHECK_FAILURE)
         self.assertIn("parser limits", result.detail or "")
 
+    def test_python_syntax_uses_the_frozen_311_feature_grammar(self) -> None:
+        self.assertEqual(PYTHON_FEATURE_VERSION, (3, 11))
+        newer_syntax = parse_response("```python\ntype Alias = int\n```")
+        result = check_syntax(newer_syntax)
+        self.assertEqual(result.status, ResponseStatus.SYNTAX_FAILURE)
+
+    @unittest.skipUnless(shutil.which("bash"), "bash is required for identity test")
+    def test_bash_checker_identity_records_resolved_binary_hash(self) -> None:
+        identity = identify_bash_checker("bash")
+        self.assertEqual(identity.requested, "bash")
+        self.assertTrue(identity.resolved_path)
+        self.assertRegex(identity.executable_sha256 or "", r"^[0-9a-f]{64}$")
+
+    def test_missing_bash_checker_identity_is_explicit(self) -> None:
+        identity = identify_bash_checker("definitely-not-a-real-cbds-bash")
+        self.assertEqual(identity.requested, "definitely-not-a-real-cbds-bash")
+        self.assertIsNone(identity.resolved_path)
+        self.assertIsNone(identity.executable_sha256)
+
     @unittest.skipUnless(shutil.which("bash"), "bash is required for Bash syntax tests")
     def test_bash_valid_and_invalid_syntax(self) -> None:
         valid = check_syntax(parse_response("if true; then echo ok; fi"))
@@ -174,7 +195,7 @@ class SyntaxCheckTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             check_syntax("echo ok")  # type: ignore[arg-type]
         parsed = parse_response("echo ok")
-        for value in (0, -1, True, "1", float("nan"), float("inf")):
+        for value in (0, -1, 301, 1e308, True, "1", float("nan"), float("inf")):
             with self.subTest(timeout=value):
                 with self.assertRaises(ValueError):
                     check_syntax(parsed, timeout_seconds=value)  # type: ignore[arg-type]

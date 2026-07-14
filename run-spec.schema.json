@@ -1,0 +1,803 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/run-spec.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Prospective Run Specification",
+  "description": "Immutable decisions and maximum compute budgets fixed before a train or compression run. Measured FLOPs and final artifact hashes belong in a completed experiment manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "created_at",
+    "git_revision",
+    "stage",
+    "campaign",
+    "model",
+    "tokenizer",
+    "data",
+    "execution",
+    "capability_mixture",
+    "teacher",
+    "operator",
+    "optimizer",
+    "training_protocol",
+    "seeds",
+    "tokens",
+    "compute_budget",
+    "checkpoint",
+    "export"
+  ],
+  "properties": {
+    "schema_version": { "const": "2.0.0" },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "git_revision": { "$ref": "#/$defs/sha1" },
+    "stage": { "enum": ["train", "compress"] },
+    "campaign": { "$ref": "#/$defs/campaign" },
+    "model": { "$ref": "#/$defs/model" },
+    "tokenizer": { "$ref": "#/$defs/tokenizer" },
+    "data": { "$ref": "#/$defs/data" },
+    "execution": { "$ref": "#/$defs/execution" },
+    "capability_mixture": { "$ref": "#/$defs/capabilityMixture" },
+    "teacher": { "$ref": "#/$defs/teacher" },
+    "operator": { "$ref": "#/$defs/operator" },
+    "optimizer": { "$ref": "#/$defs/optimizer" },
+    "training_protocol": { "$ref": "#/$defs/trainingProtocol" },
+    "seeds": { "$ref": "#/$defs/seeds" },
+    "tokens": { "$ref": "#/$defs/tokens" },
+    "compute_budget": { "$ref": "#/$defs/computeBudget" },
+    "checkpoint": { "$ref": "#/$defs/checkpoint" },
+    "export": { "$ref": "#/$defs/export" }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "anyOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "null" }
+      ]
+    },
+    "immutableRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "nullableRevision": {
+      "anyOf": [
+        { "$ref": "#/$defs/immutableRevision" },
+        { "type": "null" }
+      ]
+    },
+    "nullableString": {
+      "anyOf": [
+        { "type": "string", "minLength": 1, "maxLength": 256 },
+        { "type": "null" }
+      ]
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_schema_version",
+        "policy_sha256",
+        "profile",
+        "contrast_role",
+        "replicate_index",
+        "declared_seed_count"
+      ],
+      "properties": {
+        "policy_schema_version": { "const": "1.0.0" },
+        "policy_sha256": { "$ref": "#/$defs/sha256" },
+        "profile": {
+          "enum": ["screening", "confirmation", "runner_up"]
+        },
+        "contrast_role": {
+          "anyOf": [
+            { "enum": ["reference", "comparison"] },
+            { "type": "null" }
+          ]
+        },
+        "replicate_index": { "type": "integer", "minimum": 0 },
+        "declared_seed_count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "revision",
+        "checkpoint_sha256",
+        "inspection_report_sha256",
+        "architecture",
+        "physical_parameters",
+        "serialized_weight_bits",
+        "checkpoint_weight_bytes",
+        "checkpoint_bundle_bytes"
+      ],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revision": { "$ref": "#/$defs/immutableRevision" },
+        "checkpoint_sha256": { "$ref": "#/$defs/sha256" },
+        "inspection_report_sha256": { "$ref": "#/$defs/sha256" },
+        "architecture": { "const": "dense" },
+        "physical_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "serialized_weight_bits": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 32
+        },
+        "checkpoint_weight_bytes": { "type": "integer", "minimum": 1 },
+        "checkpoint_bundle_bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "tokenizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "revision",
+        "source_sha256",
+        "derived_vocabulary_mapping_sha256",
+        "vocabulary_size"
+      ],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revision": { "$ref": "#/$defs/immutableRevision" },
+        "source_sha256": { "$ref": "#/$defs/sha256" },
+        "derived_vocabulary_mapping_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "vocabulary_size": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "sha256", "sealed", "role"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "sealed": { "type": "boolean" },
+        "role": {
+          "enum": [
+            "training",
+            "operator_selection",
+            "method_development",
+            "shadow_validation",
+            "sealed_test",
+            "diagnostic"
+          ]
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "revision",
+        "manifest_sha256",
+        "semantic_graph_sha256",
+        "fixtures_sha256",
+        "splits"
+      ],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revision": { "$ref": "#/$defs/immutableRevision" },
+        "manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "semantic_graph_sha256": { "$ref": "#/$defs/sha256" },
+        "fixtures_sha256": { "$ref": "#/$defs/sha256" },
+        "splits": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/split" }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_image_repository",
+        "container_image_digest",
+        "container_recipe_revision",
+        "container_recipe_sha256",
+        "verifier_repository",
+        "verifier_revision",
+        "verifier_sha256"
+      ],
+      "properties": {
+        "container_image_repository": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "container_image_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "container_recipe_revision": { "$ref": "#/$defs/immutableRevision" },
+        "container_recipe_sha256": { "$ref": "#/$defs/sha256" },
+        "verifier_repository": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "verifier_revision": { "$ref": "#/$defs/immutableRevision" },
+        "verifier_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "capabilityEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "fraction", "tokens", "data_sha256"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "fraction": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "tokens": { "type": "integer", "minimum": 1 },
+        "data_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "capabilityMixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "support"],
+      "properties": {
+        "target": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/capabilityEntry" }
+        },
+        "support": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/capabilityEntry" }
+        }
+      }
+    },
+    "teacher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "repository",
+        "revision",
+        "checkpoint_sha256",
+        "architecture",
+        "physical_parameters",
+        "generation_policy_sha256",
+        "source_split",
+        "initial_candidates_per_prompt",
+        "maximum_candidates_per_prompt",
+        "verified_only"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "repository": { "$ref": "#/$defs/nullableString" },
+        "revision": { "$ref": "#/$defs/nullableRevision" },
+        "checkpoint_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "architecture": {
+          "anyOf": [
+            { "const": "dense" },
+            { "type": "null" }
+          ]
+        },
+        "physical_parameters": {
+          "anyOf": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "generation_policy_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "source_split": {
+          "anyOf": [
+            { "type": "string", "minLength": 1, "maxLength": 64 },
+            { "type": "null" }
+          ]
+        },
+        "initial_candidates_per_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1024
+        },
+        "maximum_candidates_per_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1024
+        },
+        "verified_only": { "type": "boolean" }
+      }
+    },
+    "structuralIndexGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "layer", "indices"],
+      "properties": {
+        "component": {
+          "enum": [
+            "residual_branch",
+            "attention_head",
+            "ffn_channel",
+            "hidden_dimension",
+            "embedding_token",
+            "layer"
+          ]
+        },
+        "layer": {
+          "anyOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "indices": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 65536,
+          "items": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "bitAllocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "layer", "bits"],
+      "properties": {
+        "component": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "layer": {
+          "anyOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "bits": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 32
+        }
+      }
+    },
+    "lowRankFactorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tensor_name",
+        "component",
+        "layer",
+        "input_dimension",
+        "output_dimension",
+        "rank"
+      ],
+      "properties": {
+        "tensor_name": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "component": {
+          "enum": [
+            "attention_q_proj",
+            "attention_k_proj",
+            "attention_v_proj",
+            "attention_o_proj",
+            "ffn_gate_proj",
+            "ffn_up_proj",
+            "ffn_down_proj",
+            "embedding",
+            "lm_head",
+            "other_dense"
+          ]
+        },
+        "layer": {
+          "anyOf": [
+            { "type": "integer", "minimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "input_dimension": { "type": "integer", "minimum": 1 },
+        "output_dimension": { "type": "integer", "minimum": 1 },
+        "rank": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mechanism",
+        "family",
+        "configuration_sha256",
+        "dose",
+        "selection_strategy",
+        "selection_split",
+        "selection_manifest_sha256",
+        "structural_indices",
+        "bit_allocation",
+        "factorizations"
+      ],
+      "properties": {
+        "mechanism": {
+          "enum": [
+            "baseline",
+            "recycle",
+            "prune",
+            "quantize",
+            "factorize",
+            "distill",
+            "hybrid"
+          ]
+        },
+        "family": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "configuration_sha256": { "$ref": "#/$defs/sha256" },
+        "dose": {
+          "anyOf": [
+            { "type": "number", "minimum": 0 },
+            { "type": "string", "minLength": 1, "maxLength": 128 },
+            { "type": "null" }
+          ]
+        },
+        "selection_strategy": {
+          "enum": [
+            "none",
+            "random",
+            "uniform",
+            "task_agnostic",
+            "target_aware"
+          ]
+        },
+        "selection_split": {
+          "anyOf": [
+            { "type": "string", "minLength": 1, "maxLength": 64 },
+            { "type": "null" }
+          ]
+        },
+        "selection_manifest_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "structural_indices": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": { "$ref": "#/$defs/structuralIndexGroup" }
+        },
+        "bit_allocation": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": { "$ref": "#/$defs/bitAllocation" }
+        },
+        "factorizations": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": { "$ref": "#/$defs/lowRankFactorization" }
+        }
+      }
+    },
+    "parameterGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "learning_rate", "weight_decay"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "role": { "enum": ["backbone", "side_branch", "all_trainable"] },
+        "learning_rate": { "type": "number", "exclusiveMinimum": 0 },
+        "weight_decay": { "type": "number", "minimum": 0 }
+      }
+    },
+    "optimizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "name",
+        "parameter_groups",
+        "betas",
+        "epsilon",
+        "gradient_clip",
+        "warmup_fraction",
+        "schedule",
+        "total_steps"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "name": {
+          "anyOf": [
+            { "type": "string", "minLength": 1, "maxLength": 64 },
+            { "type": "null" }
+          ]
+        },
+        "parameter_groups": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/parameterGroup" }
+        },
+        "betas": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMaximum": 1
+          }
+        },
+        "epsilon": {
+          "anyOf": [
+            { "type": "number", "exclusiveMinimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "gradient_clip": {
+          "anyOf": [
+            { "type": "number", "exclusiveMinimum": 0 },
+            { "type": "null" }
+          ]
+        },
+        "warmup_fraction": {
+          "anyOf": [
+            { "type": "number", "minimum": 0, "maximum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "schedule": {
+          "anyOf": [
+            { "type": "string", "minLength": 1, "maxLength": 64 },
+            { "type": "null" }
+          ]
+        },
+        "total_steps": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "trainingProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "training_dtype",
+        "optimizer_state_dtype",
+        "microbatch_size",
+        "gradient_accumulation_steps",
+        "data_parallel_world_size",
+        "effective_batch_size",
+        "attention_backend",
+        "gradient_checkpointing",
+        "deterministic_algorithms",
+        "packing",
+        "loss",
+        "freezing"
+      ],
+      "properties": {
+        "training_dtype": {
+          "anyOf": [
+            { "enum": ["bf16", "fp16", "fp32"] },
+            { "type": "null" }
+          ]
+        },
+        "optimizer_state_dtype": {
+          "anyOf": [
+            { "enum": ["bf16", "fp16", "fp32"] },
+            { "type": "null" }
+          ]
+        },
+        "microbatch_size": { "type": "integer", "minimum": 0 },
+        "gradient_accumulation_steps": { "type": "integer", "minimum": 0 },
+        "data_parallel_world_size": { "type": "integer", "minimum": 0 },
+        "effective_batch_size": { "type": "integer", "minimum": 0 },
+        "attention_backend": {
+          "anyOf": [
+            { "enum": ["sdpa", "flash_attention_2", "eager"] },
+            { "type": "null" }
+          ]
+        },
+        "gradient_checkpointing": { "type": "boolean" },
+        "deterministic_algorithms": { "type": "boolean" },
+        "packing": { "$ref": "#/$defs/packing" },
+        "loss": { "$ref": "#/$defs/loss" },
+        "freezing": { "$ref": "#/$defs/freezing" }
+      }
+    },
+    "packing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "strategy", "minimum_sequence_length", "maximum_sequence_length"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "strategy": { "enum": ["greedy", "first_fit_decreasing", "none"] },
+        "minimum_sequence_length": {
+          "anyOf": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "maximum_sequence_length": {
+          "anyOf": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "loss": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objective",
+        "label_scope",
+        "target_weight",
+        "support_weight",
+        "kl_weight",
+        "anchor_model_sha256"
+      ],
+      "properties": {
+        "objective": {
+          "enum": ["causal_cross_entropy", "causal_cross_entropy_with_kl", "none"]
+        },
+        "label_scope": {
+          "enum": ["all_non_padding_tokens", "assistant_response_tokens", "none"]
+        },
+        "target_weight": { "type": "number", "minimum": 0 },
+        "support_weight": { "type": "number", "minimum": 0 },
+        "kl_weight": { "type": "number", "minimum": 0 },
+        "anchor_model_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "freezing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "trainable_parameters_sha256", "schedule_sha256"],
+      "properties": {
+        "mode": { "enum": ["full_model", "side_only", "phased", "none"] },
+        "trainable_parameters_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "schedule_sha256": { "$ref": "#/$defs/nullableSha256" }
+      }
+    },
+    "seeds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_initialization",
+        "data_order",
+        "training",
+        "operator_selection",
+        "evaluation"
+      ],
+      "properties": {
+        "model_initialization": { "type": "integer", "minimum": 0 },
+        "data_order": { "type": "integer", "minimum": 0 },
+        "training": { "type": "integer", "minimum": 0 },
+        "operator_selection": { "type": "integer", "minimum": 0 },
+        "evaluation": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mixture_visible",
+        "target",
+        "support",
+        "optimizer_visible",
+        "teacher_derived",
+        "selection_visible",
+        "maximum_sequence_length"
+      ],
+      "properties": {
+        "mixture_visible": { "type": "integer", "minimum": 1 },
+        "target": { "type": "integer", "minimum": 0 },
+        "support": { "type": "integer", "minimum": 0 },
+        "optimizer_visible": { "type": "integer", "minimum": 0 },
+        "teacher_derived": { "type": "integer", "minimum": 0 },
+        "selection_visible": { "type": "integer", "minimum": 0 },
+        "maximum_sequence_length": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "computeBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accounting_revision",
+        "accounting_sha256",
+        "selection_max_flops",
+        "teacher_generation_max_flops",
+        "optimization_max_flops",
+        "compression_max_flops",
+        "export_max_flops",
+        "total_max_flops"
+      ],
+      "properties": {
+        "accounting_revision": { "$ref": "#/$defs/immutableRevision" },
+        "accounting_sha256": { "$ref": "#/$defs/sha256" },
+        "selection_max_flops": { "type": "number", "minimum": 0 },
+        "teacher_generation_max_flops": { "type": "number", "minimum": 0 },
+        "optimization_max_flops": { "type": "number", "minimum": 0 },
+        "compression_max_flops": { "type": "number", "minimum": 0 },
+        "export_max_flops": { "type": "number", "minimum": 0 },
+        "total_max_flops": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection_split",
+        "metric",
+        "mode",
+        "tie_breakers",
+        "rule",
+        "save_every_optimizer_steps",
+        "maximum_saved_checkpoints"
+      ],
+      "properties": {
+        "selection_split": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "mode": { "enum": ["min", "max"] },
+        "tie_breakers": {
+          "type": "array",
+          "maxItems": 16,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        },
+        "rule": { "type": "string", "minLength": 1, "maxLength": 1024 },
+        "save_every_optimizer_steps": { "type": "integer", "minimum": 0 },
+        "maximum_saved_checkpoints": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "export": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intent",
+        "architecture",
+        "format",
+        "runtime_compatibility",
+        "planned_physical_parameters",
+        "planned_average_weight_bits",
+        "maximum_weight_bytes",
+        "maximum_bundle_bytes",
+        "planned_vocabulary_size",
+        "include_tokenizer"
+      ],
+      "properties": {
+        "intent": { "enum": ["fixed_size", "compression"] },
+        "architecture": { "const": "dense" },
+        "format": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "runtime_compatibility": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        },
+        "planned_physical_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "planned_average_weight_bits": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 32
+        },
+        "maximum_weight_bytes": { "type": "integer", "minimum": 1 },
+        "maximum_bundle_bytes": { "type": "integer", "minimum": 1 },
+        "planned_vocabulary_size": { "type": "integer", "minimum": 1 },
+        "include_tokenizer": {
+          "const": true,
+          "description": "A deployable-size claim must include the exact tokenizer in the content-addressed bundle."
+        }
+      }
+    }
+  }
+}

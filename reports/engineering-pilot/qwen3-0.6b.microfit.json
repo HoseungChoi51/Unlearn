@@ -1,0 +1,131 @@
+{
+  "artifact": {
+    "after_load": {
+      "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+      "inspection_report_sha256": "e3d821157bd7888906ae0fda459d523712ab743bd9edf9fb79728123f9782319",
+      "safetensors_payload_bytes": 1192099840,
+      "static_classification": "dense_consistent",
+      "stored_tensor_elements": 596049920,
+      "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8"
+    },
+    "content_and_metadata_match_after_load": true,
+    "content_and_metadata_match_after_training": true,
+    "final": {
+      "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+      "inspection_report_sha256": "e3d821157bd7888906ae0fda459d523712ab743bd9edf9fb79728123f9782319",
+      "safetensors_payload_bytes": 1192099840,
+      "static_classification": "dense_consistent",
+      "stored_tensor_elements": 596049920,
+      "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8"
+    },
+    "initial": {
+      "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+      "inspection_report_sha256": "e3d821157bd7888906ae0fda459d523712ab743bd9edf9fb79728123f9782319",
+      "safetensors_payload_bytes": 1192099840,
+      "static_classification": "dense_consistent",
+      "stored_tensor_elements": 596049920,
+      "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8"
+    }
+  },
+  "claim_scope": "none",
+  "configuration": {
+    "adam_betas": [
+      0.9,
+      0.95
+    ],
+    "batch_size": 8,
+    "deterministic_algorithms_enforced": false,
+    "gradient_checkpointing": true,
+    "gradient_clip": 1.0,
+    "input_ids_sha256": "bcb0bb282c8c7b92372ba6fbc31d36fee3207bfc338a23e653f4fd8fa844535b",
+    "learning_rate": 1e-05,
+    "measured_steps": 10,
+    "optimizer": "torch.optim.AdamW(fused=True)",
+    "precision": "bfloat16",
+    "seed": 20260714,
+    "sequence_length": 1024,
+    "tf32_enabled": false,
+    "warmup_steps": 2,
+    "weight_decay": 0.1
+  },
+  "data_scope": "seeded_synthetic_token_ids_only",
+  "implementation": {
+    "record_hash_scope": "canonical JSON of every field except record_sha256",
+    "script_sha256": "d83616dc58099e435bde2ab27dfc999aa9dbd05e52e777eacff3d05b84dc3292"
+  },
+  "measurements": {
+    "measured_losses": [
+      12.8571138381958,
+      12.73613452911377,
+      12.6370849609375,
+      12.554685592651367,
+      12.4860258102417,
+      12.426857948303223,
+      12.374979972839355,
+      12.330093383789062,
+      12.290990829467773,
+      12.256592750549316
+    ],
+    "measured_seconds": 4.1137246010039235,
+    "measured_tokens": 81920,
+    "milliseconds_per_optimizer_step": 411.37246010039235,
+    "optimizer_visible_tokens_per_second": 19913.82699269855,
+    "peak_cuda_memory_allocated_bytes": 21557459968,
+    "peak_cuda_memory_reserved_bytes": 24345837568,
+    "warmup_losses": [
+      13.253804206848145,
+      13.016587257385254
+    ]
+  },
+  "network_access": "huggingface_offline_and_local_only_requested;os_socket_isolation_not_provided",
+  "record_sha256": "b9cea5df2c13bb860f9abd1b10b307491af12336bb14e72ff415e5cf3559508c",
+  "record_type": "cbds.gpu-microfit",
+  "record_version": "1.1.0",
+  "reproducibility_scope": {
+    "cuda_training_trajectory_determinism_guaranteed": false,
+    "synthetic_input_ids_reproducible_from_seed": true
+  },
+  "runtime": {
+    "buffer_accounting": {
+      "accounting_basis": "union_of_contiguous_untyped_storage_byte_spans",
+      "by_dtype": [
+        {
+          "dtype": "torch.float32",
+          "physical_bytes": 512,
+          "physical_elements": 128
+        }
+      ],
+      "deduplicated_alias_entries": 0,
+      "named_tensor_entries": 2,
+      "physical_bytes": 512,
+      "physical_elements": 128,
+      "storage_allocations_referenced": 2,
+      "unique_physical_spans": 2
+    },
+    "compute_capability": [
+      12,
+      0
+    ],
+    "cuda_runtime_version": "12.8",
+    "device_name": "NVIDIA GeForce RTX 5090",
+    "device_total_memory_bytes": 33667612672,
+    "load_seconds": 0.3844287859974429,
+    "model_class": "Qwen3ForCausalLM",
+    "parameter_accounting_by_dtype": [
+      {
+        "dtype": "torch.bfloat16",
+        "physical_bytes": 1192099840,
+        "physical_elements": 596049920,
+        "trainable_bytes": 1192099840,
+        "trainable_elements": 596049920
+      }
+    ],
+    "parameter_payload_bytes": 1192099840,
+    "physical_parameter_elements": 596049920,
+    "torch_version": "2.11.0+cu128",
+    "trainable_parameter_elements": 596049920,
+    "trainable_parameter_payload_bytes": 1192099840,
+    "transformers_version": "5.13.1"
+  },
+  "status": "completed_engineering_diagnostic"
+}

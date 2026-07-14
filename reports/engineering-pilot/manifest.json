@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.1.0",
+  "record_type": "cbds.engineering-pilot-manifest",
+  "manifest_hash_scope": "canonical_json_excluding_manifest_sha256",
+  "created_date": "2026-07-14",
+  "claim_scope": "none",
+  "selection_authorized": false,
+  "sealed_data_accessed": false,
+  "data_scope": "seeded_synthetic_token_ids_and_one_public_runtime_prompt_only",
+  "purpose": "static_artifact_runtime_and_microtraining_fit_diagnostics",
+  "limitations": [
+    "No terminal behavior, capability, quality, or benchmark endpoint was measured.",
+    "The microfit uses one repeated seeded synthetic token batch and is not a training result.",
+    "CUDA training-trajectory determinism was not enforced; throughput and losses are descriptive for this host.",
+    "Hugging Face offline/local-only loading was requested, but the process had no OS-level socket isolation.",
+    "The diagnostics do not select the primary backbone.",
+    "The model cache paths are intentionally excluded; revisions and content hashes bind identity."
+  ],
+  "host": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "torch_cuda_mem_get_info_total_bytes": 33667612672,
+    "torch_cuda_get_device_properties_total_memory_bytes": 33667612672,
+    "nvidia_smi_memory_total_mib": 32607,
+    "driver_version": "595.71.05",
+    "torch_version": "2.11.0+cu128",
+    "transformers_version": "5.13.1",
+    "safetensors_version": "0.8.0",
+    "tokenizers_version": "0.22.2",
+    "containerized": false,
+    "os_socket_isolation_provided": false
+  },
+  "microfit_configuration": {
+    "batch_size": 8,
+    "sequence_length": 1024,
+    "optimizer_visible_tokens_per_step": 8192,
+    "warmup_steps": 2,
+    "measured_steps": 10,
+    "precision": "bfloat16",
+    "gradient_checkpointing": true,
+    "optimizer": "torch.optim.AdamW(fused=True)",
+    "learning_rate": 1e-05,
+    "weight_decay": 0.1,
+    "adam_betas": [
+      0.9,
+      0.95
+    ],
+    "gradient_clip": 1.0,
+    "seed": 20260714,
+    "deterministic_algorithms_enforced": false
+  },
+  "code_sources": {
+    "src/cbds/model_artifacts.py": "70fa1a385d1dcbb972dca78d5ba88d57443200ea5039091eb9c5ee99504ebf36",
+    "src/cbds/model_runtime.py": "7e916803a791d0e8b915608aa13a608493d5f1a81cf5149b38cb8df3f3e826c1",
+    "src/cbds/cli.py": "5b782d600d1e39f98b398c424f83015d67f0f7f64f9b1a06aaedd31f7345bfd0",
+    "src/cbds/manifests.py": "b5083c702d7f18049c34c528bd60c883085128f5eb98ee47977c3e16279fb6f2",
+    "scripts/gpu_microfit.py": "d83616dc58099e435bde2ab27dfc999aa9dbd05e52e777eacff3d05b84dc3292",
+    "configs/runtime-smoke-prompt.txt": "937b8eec83d3d7895edaad883c2b9582f62665bd722eb2427e9057936d14efff"
+  },
+  "models": [
+    {
+      "model_id": "Qwen/Qwen3-0.6B-Base",
+      "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+      "physical_parameters": 596049920,
+      "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+      "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8",
+      "static_report": {
+        "path": "qwen3-0.6b.static.json",
+        "file_sha256": "051add3c93853542fd1f12567549ab70eefc2e0158ed9716e1e13a58491e14b1",
+        "report_sha256": "e3d821157bd7888906ae0fda459d523712ab743bd9edf9fb79728123f9782319"
+      },
+      "runtime_report": {
+        "path": "qwen3-0.6b.runtime.json",
+        "file_sha256": "5dd2d691c8eda8a39039ed33adac497bc13028e4befdaa4f5a15a537c9d8d6d3",
+        "report_sha256": "7efbde766260aaee0a80b27f9723a6d22c5ab253348e6903eb1251826958216b"
+      },
+      "microfit_report": {
+        "path": "qwen3-0.6b.microfit.json",
+        "file_sha256": "f817a5d1c347bd697d7e19459de016f0a9e712fe2b0afb8df3272d743d20884b",
+        "record_sha256": "b9cea5df2c13bb860f9abd1b10b307491af12336bb14e72ff415e5cf3559508c",
+        "optimizer_visible_tokens_per_second": 19913.82699269855,
+        "milliseconds_per_optimizer_step": 411.37246010039235,
+        "peak_cuda_memory_allocated_bytes": 21557459968,
+        "peak_cuda_memory_reserved_bytes": 24345837568
+      }
+    },
+    {
+      "model_id": "Qwen/Qwen2.5-0.5B",
+      "revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+      "physical_parameters": 494032768,
+      "bundle_manifest_sha256": "d586a66bdb618c1faee778022aa26dec279dcaab993b72afded9718c5acd0307",
+      "weight_set_sha256": "a5211dcbd45f61dd41c04ac85d3434b0b6962be991a28ce649dee0185464f89d",
+      "static_report": {
+        "path": "qwen2.5-0.5b.static.json",
+        "file_sha256": "5d41d6e66a8bba1cdd56edaf7059273355401a4912d7109e3045a9c05e78b04b",
+        "report_sha256": "485a6ddf01ff0a40341673f12d7d4d9956cdc4e15c0033a125599e3909444031"
+      },
+      "runtime_report": {
+        "path": "qwen2.5-0.5b.runtime.json",
+        "file_sha256": "36f8ad8de083a9d96dcafc0086e1d29a7701d483ceec1b31bb5643ce66d14c34",
+        "report_sha256": "f61cf49f93c1a95a5235e550abcb28d8a001f4bef7f7f12090d2aa1ca1c8006f"
+      },
+      "microfit_report": {
+        "path": "qwen2.5-0.5b.microfit.json",
+        "file_sha256": "7bf11826150d9d0c28e4e33ff20696dd9498fedd21831b7dbdcde0ca88fa55e6",
+        "record_sha256": "45da23ed5ab71fd93dcc36a90bf2d34d2490a6bd1625350124a805fd3583adbb",
+        "optimizer_visible_tokens_per_second": 30516.86866737443,
+        "milliseconds_per_optimizer_step": 268.4416966003482,
+        "peak_cuda_memory_allocated_bytes": 20832052224,
+        "peak_cuda_memory_reserved_bytes": 24228397056
+      }
+    },
+    {
+      "model_id": "HuggingFaceTB/SmolLM2-360M",
+      "revision": "f8027fd0eaeea54caa13c31d31b9fdc459c38b49",
+      "physical_parameters": 361821120,
+      "bundle_manifest_sha256": "29700fc6d15878b1296468b7b2404b34911c98de17ecfa45df119090144e6f8c",
+      "weight_set_sha256": "20c125d071d0232d40fcc7c8b40f4b79c883f2dd379ecb42c84f94f399694230",
+      "static_report": {
+        "path": "smollm2-360m.static.json",
+        "file_sha256": "16b5878d4bc220157493970f0f2f870f9c4191a9eb33d04ec3533e933012a65d",
+        "report_sha256": "89d3b118779f13b0a5942626e57b51d1ff804247dc9b07578f9a2f3a1fd253c8"
+      },
+      "runtime_report": {
+        "path": "smollm2-360m.runtime.json",
+        "file_sha256": "a6ca46e962f139575aedcbf50a9d1e06d840ca8227de11a81731aac80b4421e0",
+        "report_sha256": "8bed64416157db846c13376f4212f29f6f4a307b5c13d8ccc0030aea04b76813"
+      },
+      "microfit_report": {
+        "path": "smollm2-360m.microfit.json",
+        "file_sha256": "9a24fd28b34ed3b0b584497df88b195cc38384a484ee47259cb4f589f3414043",
+        "record_sha256": "81fa0a1f5f0ea487686d037f9189de437874898a0187272af670dc291812678a",
+        "optimizer_visible_tokens_per_second": 38802.009425184435,
+        "milliseconds_per_optimizer_step": 211.12308669980848,
+        "peak_cuda_memory_allocated_bytes": 8410096640,
+        "peak_cuda_memory_reserved_bytes": 8982102016
+      }
+    }
+  ],
+  "manifest_sha256": "10cbfec5cb270ad675f1f6a052d21145cd1dddd33bdb5d67e98053bcee24ed24"
+}

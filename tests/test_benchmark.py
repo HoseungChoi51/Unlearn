@@ -181,12 +181,24 @@ class ValidationTests(unittest.TestCase):
 
 
 class PreparationTests(unittest.TestCase):
+    def test_existing_output_tree_and_member_symlinks_are_never_followed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = root / "dataset"
+            (output / "static").mkdir(parents=True)
+            victim = root / "victim.txt"
+            victim.write_text("do not overwrite", encoding="utf-8")
+            (output / "static" / "train.jsonl").symlink_to(victim)
+            with self.assertRaises(FileExistsError):
+                prepare_benchmark(tiny_config(), output)
+            self.assertEqual(victim.read_text(encoding="utf-8"), "do not overwrite")
+
     def test_smoke_config_has_a_cross_version_golden_dataset_hash(self) -> None:
         config = json.loads(
             (ROOT / "configs" / "benchmark-smoke.json").read_text(encoding="utf-8")
         )
         with tempfile.TemporaryDirectory() as temporary:
-            manifest = prepare_benchmark(config, Path(temporary))
+            manifest = prepare_benchmark(config, Path(temporary) / "dataset")
         self.assertEqual(
             manifest["dataset_sha256"],
             "eccbef345ecdce2adc3f80990abbd4ae618f933de30baa257076ea836d0ef19f",
@@ -203,7 +215,7 @@ class PreparationTests(unittest.TestCase):
     def test_prepare_writes_canonical_jsonl_and_hash_manifest(self) -> None:
         config_mapping = tiny_config().as_dict()
         with tempfile.TemporaryDirectory() as temporary:
-            output_dir = Path(temporary)
+            output_dir = Path(temporary) / "dataset"
             manifest = prepare_benchmark(config_mapping, output_dir)
 
             self.assertEqual(len(manifest["files"]), 12)
@@ -237,7 +249,7 @@ class PreparationTests(unittest.TestCase):
     def test_jsonl_round_trip_preserves_typed_specs(self) -> None:
         config = tiny_config()
         with tempfile.TemporaryDirectory() as temporary:
-            output_dir = Path(temporary)
+            output_dir = Path(temporary) / "dataset"
             prepare_benchmark(config, output_dir)
             loaded = load_jsonl(output_dir / "static" / "train.jsonl")
             expected = tuple(
@@ -250,12 +262,14 @@ class PreparationTests(unittest.TestCase):
     def test_repeated_preparation_is_byte_identical(self) -> None:
         config = tiny_config()
         with tempfile.TemporaryDirectory() as first_dir, tempfile.TemporaryDirectory() as second_dir:
-            first_manifest = prepare_benchmark(config, Path(first_dir))
-            second_manifest = prepare_benchmark(config, Path(second_dir))
+            first_output = Path(first_dir) / "dataset"
+            second_output = Path(second_dir) / "dataset"
+            first_manifest = prepare_benchmark(config, first_output)
+            second_manifest = prepare_benchmark(config, second_output)
             self.assertEqual(first_manifest, second_manifest)
             self.assertEqual(
-                (Path(first_dir) / "manifest.json").read_bytes(),
-                (Path(second_dir) / "manifest.json").read_bytes(),
+                (first_output / "manifest.json").read_bytes(),
+                (second_output / "manifest.json").read_bytes(),
             )
 
 

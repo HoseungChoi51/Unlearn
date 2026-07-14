@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from hashlib import sha256
 import json
 from pathlib import Path
+import shutil
+import tempfile
 from typing import Any, Final, Literal, TypeAlias, cast
 
 
@@ -816,7 +818,7 @@ def _write_jsonl(path: Path, specs: Sequence[SemanticSpec]) -> dict[str, object]
     }
 
 
-def prepare_benchmark(
+def _prepare_benchmark_in_directory(
     config: BenchmarkConfig | Mapping[str, object], output_dir: Path
 ) -> dict[str, object]:
     """Generate, validate, and write canonical JSONL plus a SHA256 manifest.
@@ -870,6 +872,54 @@ def prepare_benchmark(
         f"{manifest_digest}  manifest.json\n", encoding="ascii", newline="\n"
     )
     return manifest
+
+
+def prepare_benchmark(
+    config: BenchmarkConfig | Mapping[str, object], output_dir: Path
+) -> dict[str, object]:
+    """Prepare an immutable benchmark tree and publish it atomically.
+
+    ``output_dir`` must not already exist. All members are first written under
+    a fresh sibling directory, preventing pre-existing files or symlinks from
+    redirecting generated output outside the artifact root.
+    """
+
+    if not isinstance(output_dir, Path):
+        raise TypeError("output_dir must be a pathlib.Path")
+    try:
+        output_dir.lstat()
+    except FileNotFoundError:
+        pass
+    else:
+        raise FileExistsError(f"benchmark output already exists: {output_dir}")
+
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(
+        tempfile.mkdtemp(
+            prefix=f".{output_dir.name}.prepare-",
+            dir=output_dir.parent,
+        )
+    )
+    published = False
+    try:
+        manifest = _prepare_benchmark_in_directory(config, staging)
+        try:
+            output_dir.lstat()
+        except FileNotFoundError:
+            pass
+        else:
+            raise FileExistsError(
+                f"benchmark output appeared during preparation: {output_dir}"
+            )
+        staging.replace(output_dir)
+        published = True
+        return manifest
+    finally:
+        if not published:
+            try:
+                shutil.rmtree(staging)
+            except FileNotFoundError:
+                pass
 
 
 def load_jsonl(path: Path) -> tuple[SemanticSpec, ...]:

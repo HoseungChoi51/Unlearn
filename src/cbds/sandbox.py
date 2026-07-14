@@ -27,7 +27,6 @@ class ContainerRuntime(str, Enum):
 _PINNED_IMAGE = re.compile(
     r"^[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[0-9]+)?"
     r"(?:/[a-z0-9]+(?:[._-][a-z0-9]+)*)*"
-    r"(?:[:][A-Za-z0-9_][A-Za-z0-9_.-]*)?"
     r"@sha256:[0-9a-f]{64}$"
 )
 _SAFE_ENV_VALUE = re.compile(r"^[^\x00\r\n]*$")
@@ -70,8 +69,8 @@ class SandboxConfig:
 
         if not isinstance(self.image, str) or _PINNED_IMAGE.fullmatch(self.image) is None:
             raise ValueError(
-                "image must be a registry/repository reference pinned by a lowercase "
-                "sha256 digest"
+                "image must be an untagged registry/repository reference pinned by "
+                "a lowercase sha256 digest"
             )
         _validate_nonroot_id("uid", self.uid)
         _validate_nonroot_id("gid", self.gid)
@@ -175,6 +174,7 @@ def build_sandbox_argv(
         "run",
         "--rm",
         "--interactive",
+        "--pull=never",
         "--init",
         "--network=none",
         "--read-only",

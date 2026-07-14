@@ -10,6 +10,7 @@
     "run_id",
     "created_at",
     "git_revision",
+    "dirty_worktree",
     "artifact",
     "hardware",
     "software",
@@ -21,7 +22,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.0.0"
+      "const": "2.0.0"
     },
     "run_id": {
       "type": "string",
@@ -35,8 +36,8 @@
       "$ref": "#/$defs/sha1"
     },
     "dirty_worktree": {
-      "type": "boolean",
-      "default": false
+      "const": false,
+      "description": "Claim-protocol records must be captured from an explicitly clean worktree."
     },
     "artifact": {
       "$ref": "#/$defs/artifact"
@@ -119,10 +120,12 @@
       "additionalProperties": false,
       "required": [
         "name",
+        "architecture",
         "format",
         "sha256",
         "bundle_sha256",
         "tokenizer_sha256",
+        "inspection_report_sha256",
         "weight_bytes",
         "bundle_bytes",
         "physical_parameters",
@@ -130,6 +133,7 @@
         "nonzero_parameters",
         "average_weight_bits",
         "method",
+        "dose",
         "source_manifest_sha256"
       ],
       "properties": {
@@ -138,6 +142,7 @@
           "minLength": 1,
           "maxLength": 256
         },
+        "architecture": { "const": "dense" },
         "format": {
           "enum": ["safetensors", "gguf", "onnx", "other"]
         },
@@ -148,6 +153,9 @@
           "$ref": "#/$defs/sha256"
         },
         "tokenizer_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "inspection_report_sha256": {
           "$ref": "#/$defs/sha256"
         },
         "weight_bytes": {
@@ -184,8 +192,11 @@
           "maxLength": 128
         },
         "dose": {
-          "type": ["string", "null"],
-          "maxLength": 128
+          "anyOf": [
+            { "type": "number", "minimum": 0 },
+            { "type": "string", "minLength": 1, "maxLength": 128 },
+            { "type": "null" }
+          ]
         },
         "source_manifest_sha256": {
           "$ref": "#/$defs/sha256"
@@ -411,6 +422,7 @@
       "additionalProperties": false,
       "required": [
         "cold_start",
+        "process_model",
         "warmups",
         "repetitions",
         "temperature",
@@ -421,13 +433,19 @@
         "cold_start": {
           "type": "boolean"
         },
+        "process_model": {
+          "enum": [
+            "independent_process_per_repetition",
+            "single_loaded_process"
+          ]
+        },
         "warmups": {
           "type": "integer",
-          "minimum": 0
+          "enum": [0, 10]
         },
         "repetitions": {
           "type": "integer",
-          "minimum": 1
+          "enum": [1, 5, 30]
         },
         "temperature": {
           "const": 0

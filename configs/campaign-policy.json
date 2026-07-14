@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "cbds-plan-2026-07-14",
+  "created_at": "2026-07-14T00:00:00+09:00",
+  "source_plan_sha256": "72d07f7f7eceef6931b61fea6c2ae344f9d5c0db3e6cb65b0c28bd1d388d436b",
+  "profiles": [
+    {
+      "name": "screening",
+      "optimizer_visible_tokens": 2000000,
+      "target_fraction": 0.8,
+      "support_fraction": 0.2,
+      "required_seed_count": 2,
+      "fresh_seed_count": 2,
+      "pairing": "paired_across_arms",
+      "fresh_from_profiles": []
+    },
+    {
+      "name": "confirmation",
+      "optimizer_visible_tokens": 20000000,
+      "target_fraction": 0.8,
+      "support_fraction": 0.2,
+      "required_seed_count": 5,
+      "fresh_seed_count": 5,
+      "pairing": "fresh_from_screening_and_paired_across_arms",
+      "fresh_from_profiles": ["screening"]
+    },
+    {
+      "name": "runner_up",
+      "optimizer_visible_tokens": 20000000,
+      "target_fraction": 0.8,
+      "support_fraction": 0.2,
+      "required_seed_count": 5,
+      "fresh_seed_count": 5,
+      "pairing": "fresh_runner_up_and_paired_across_arms",
+      "fresh_from_profiles": ["screening", "confirmation"]
+    }
+  ],
+  "optimizer": {
+    "enabled_required": true,
+    "name": "AdamW",
+    "betas": [0.9, 0.95],
+    "gradient_clip": 1.0,
+    "warmup_fraction": 0.05,
+    "schedule": "cosine"
+  },
+  "training_protocol": {
+    "training_dtype": "bf16",
+    "packing_enabled": true,
+    "minimum_packed_sequence_length": 1024,
+    "maximum_packed_sequence_length": 2048
+  },
+  "learning_rate_grids": {
+    "side_only": [0.0001, 0.0003, 0.001],
+    "full_model": [0.00001, 0.00003],
+    "phased": [0.00001, 0.00003, 0.0001, 0.0003, 0.001]
+  }
+}

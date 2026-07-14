@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/campaign-policy.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Campaign Policy",
+  "description": "Immutable cross-run profiles derived from PLAN.md. Per-run specifications reference a canonical policy digest and one profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "policy_id",
+    "created_at",
+    "source_plan_sha256",
+    "profiles",
+    "optimizer",
+    "training_protocol",
+    "learning_rate_grids"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "policy_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "source_plan_sha256": { "$ref": "#/$defs/sha256" },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": { "$ref": "#/$defs/profile" }
+    },
+    "optimizer": { "$ref": "#/$defs/optimizer" },
+    "training_protocol": { "$ref": "#/$defs/trainingProtocol" },
+    "learning_rate_grids": { "$ref": "#/$defs/learningRateGrids" }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "optimizer_visible_tokens",
+        "target_fraction",
+        "support_fraction",
+        "required_seed_count",
+        "fresh_seed_count",
+        "pairing",
+        "fresh_from_profiles"
+      ],
+      "properties": {
+        "name": {
+          "enum": ["screening", "confirmation", "runner_up"]
+        },
+        "optimizer_visible_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "target_fraction": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "support_fraction": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "required_seed_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1024
+        },
+        "fresh_seed_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1024
+        },
+        "pairing": {
+          "enum": [
+            "paired_across_arms",
+            "fresh_from_screening_and_paired_across_arms",
+            "fresh_runner_up_and_paired_across_arms"
+          ]
+        },
+        "fresh_from_profiles": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "enum": ["screening", "confirmation", "runner_up"]
+          }
+        }
+      }
+    },
+    "optimizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled_required",
+        "name",
+        "betas",
+        "gradient_clip",
+        "warmup_fraction",
+        "schedule"
+      ],
+      "properties": {
+        "enabled_required": { "type": "boolean" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "betas": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMaximum": 1
+          }
+        },
+        "gradient_clip": { "type": "number", "exclusiveMinimum": 0 },
+        "warmup_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "schedule": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "trainingProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "training_dtype",
+        "packing_enabled",
+        "minimum_packed_sequence_length",
+        "maximum_packed_sequence_length"
+      ],
+      "properties": {
+        "training_dtype": { "enum": ["bf16", "fp16", "fp32"] },
+        "packing_enabled": { "type": "boolean" },
+        "minimum_packed_sequence_length": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximum_packed_sequence_length": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "learningRateGrids": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["side_only", "full_model", "phased"],
+      "properties": {
+        "side_only": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "full_model": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "phased": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    }
+  }
+}

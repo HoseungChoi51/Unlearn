@@ -23,8 +23,10 @@ from pathlib import Path
 from typing import Any
 
 
-EXPERIMENT_SCHEMA_VERSION = "1.0.0"
-HARDWARE_SCHEMA_VERSION = "1.0.0"
+EXPERIMENT_SCHEMA_VERSION = "2.0.0"
+HARDWARE_SCHEMA_VERSION = "2.0.0"
+MAX_DOCUMENT_BYTES = 8 * 1024 * 1024
+MAX_YAML_ALIASES = 100
 _SCHEMA_NAMES = {
     "experiment": "experiment-manifest.schema.json",
     "hardware": "hardware-result.schema.json",
@@ -97,11 +99,25 @@ def file_sha256(path: str | os.PathLike[str], *, chunk_size: int = 1024 * 1024) 
     return digest.hexdigest()
 
 
+def _bounded_key_identity(key: object) -> str:
+    """Describe a mapping key without reflecting unbounded attacker text."""
+
+    if isinstance(key, str):
+        encoded = key.encode("utf-8", errors="surrogatepass")
+        if len(encoded) <= 128:
+            return repr(key)
+        return f"<utf8_bytes={len(encoded)} sha256={sha256_bytes(encoded)}>"
+    rendered = repr(type(key).__name__)
+    return f"<key_type={rendered}>"
+
+
 def _reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, value in pairs:
         if key in result:
-            raise ManifestValidationError(f"duplicate object key: {key!r}")
+            raise ManifestValidationError(
+                f"duplicate object key: {_bounded_key_identity(key)}"
+            )
         result[key] = value
     return result
 
@@ -126,7 +142,16 @@ def _load_yaml(text: str, source: Path) -> Any:
         ) from error
 
     class UniqueKeySafeLoader(yaml.SafeLoader):
-        pass
+        alias_count = 0
+
+        def compose_node(self, parent: Any, index: Any) -> Any:
+            if self.check_event(yaml.AliasEvent):
+                self.alias_count += 1
+                if self.alias_count > MAX_YAML_ALIASES:
+                    raise ManifestValidationError(
+                        f"YAML input exceeds the alias limit of {MAX_YAML_ALIASES}"
+                    )
+            return super().compose_node(parent, index)
 
     # Manifests use RFC 3339 strings.  Prevent PyYAML from silently converting
     # an unquoted timestamp into a Python datetime, which is not JSON data.
@@ -151,7 +176,9 @@ def _load_yaml(text: str, source: Path) -> Any:
                     f"unhashable YAML mapping key in {source}"
                 ) from error
             if duplicate:
-                raise ManifestValidationError(f"duplicate object key: {key!r}")
+                raise ManifestValidationError(
+                    f"duplicate object key: {_bounded_key_identity(key)}"
+                )
             result[key] = loader.construct_object(value_node, deep=deep)
         return result
 
@@ -175,10 +202,51 @@ def load_document(path: str | os.PathLike[str]) -> Any:
     """
 
     source = Path(path)
+    flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NONBLOCK", 0)
+    flags |= getattr(os, "O_NOFOLLOW", 0)
     try:
-        text = source.read_text(encoding="utf-8")
+        descriptor = os.open(source, flags)
     except (OSError, UnicodeError) as error:
-        raise ManifestValidationError(f"cannot read {source}: {error}") from error
+        raise ManifestValidationError(
+            f"cannot open document {source}: {type(error).__name__}"
+        ) from error
+    try:
+        with os.fdopen(descriptor, "rb", buffering=0) as handle:
+            before = os.fstat(handle.fileno())
+            if not stat.S_ISREG(before.st_mode):
+                raise ManifestValidationError(
+                    f"document {source} must be a regular file"
+                )
+            if before.st_size > MAX_DOCUMENT_BYTES:
+                raise ManifestValidationError(
+                    f"document {source} exceeds {MAX_DOCUMENT_BYTES} bytes"
+                )
+            payload = handle.read(MAX_DOCUMENT_BYTES + 1)
+            after = os.fstat(handle.fileno())
+    except OSError as error:
+        raise ManifestValidationError(
+            f"cannot read document {source}: {type(error).__name__}"
+        ) from error
+    fingerprint = lambda value: (
+        value.st_dev,
+        value.st_ino,
+        value.st_mode,
+        value.st_size,
+        value.st_mtime_ns,
+        value.st_ctime_ns,
+    )
+    if len(payload) > MAX_DOCUMENT_BYTES:
+        raise ManifestValidationError(
+            f"document {source} exceeds {MAX_DOCUMENT_BYTES} bytes"
+        )
+    if fingerprint(before) != fingerprint(after) or len(payload) != before.st_size:
+        raise ManifestValidationError(f"document {source} changed while being read")
+    try:
+        text = payload.decode("utf-8")
+    except UnicodeError as error:
+        raise ManifestValidationError(
+            f"document {source} is not valid UTF-8"
+        ) from error
     suffix = source.suffix.lower()
     if suffix == ".json":
         return _load_json(text, source)
@@ -279,7 +347,13 @@ def _load_schema(
     loaded = load_document(schema_path)
     if not isinstance(loaded, dict):
         raise ManifestValidationError(f"schema {schema_path} must be a JSON object")
-    return loaded
+    packaged = _load_repository_schema(name)
+    if value_sha256(loaded) != value_sha256(packaged):
+        raise ManifestValidationError(
+            f"schema {schema_path} does not match the frozen packaged "
+            f"{_SCHEMA_NAMES[name]} contract"
+        )
+    return packaged
 
 
 def _resolve_local_ref(schema: Mapping[str, Any], reference: str) -> Any:
@@ -486,6 +560,13 @@ def _experiment_invariant_errors(manifest: Mapping[str, Any]) -> list[str]:
     splits = manifest["data"]["splits"]
     _unique_values((split_["name"] for split_ in splits), "$.data.splits", errors)
     split_by_name = {split_["name"]: split_ for split_ in splits}
+    for split_index, split_ in enumerate(splits):
+        expected_sealed = split_["role"] == "sealed_test"
+        if split_["sealed"] is not expected_sealed:
+            errors.append(
+                f"$.data.splits[{split_index}].sealed: must be {expected_sealed} "
+                f"when role is {split_['role']!r}"
+            )
     selection_split = manifest["checkpoint"]["selection_split"]
     if selection_split not in split_by_name:
         errors.append(
@@ -494,6 +575,10 @@ def _experiment_invariant_errors(manifest: Mapping[str, Any]) -> list[str]:
     elif split_by_name[selection_split]["sealed"]:
         errors.append(
             "$.checkpoint.selection_split: cannot select checkpoints on a sealed split"
+        )
+    elif split_by_name[selection_split]["role"] != "shadow_validation":
+        errors.append(
+            "$.checkpoint.selection_split: must have role 'shadow_validation'"
         )
 
     target = manifest["capability_mixture"]["target"]
@@ -523,7 +608,8 @@ def _experiment_invariant_errors(manifest: Mapping[str, Any]) -> list[str]:
         if teacher["generation_flops"] != 0:
             errors.append("$.teacher.generation_flops: must be zero when the teacher is disabled")
 
-    index_groups = manifest["operator"]["structural_indices"]
+    operator = manifest["operator"]
+    index_groups = operator["structural_indices"]
     group_keys: set[tuple[str, int | None]] = set()
     for group_index, group in enumerate(index_groups):
         group_key = (group["component"], group["layer"])
@@ -538,15 +624,196 @@ def _experiment_invariant_errors(manifest: Mapping[str, Any]) -> list[str]:
             errors,
         )
     _unique_values(
-        (allocation["component"] for allocation in manifest["operator"]["bit_allocation"]),
+        (
+            (allocation["component"], allocation["layer"])
+            for allocation in manifest["operator"]["bit_allocation"]
+        ),
         "$.operator.bit_allocation",
         errors,
     )
+    factorizations = operator["factorizations"]
     _unique_values(
-        (group["name"] for group in manifest["optimizer"]["parameter_groups"]),
+        (
+            factorization["tensor_name"]
+            for factorization in factorizations
+        ),
+        "$.operator.factorizations",
+        errors,
+    )
+    layered_factor_components = {
+        "attention_q_proj",
+        "attention_k_proj",
+        "attention_v_proj",
+        "attention_o_proj",
+        "ffn_gate_proj",
+        "ffn_up_proj",
+        "ffn_down_proj",
+    }
+    unlayered_factor_components = {"embedding", "lm_head"}
+    factorization_parameter_savings = 0
+    for factorization_index, factorization in enumerate(factorizations):
+        if (
+            factorization["component"] in layered_factor_components
+            and factorization["layer"] is None
+        ):
+            errors.append(
+                f"$.operator.factorizations[{factorization_index}].layer: required "
+                f"for {factorization['component']}"
+            )
+        if (
+            factorization["component"] in unlayered_factor_components
+            and factorization["layer"] is not None
+        ):
+            errors.append(
+                f"$.operator.factorizations[{factorization_index}].layer: must be "
+                f"null for {factorization['component']}"
+            )
+        dense_parameters = (
+            factorization["input_dimension"] * factorization["output_dimension"]
+        )
+        factor_parameters = factorization["rank"] * (
+            factorization["input_dimension"] + factorization["output_dimension"]
+        )
+        if factor_parameters >= dense_parameters:
+            errors.append(
+                f"$.operator.factorizations[{factorization_index}].rank: two-factor "
+                "decomposition must use fewer parameters than the dense matrix"
+            )
+        else:
+            factorization_parameter_savings += dense_parameters - factor_parameters
+
+    mechanism = operator["mechanism"]
+    bit_allocations = operator["bit_allocation"]
+    if mechanism in {"baseline", "distill"}:
+        if index_groups or bit_allocations or factorizations:
+            errors.append(
+                f"$.operator: {mechanism} cannot specify structural indices, bit "
+                "allocation, or factorizations"
+            )
+    elif mechanism in {"recycle", "prune"}:
+        if not index_groups:
+            errors.append(f"$.operator.structural_indices: required for {mechanism}")
+        if bit_allocations:
+            errors.append(f"$.operator.bit_allocation: must be empty for {mechanism}")
+        if factorizations:
+            errors.append(f"$.operator.factorizations: must be empty for {mechanism}")
+    elif mechanism == "quantize":
+        if index_groups:
+            errors.append("$.operator.structural_indices: must be empty for quantize")
+        if not bit_allocations:
+            errors.append("$.operator.bit_allocation: required for quantize")
+        if factorizations:
+            errors.append("$.operator.factorizations: must be empty for quantize")
+    elif mechanism == "factorize":
+        if index_groups:
+            errors.append("$.operator.structural_indices: must be empty for factorize")
+        if bit_allocations:
+            errors.append("$.operator.bit_allocation: must be empty for factorize")
+        if not factorizations:
+            errors.append("$.operator.factorizations: required for factorize")
+    elif mechanism == "hybrid":
+        if not bit_allocations:
+            errors.append("$.operator.bit_allocation: required for hybrid")
+        if bool(index_groups) == bool(factorizations):
+            errors.append(
+                "$.operator: hybrid requires exactly one non-quant architectural "
+                "payload: structural_indices XOR factorizations"
+            )
+
+    expected_stage = {
+        "baseline": "train",
+        "recycle": "train",
+        "prune": "compress",
+        "quantize": "compress",
+        "factorize": "compress",
+        "hybrid": "compress",
+    }.get(mechanism)
+    if expected_stage is not None and manifest["stage"] != expected_stage:
+        errors.append(
+            f"$.stage: mechanism {mechanism!r} requires stage {expected_stage!r}"
+        )
+    if operator["mechanism"] == "recycle":
+        if operator["archived_weights_sha256"] is None:
+            errors.append(
+                "$.operator.archived_weights_sha256: required for recycle swap-back evidence"
+            )
+    elif operator["mechanism"] != "hybrid" and operator["archived_weights_sha256"] is not None:
+        errors.append(
+            "$.operator.archived_weights_sha256: must be null unless the operator "
+            "recycles weights or a hybrid explicitly archives them"
+        )
+
+    optimizer = manifest["optimizer"]
+    _unique_values(
+        (group["name"] for group in optimizer["parameter_groups"]),
         "$.optimizer.parameter_groups",
         errors,
     )
+    optimizer_roles = [
+        group["role"] for group in optimizer["parameter_groups"]
+    ]
+    nullable_optimizer_fields = (
+        "name",
+        "epsilon",
+        "gradient_clip",
+        "warmup_fraction",
+        "schedule",
+    )
+    if optimizer["enabled"]:
+        for field in nullable_optimizer_fields:
+            if optimizer[field] is None:
+                errors.append(f"$.optimizer.{field}: required when optimizer is enabled")
+        if not optimizer["parameter_groups"]:
+            errors.append(
+                "$.optimizer.parameter_groups: cannot be empty when optimizer is enabled"
+            )
+        if len(optimizer["betas"]) != 2:
+            errors.append("$.optimizer.betas: must contain two values when enabled")
+        if optimizer["total_steps"] <= 0:
+            errors.append("$.optimizer.total_steps: must be positive when enabled")
+    else:
+        for field in nullable_optimizer_fields:
+            if optimizer[field] is not None:
+                errors.append(f"$.optimizer.{field}: must be null when optimizer is disabled")
+        if optimizer["parameter_groups"]:
+            errors.append("$.optimizer.parameter_groups: must be empty when disabled")
+        if optimizer["betas"]:
+            errors.append("$.optimizer.betas: must be empty when optimizer is disabled")
+        if optimizer["total_steps"] != 0:
+            errors.append("$.optimizer.total_steps: must be zero when optimizer is disabled")
+    if manifest["stage"] == "train" and not optimizer["enabled"]:
+        errors.append("$.optimizer.enabled: train stage requires an optimizer")
+    freeze_mode = manifest["training_protocol"]["freezing"]["mode"]
+    if optimizer["enabled"]:
+        if freeze_mode == "full_model" and any(
+            role != "all_trainable" for role in optimizer_roles
+        ):
+            errors.append(
+                "$.optimizer.parameter_groups: full_model requires every group "
+                "to have role 'all_trainable'"
+            )
+        elif freeze_mode == "side_only" and any(
+            role != "side_branch" for role in optimizer_roles
+        ):
+            errors.append(
+                "$.optimizer.parameter_groups: side_only requires every group "
+                "to have role 'side_branch'"
+            )
+        elif freeze_mode == "phased":
+            if any(
+                role not in {"side_branch", "backbone"}
+                for role in optimizer_roles
+            ):
+                errors.append(
+                    "$.optimizer.parameter_groups: phased permits only 'side_branch' "
+                    "and 'backbone' roles"
+                )
+            for required_role in ("side_branch", "backbone"):
+                if required_role not in optimizer_roles:
+                    errors.append(
+                        "$.optimizer.parameter_groups: phased requires at least one "
+                        f"group with role {required_role!r}"
+                    )
 
     tokens = manifest["tokens"]
     if tokens["target"] + tokens["replay"] != tokens["optimizer_visible"]:
@@ -572,6 +839,15 @@ def _experiment_invariant_errors(manifest: Mapping[str, Any]) -> list[str]:
     if teacher["enabled"] != (tokens["teacher_derived"] > 0):
         errors.append(
             "$.tokens.teacher_derived: must be positive exactly when teacher.enabled is true"
+        )
+    if optimizer["enabled"]:
+        if tokens["optimizer_visible"] <= 0:
+            errors.append(
+                "$.tokens.optimizer_visible: must be positive when optimizer is enabled"
+            )
+    elif tokens["optimizer_visible"] != 0:
+        errors.append(
+            "$.tokens.optimizer_visible: must be zero when optimizer is disabled"
         )
 
     flops = manifest["flops"]
@@ -601,14 +877,39 @@ def _experiment_invariant_errors(manifest: Mapping[str, Any]) -> list[str]:
         errors.append(
             "$.teacher.generation_flops: must equal $.flops.teacher_generation"
         )
+    if optimizer["enabled"]:
+        if flops["training"] <= 0:
+            errors.append("$.flops.training: must be positive when optimizer is enabled")
+    elif flops["training"] != 0:
+        errors.append("$.flops.training: must be zero when optimizer is disabled")
 
     exported = manifest["export"]
+    if factorizations:
+        expected_physical_parameters = (
+            manifest["model"]["physical_parameters"]
+            - factorization_parameter_savings
+        )
+        if exported["physical_parameters"] != expected_physical_parameters:
+            errors.append(
+                "$.export.physical_parameters: must equal source physical parameters "
+                "minus the committed low-rank factorization savings "
+                f"({expected_physical_parameters})"
+            )
     if exported["active_parameters"] > exported["physical_parameters"]:
         errors.append("$.export.active_parameters: cannot exceed physical_parameters")
     if exported["nonzero_parameters"] > exported["physical_parameters"]:
         errors.append("$.export.nonzero_parameters: cannot exceed physical_parameters")
     if exported["weight_bytes"] > exported["bundle_bytes"]:
         errors.append("$.export.weight_bytes: cannot exceed bundle_bytes")
+    required_weight_bits = (
+        exported["physical_parameters"] * exported["average_weight_bits"]
+    )
+    available_weight_bits = exported["weight_bytes"] * 8
+    if available_weight_bits + max(1e-6, required_weight_bits * 1e-12) < required_weight_bits:
+        errors.append(
+            "$.export.weight_bytes: cannot encode physical_parameters at the "
+            "declared average_weight_bits"
+        )
     _unique_values(exported["runtime_compatibility"], "$.export.runtime_compatibility", errors)
     return errors
 
@@ -642,6 +943,127 @@ def load_experiment_manifest(
     return validate_experiment_manifest(loaded, schema_path=schema_path)
 
 
+_HARDWARE_PROTOCOL_BY_WORKLOAD: dict[str, dict[str, Any]] = {
+    "cold_load": {
+        "cold_start": True,
+        "process_model": "independent_process_per_repetition",
+        "warmups": 0,
+        "repetitions": 5,
+        "synchronized_timing": False,
+        "randomized_workload_order": False,
+    },
+    "token_controlled": {
+        "cold_start": False,
+        "process_model": "single_loaded_process",
+        "warmups": 10,
+        "repetitions": 30,
+        "synchronized_timing": True,
+        "randomized_workload_order": True,
+    },
+    # The real-terminal protocol scores one deterministic prompt/seed attempt.
+    # Its prompt order is randomized at the session level, but it is not a
+    # 30-repetition latency microbenchmark.
+    "real_terminal": {
+        "cold_start": False,
+        "process_model": "single_loaded_process",
+        "warmups": 0,
+        "repetitions": 1,
+        "synchronized_timing": True,
+        "randomized_workload_order": True,
+    },
+}
+
+_TOKEN_CONTROLLED_WORKLOADS = frozenset(
+    {
+        (128, 64),
+        (512, 64),
+        (2048, 64),
+        (128, 256),
+        (512, 256),
+    }
+)
+
+
+def _hardware_protocol_errors(result: Mapping[str, Any]) -> list[str]:
+    """Enforce the exact claim protocol documented in HARDWARE.md."""
+
+    errors: list[str] = []
+    workload = result["workload"]
+    kind = workload["kind"]
+    protocol = result["protocol"]
+    measurements = result["measurements"]
+
+    expected = _HARDWARE_PROTOCOL_BY_WORKLOAD[kind]
+    for field, expected_value in expected.items():
+        if protocol[field] != expected_value:
+            errors.append(
+                f"$.protocol.{field}: workload kind {kind!r} requires "
+                f"{expected_value!r}"
+            )
+
+    if kind == "cold_load":
+        if workload["prompt_tokens"] != 0:
+            errors.append("$.workload.prompt_tokens: cold_load requires zero")
+        if workload["generated_tokens"] != 0:
+            errors.append("$.workload.generated_tokens: cold_load requires zero")
+        if workload.get("prompt_sha256") is not None:
+            errors.append("$.workload.prompt_sha256: cold_load requires null")
+    else:
+        if workload["prompt_tokens"] <= 0:
+            errors.append(
+                f"$.workload.prompt_tokens: {kind} requires a positive token count"
+            )
+        if workload.get("prompt_sha256") is None:
+            errors.append(f"$.workload.prompt_sha256: {kind} requires a digest")
+
+    if kind == "token_controlled":
+        token_shape = (workload["prompt_tokens"], workload["generated_tokens"])
+        if token_shape not in _TOKEN_CONTROLLED_WORKLOADS:
+            errors.append(
+                "$.workload: token_controlled prompt/generated token counts must "
+                "match one of the five frozen microbenchmarks"
+            )
+
+    required_summaries = (
+        {"load_time_ms"}
+        if kind == "cold_load"
+        else {"first_token_ms", "wall_time_ms"}
+    )
+    forbidden_summaries = (
+        {
+            "first_token_ms",
+            "prefill_tokens_per_second",
+            "decode_tokens_per_second",
+            "wall_time_ms",
+        }
+        if kind == "cold_load"
+        else {"load_time_ms"}
+    )
+    for field in sorted(required_summaries):
+        if measurements[field] is None:
+            errors.append(
+                f"$.measurements.{field}: required for workload kind {kind!r}"
+            )
+    for field in sorted(forbidden_summaries):
+        if measurements[field] is not None:
+            errors.append(
+                f"$.measurements.{field}: must be null for workload kind {kind!r}"
+            )
+
+    prefill_present = measurements["prefill_tokens_per_second"] is not None
+    decode_present = measurements["decode_tokens_per_second"] is not None
+    if kind != "cold_load" and prefill_present != decode_present:
+        errors.append(
+            "$.measurements: prefill_tokens_per_second and "
+            "decode_tokens_per_second must both be present or both be null"
+        )
+
+    if measurements["peak_host_rss_bytes"] is None:
+        errors.append("$.measurements.peak_host_rss_bytes: must be measured")
+
+    return errors
+
+
 def _hardware_invariant_errors(result: Mapping[str, Any]) -> list[str]:
     errors: list[str] = []
     artifact = result["artifact"]
@@ -651,6 +1073,14 @@ def _hardware_invariant_errors(result: Mapping[str, Any]) -> list[str]:
         errors.append("$.artifact.nonzero_parameters: cannot exceed physical_parameters")
     if artifact["weight_bytes"] > artifact["bundle_bytes"]:
         errors.append("$.artifact.weight_bytes: cannot exceed bundle_bytes")
+    declared_weight_bits = (
+        artifact["physical_parameters"] * artifact["average_weight_bits"]
+    )
+    if artifact["weight_bytes"] * 8 < declared_weight_bits:
+        errors.append(
+            "$.artifact.weight_bytes: cannot store physical_parameters at the "
+            "declared average_weight_bits"
+        )
 
     hardware = result["hardware"]
     if hardware["logical_threads"] < hardware["physical_cores"]:
@@ -673,6 +1103,18 @@ def _hardware_invariant_errors(result: Mapping[str, Any]) -> list[str]:
         ):
             errors.append(
                 f"$.measurements.{measurement_name}: expected minimum <= median <= p95 <= maximum"
+            )
+        if summary["sample_count"] == 1 and len(
+            {
+                summary["minimum"],
+                summary["median"],
+                summary["p95"],
+                summary["maximum"],
+            }
+        ) != 1:
+            errors.append(
+                f"$.measurements.{measurement_name}: a one-sample summary must "
+                "have identical minimum, median, p95, and maximum"
             )
 
     correctness = result["correctness"]
@@ -699,6 +1141,7 @@ def _hardware_invariant_errors(result: Mapping[str, Any]) -> list[str]:
                 errors.append(f"$.correctness.{field}: cannot be false when gate_passed is true")
         if correctness["errors"]:
             errors.append("$.correctness.errors: must be empty when gate_passed is true")
+    errors.extend(_hardware_protocol_errors(result))
     return errors
 
 
@@ -707,7 +1150,16 @@ def validate_hardware_result(
     *,
     schema_path: str | os.PathLike[str] | None = None,
 ) -> dict[str, Any]:
-    """Validate and defensively copy one hardware result."""
+    """Validate and defensively copy one unbound hardware result.
+
+    Standalone validation enforces the exact clean-worktree measurement
+    protocol and checks the hardware-result contract.  It does not establish
+    that ``artifact.source_manifest_sha256`` names a real completed experiment,
+    that the artifact identity/accounting agrees with such a record, or that
+    external raw samples and inspection evidence are authentic.  Use
+    :func:`validate_hardware_result_against_experiment_manifest` for that
+    evidence-chain check.
+    """
 
     candidate = copy.deepcopy(result)
     schema = _load_schema("hardware", schema_path)
@@ -716,6 +1168,76 @@ def validate_hardware_result(
     if invariant_errors:
         raise ManifestValidationError(invariant_errors)
     return candidate
+
+
+def validate_hardware_result_against_experiment_manifest(
+    result: Mapping[str, Any],
+    completed_record: Mapping[str, Any],
+    *,
+    hardware_schema_path: str | os.PathLike[str] | None = None,
+    experiment_schema_path: str | os.PathLike[str] | None = None,
+) -> dict[str, Any]:
+    """Validate and bind a hardware result to one completed experiment.
+
+    The completed record's canonical JSON hash is the source identity.  Every
+    exported artifact identity and size/accounting field consumed by the
+    hardware protocol must then match exactly.  The comparison method and dose
+    are also taken from the completed operator rather than accepted as mutable
+    hardware-run labels.  Both input mappings are validated before any
+    cross-document comparison.
+    """
+
+    validated_result = validate_hardware_result(
+        result,
+        schema_path=hardware_schema_path,
+    )
+    validated_record = validate_experiment_manifest(
+        completed_record,
+        schema_path=experiment_schema_path,
+    )
+    artifact = validated_result["artifact"]
+    exported = validated_record["export"]
+    errors: list[str] = []
+
+    expected_manifest_sha256 = value_sha256(validated_record)
+    if artifact["source_manifest_sha256"] != expected_manifest_sha256:
+        errors.append(
+            "$.artifact.source_manifest_sha256: must equal the canonical "
+            "completed experiment manifest hash"
+        )
+
+    field_pairs = (
+        ("architecture", "architecture"),
+        ("format", "format"),
+        ("sha256", "artifact_sha256"),
+        ("bundle_sha256", "bundle_sha256"),
+        ("tokenizer_sha256", "tokenizer_sha256"),
+        ("inspection_report_sha256", "inspection_report_sha256"),
+        ("weight_bytes", "weight_bytes"),
+        ("bundle_bytes", "bundle_bytes"),
+        ("physical_parameters", "physical_parameters"),
+        ("active_parameters", "active_parameters"),
+        ("nonzero_parameters", "nonzero_parameters"),
+        ("average_weight_bits", "average_weight_bits"),
+    )
+    for artifact_field, export_field in field_pairs:
+        if not _json_equal(artifact[artifact_field], exported[export_field]):
+            errors.append(
+                f"$.artifact.{artifact_field}: must exactly match "
+                f"$.export.{export_field} in the completed experiment manifest"
+            )
+    for artifact_field, operator_field in (("method", "family"), ("dose", "dose")):
+        if not _json_equal(
+            artifact[artifact_field],
+            validated_record["operator"][operator_field],
+        ):
+            errors.append(
+                f"$.artifact.{artifact_field}: must exactly match "
+                f"$.operator.{operator_field} in the completed experiment manifest"
+            )
+    if errors:
+        raise ManifestValidationError(errors)
+    return validated_result
 
 
 def load_hardware_result(
@@ -764,9 +1286,11 @@ def _artifact_fingerprint(artifact: Mapping[str, Any]) -> dict[str, Any]:
     return {
         key: copy.deepcopy(artifact[key])
         for key in (
+            "architecture",
             "sha256",
             "bundle_sha256",
             "tokenizer_sha256",
+            "inspection_report_sha256",
             "weight_bytes",
             "bundle_bytes",
             "physical_parameters",
@@ -877,6 +1401,7 @@ def merge_hardware_results(
 __all__ = [
     "EXPERIMENT_SCHEMA_VERSION",
     "HARDWARE_SCHEMA_VERSION",
+    "MAX_DOCUMENT_BYTES",
     "ManifestValidationError",
     "atomic_write_json",
     "canonical_json",
@@ -890,5 +1415,6 @@ __all__ = [
     "sha256_bytes",
     "validate_experiment_manifest",
     "validate_hardware_result",
+    "validate_hardware_result_against_experiment_manifest",
     "value_sha256",
 ]

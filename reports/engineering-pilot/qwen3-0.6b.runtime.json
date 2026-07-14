@@ -1,0 +1,117 @@
+{
+  "buffers": {
+    "accounting_basis": "union_of_contiguous_untyped_storage_byte_spans",
+    "by_dtype": [
+      {
+        "dtype": "torch.float32",
+        "physical_bytes": 512,
+        "physical_elements": 128
+      }
+    ],
+    "deduplicated_alias_entries": 0,
+    "named_tensor_entries": 2,
+    "physical_bytes": 512,
+    "physical_elements": 128,
+    "storage_allocations_referenced": 2,
+    "unique_physical_spans": 2
+  },
+  "claim_qualification": {
+    "ambiguous_static_density_upgraded": false,
+    "forward_succeeded": true,
+    "model_load_succeeded": true,
+    "physical_parameter_elements": 596049920,
+    "physical_parameter_elements_below_one_billion": true,
+    "scope": "physical runtime parameter storage plus one bounded local causal-LM forward; no capability or benchmark quality claim",
+    "static_density_classification": "dense_consistent",
+    "sub_billion_dense_runtime_qualified": true
+  },
+  "dependency_versions": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.13.1"
+  },
+  "device_placement": {
+    "buffer_devices": [
+      "cuda:0"
+    ],
+    "input_device": "cuda:0",
+    "logits_device": "cuda:0",
+    "parameter_devices": [
+      "cuda:0"
+    ],
+    "requested": "cuda:0"
+  },
+  "forward": {
+    "input_ids_shape": [
+      1,
+      8
+    ],
+    "logits_dtype": "torch.bfloat16",
+    "logits_finite": true,
+    "logits_shape": [
+      1,
+      8,
+      151936
+    ],
+    "mode": "eval_inference_single_forward_no_generation",
+    "use_cache": false
+  },
+  "implementation": {
+    "module": "cbds.model_runtime",
+    "package_name": "cbds-research",
+    "package_version": "0.3.0",
+    "source_sha256": "7e916803a791d0e8b915608aa13a608493d5f1a81cf5149b38cb8df3f3e826c1"
+  },
+  "load_policy": {
+    "artifact_writes_permitted": false,
+    "flat_local_artifact_required": true,
+    "local_files_only": true,
+    "os_socket_isolation_provided": false,
+    "trust_remote_code": false,
+    "use_safetensors": true
+  },
+  "parameters": {
+    "accounting_basis": "union_of_contiguous_untyped_storage_byte_spans",
+    "by_dtype": [
+      {
+        "dtype": "torch.bfloat16",
+        "physical_bytes": 1192099840,
+        "physical_elements": 596049920,
+        "trainable_bytes": 1192099840,
+        "trainable_elements": 596049920
+      }
+    ],
+    "deduplicated_alias_entries": 1,
+    "named_tensor_entries": 311,
+    "physical_bytes": 1192099840,
+    "physical_elements": 596049920,
+    "storage_allocations_referenced": 310,
+    "trainable_bytes": 1192099840,
+    "trainable_elements": 596049920,
+    "unique_physical_spans": 310
+  },
+  "prompt": {
+    "observed_tokens": 8,
+    "prompt_sha256": "937b8eec83d3d7895edaad883c2b9582f62665bd722eb2427e9057936d14efff",
+    "prompt_utf8_bytes": 40,
+    "token_cap": 64,
+    "truncation": false
+  },
+  "report_hash_scope": "canonical_json_excluding_report_sha256",
+  "report_sha256": "7efbde766260aaee0a80b27f9723a6d22c5ab253348e6903eb1251826958216b",
+  "runtime_classes": {
+    "loaded_model_class": "transformers.models.qwen3.modeling_qwen3.Qwen3ForCausalLM",
+    "loaded_tokenizer_class": "transformers.models.qwen2.tokenization_qwen2.Qwen2Tokenizer",
+    "transformers_auto_model_class": "transformers.models.auto.modeling_auto.AutoModelForCausalLM",
+    "transformers_auto_tokenizer_class": "transformers.models.auto.tokenization_auto.AutoTokenizer"
+  },
+  "runtime_probe_version": "1.1.0",
+  "schema_version": "1.0.0",
+  "static_inspection": {
+    "architecture_classification": "dense_consistent",
+    "bundle_manifest_sha256": "5d2a258423af1a2b6973e1e3d3bec76106d0f7d9aca855fbe8ed1884042c55e3",
+    "inspector_version": "1.1.0",
+    "reinspection_match_after_runtime": true,
+    "report_sha256": "e3d821157bd7888906ae0fda459d523712ab743bd9edf9fb79728123f9782319",
+    "weight_set_sha256": "09a70514a00d07993f618fa15701c7cf321a44a30ad200fec66f1e5f3b6772e8"
+  }
+}

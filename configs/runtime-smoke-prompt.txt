@@ -1,0 +1,1 @@
+Write a Bash command that prints hello.

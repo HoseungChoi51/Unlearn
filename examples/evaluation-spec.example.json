@@ -1,0 +1,368 @@
+{
+  "schema_version": "3.0.0",
+  "evaluation_id": "development-static-evaluation-0001",
+  "created_at": "2026-07-14T19:00:00+09:00",
+  "git_revision": "1111111111111111111111111111111111111111",
+  "mode": "static",
+  "artifact": {
+    "artifact_id": "dense-terminal-artifact-0001",
+    "architecture": "dense",
+    "training_seed": 12,
+    "physical_parameters": 600000000,
+    "format": "safetensors",
+    "artifact_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "bundle_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "tokenizer_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "completed_run_id": "example-train-run-0001",
+    "completed_experiment_record_sha256": "1419a8b41e4f880f1a1e765d621633bd911f9fb9263e2e131b438bfed7217af6",
+    "inspection_report_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+  },
+  "benchmark": {
+    "benchmark_id": "generated-terminal-suite-v1",
+    "repository": "HoseungChoi51/terminal-suite",
+    "revision": "2222222222222222222222222222222222222222",
+    "dataset_sha256": "0000000000000000000000000000000000000000000000000000000000000006",
+    "manifest_sha256": "0000000000000000000000000000000000000000000000000000000000000007",
+    "semantic_graph_sha256": "0000000000000000000000000000000000000000000000000000000000000008",
+    "tasks_sha256": "0000000000000000000000000000000000000000000000000000000000000009",
+    "fixtures_sha256": "000000000000000000000000000000000000000000000000000000000000000a",
+    "suite": "static",
+    "split": {
+      "name": "method-development-static",
+      "role": "method_development",
+      "sha256": "000000000000000000000000000000000000000000000000000000000000000b",
+      "sealed": false,
+      "open_once": false
+    },
+    "task_count": 2,
+    "fixture_count": 10
+  },
+  "task_commitments": {
+    "version": "1.0.0",
+    "hash_algorithm": "canonical-json-sha256",
+    "commitments": [
+      {
+        "prompt_id": "task-9947bff842ebcdcf31b73d4567bf671585c6f4ebdfab5127a5cd9bb0feed4779",
+        "task_record_sha256": "52853857194ed6ef0cd67944f47abb50846bd58f08f82bd27b0163716e193461",
+        "fixture_ids_sha256": "2049be2979eace3145f2018d1aa9f23ec42389af7f71a5499e9e53d96b57324d",
+        "ordered_fixture_ids_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "fixture_count": 5
+      },
+      {
+        "prompt_id": "task-c8b36982316351a28e040a6520df2092c2c87a4ea611c123d04993074b2b6f1d",
+        "task_record_sha256": "03741ba1c6d24c5acbac664a54390c5d3e85ba813f56c5413d814bc58f92e217",
+        "fixture_ids_sha256": "2c69c67d53a6b5705a9162a924400afa7886884486c284d4f06f8628eff116d9",
+        "ordered_fixture_ids_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "fixture_count": 5
+      }
+    ],
+    "commitment_set_sha256": "ac4e894748433a77795ac2cdae7c1b84c293a1afb46ad646a00d37b394cae131"
+  },
+  "execution": {
+    "runtime": "podman",
+    "runtime_version": "5.2.2",
+    "runtime_executable_sha256": "000000000000000000000000000000000000000000000000000000000000000c",
+    "rootless_required": true,
+    "container_image_repository": "ghcr.io/example/cbds-evaluator",
+    "container_image_digest": "sha256:000000000000000000000000000000000000000000000000000000000000000d",
+    "container_recipe_revision": "3333333333333333333333333333333333333333",
+    "container_recipe_sha256": "000000000000000000000000000000000000000000000000000000000000000e",
+    "verifier_repository": "HoseungChoi51/terminal-verifier",
+    "verifier_revision": "4444444444444444444444444444444444444444",
+    "verifier_sha256": "000000000000000000000000000000000000000000000000000000000000000f",
+    "sandbox_measurement_method": "cgroup-v2-procfs-rusage-v1",
+    "sandbox_measurement_implementation_sha256": "0000000000000000000000000000000000000000000000000000000000000010",
+    "sandbox_policy_sha256": "0000000000000000000000000000000000000000000000000000000000000010"
+  },
+  "decoding": {
+    "algorithm": "greedy",
+    "do_sample": false,
+    "num_beams": 1,
+    "num_return_sequences": 1,
+    "maximum_new_tokens": 1024,
+    "eos_token_ids": [
+      1,
+      2
+    ],
+    "pad_token_id": 0,
+    "stop_sequences": [],
+    "tokenizer_add_special_tokens": true,
+    "skip_special_tokens": true,
+    "clean_up_tokenization_spaces": false,
+    "prompt_serialization_sha256": "0000000000000000000000000000000000000000000000000000000000000012",
+    "policy_sha256": "6744a20be5e3636039490eea91fc686cf6c7ded1d10dbdb163a42cab3495c724"
+  },
+  "parser": {
+    "grammar": "raw-or-one-triple-backtick-fence",
+    "version": "1.0.0",
+    "raw_default_language": "bash",
+    "program_language": "bash",
+    "allowed_languages": [
+      "bash"
+    ],
+    "fence_labels": {
+      "bash": [
+        "",
+        "bash",
+        "sh",
+        "shell"
+      ],
+      "python": [
+        "python",
+        "python3",
+        "py"
+      ]
+    },
+    "surrounding_prose_allowed": false,
+    "multiple_fences_allowed": false,
+    "newline_normalization": "crlf-and-cr-to-lf",
+    "nul_allowed": false,
+    "empty_program_allowed": false,
+    "policy_sha256": "97c5c8f710a3bdf50089d2089afb6a9d28f1f49df01d4a2f6e9472f2eb0bc581"
+  },
+  "limits": {
+    "maximum_prompt_tokens": 1024,
+    "maximum_sequence_tokens": 2048,
+    "maximum_response_bytes": 65536,
+    "syntax_timeout_seconds": 5,
+    "fixture_timeout_seconds": 10,
+    "kill_grace_seconds": 1,
+    "cpu_time_seconds": 10,
+    "memory_bytes": 536870912,
+    "pids": 64,
+    "open_files": 64,
+    "stdout_bytes": 1048576,
+    "stderr_bytes": 1048576,
+    "workspace_bytes": 67108864,
+    "action_limit": 0,
+    "observation_bytes": 0
+  },
+  "environment": {
+    "locale": "C.UTF-8",
+    "timezone": "UTC",
+    "umask": 63,
+    "uid": 65534,
+    "gid": 65534,
+    "working_directory": "/workspace",
+    "inherit_host_environment": false,
+    "variables": [
+      {
+        "name": "HOME",
+        "value": "/workspace"
+      },
+      {
+        "name": "LANG",
+        "value": "C.UTF-8"
+      },
+      {
+        "name": "LC_ALL",
+        "value": "C.UTF-8"
+      },
+      {
+        "name": "PATH",
+        "value": "/usr/local/bin:/usr/bin:/bin"
+      },
+      {
+        "name": "TMPDIR",
+        "value": "/workspace/tmp"
+      },
+      {
+        "name": "TZ",
+        "value": "UTC"
+      }
+    ],
+    "shell_options": [
+      "pipefail"
+    ],
+    "network": "none",
+    "read_only_root": true,
+    "no_new_privileges": true,
+    "capabilities_added": [],
+    "host_mounts_allowed": false,
+    "container_socket_allowed": false,
+    "policy_sha256": "adf68f28ca20b57d1ddba591a9261977d97b9a553576c35ec3ad042cb29d816c"
+  },
+  "tool_policy": {
+    "version": "1.0.0",
+    "track": "bash_native",
+    "allowlist_sha256": "57f615d8802330bfc3f948d960b0726c35b43e2b831e74899601333872bc11c7",
+    "allowed_executables": [
+      "bash",
+      "find",
+      "jq",
+      "printf",
+      "sort"
+    ],
+    "shell_builtins_allowed": true,
+    "python_allowed": false,
+    "perl_allowed": false,
+    "compilers_allowed": false,
+    "network_tools_allowed": false,
+    "resolution": "exact-basename-allowlist",
+    "unknown_tool_action": "fail",
+    "policy_sha256": "7b6915d82e0515e29baf1f68e114d6ce545fc5971366dce50e4272418d149616"
+  },
+  "fixture_policy": {
+    "fixtures_per_task": 5,
+    "aggregation": "all_must_pass",
+    "fixture_order": "deterministic_sha256",
+    "fixture_order_sha256": "0000000000000000000000000000000000000000000000000000000000000011",
+    "fresh_workspace_per_fixture": true,
+    "state_property_checks_required": true,
+    "independent_reference_required": true,
+    "stop_after_first_failure": false,
+    "policy_sha256": "0c5ddf58839061541e830d89e9eca2bc4a240e8c0951d6f7dcfb978543f861cd"
+  },
+  "outcome_policy": {
+    "rerun": {
+      "version": "1.0.0",
+      "mode": "never",
+      "maximum_attempts": 1,
+      "eligible_terminal_statuses": [],
+      "scored_attempt_rule": "first_attempt",
+      "policy_sha256": "323493e8f7a70888190512f5b43c81bd7df2b262544e0d99f55ae4f7c11859d3"
+    },
+    "exclusion": {
+      "version": "1.0.0",
+      "mode": "none",
+      "manifest_sha256": null,
+      "allowed_reason_codes": [],
+      "locked_before_sealed_open": true,
+      "policy_sha256": "f79faf067cdf6110980037504bf9efb8e46dd11f359fe4ce7c77190a5f7add5e"
+    },
+    "timeout": {
+      "version": "1.0.0",
+      "syntax_timeout_status": "syntax_check_failure",
+      "fixture_timeout_status": "timeout",
+      "action_timeout_status": "timeout",
+      "counts_as_failure": true,
+      "rerunnable": false,
+      "policy_sha256": "f85816447a166f5c014ee9804deca405e8ede1890973407f1c24df41f7eabf5d"
+    },
+    "failure_taxonomy": {
+      "version": "1.0.0",
+      "terminal_statuses": [
+        "passed",
+        "extraction_failure",
+        "truncation",
+        "syntax_failure",
+        "syntax_check_failure",
+        "disallowed_tool",
+        "tool_policy_check_failure",
+        "timeout",
+        "runtime_failure",
+        "functional_failure",
+        "resource_limit",
+        "verifier_failure",
+        "action_limit",
+        "internal_error"
+      ],
+      "precedence": [
+        "extraction_failure",
+        "truncation",
+        "syntax_check_failure",
+        "syntax_failure",
+        "tool_policy_check_failure",
+        "disallowed_tool",
+        "timeout",
+        "resource_limit",
+        "runtime_failure",
+        "verifier_failure",
+        "functional_failure",
+        "action_limit",
+        "internal_error",
+        "passed"
+      ],
+      "policy_sha256": "a8b662e6b81d600dd594dbeb9da70ecf996ec7bf103fd68e85da1d31f349a1c7"
+    }
+  },
+  "task_result": {
+    "schema_version": "3.0.0",
+    "schema_sha256": "bbff0c99267b230a5b509a667ab21e5fc87fc1b955959ef3e7f739010bef06a9",
+    "record_format": "canonical-json",
+    "record_hash_algorithm": "sha256"
+  },
+  "seeds": {
+    "generation": 10,
+    "task_order": 11,
+    "fixture_order": 12,
+    "action_loop": 13,
+    "environment": 14,
+    "rerun": 15
+  },
+  "analysis_plan": {
+    "version": "1.0.0",
+    "phase": "development",
+    "lane": "development",
+    "external_plan_sha256": "72d07f7f7eceef6931b61fea6c2ae344f9d5c0db3e6cb65b0c28bd1d388d436b",
+    "analysis_code_revision": "1111111111111111111111111111111111111111",
+    "analysis_code_sha256": "67e88b0021d0db935dbaeebe35e047fdd5be06a8fd1f8e99094c5ca45878cf04",
+    "seed_evidence_scope": "per_artifact_only",
+    "contrast": null,
+    "training_seed_set_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+    "training_seed_count": 1,
+    "pairing_units": [
+      "training_seed",
+      "data_order",
+      "teacher_corpus",
+      "task",
+      "fixture"
+    ],
+    "metric_unit": "proportion",
+    "points_to_proportion_divisor": 100,
+    "bootstrap": {
+      "method": "crossed_seed_task_percentile_bootstrap",
+      "resamples": 1000,
+      "random_seed": 101,
+      "percentile_interpolation": "linear_r7",
+      "resampling_unit": "semantic_task",
+      "fixtures_nested_within_task": true,
+      "training_seed_crossed_with_task": true
+    },
+    "randomization_test": {
+      "method": "paired_sign_flip_randomization",
+      "unit": "task",
+      "alternative": "two_sided",
+      "exact_max_units": 20,
+      "monte_carlo_draws": 100000,
+      "random_seed": 102
+    },
+    "multiplicity_correction": {
+      "p_values": "holm_step_down",
+      "confidence_intervals": "bonferroni_simultaneous",
+      "family_size": 2,
+      "family_confidence_level": 0.95,
+      "per_contrast_confidence_level": 0.975
+    },
+    "confirmatory_lane_contrast_count": 2,
+    "noninferiority_margins": {
+      "static_absolute_points": null,
+      "bounded_terminal_absolute_points": 2
+    },
+    "success_thresholds": {
+      "rule": "development_only",
+      "static_gain_absolute_points": 0,
+      "serialized_bytes_reduction_fraction": null,
+      "physical_parameters_reduction_fraction": null,
+      "simultaneous_lower_bound_above_zero": false
+    },
+    "policy_sha256": "f9ecb3e1a30c1e493692cc584f5331cd4ae1567aa7f6d8e5342e809f825d2f2a"
+  },
+  "output_policy": {
+    "version": "1.0.0",
+    "hash_algorithm": "sha256",
+    "hash_input": "raw_bytes",
+    "text_encoding": "utf-8",
+    "generated_text": "hash_and_byte_count_only",
+    "extracted_code": "hash_only",
+    "stdout": "hash_and_byte_count_only",
+    "stderr": "hash_and_byte_count_only",
+    "diagnostics": "hash_only",
+    "verifier_results": "hash_only",
+    "action_payloads": "hash_only",
+    "retain_plaintext": false,
+    "sealed_identifiers_only": true,
+    "task_result_record_hash": "canonical-json-sha256",
+    "policy_sha256": "e0e187e4dc1037c320439a6fcc72e1477aeefcfdf6d8c01f2d688d540febe99e"
+  }
+}

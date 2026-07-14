@@ -13,6 +13,15 @@ Every recorded run must validate against
 samples alongside the validated summary even though only the summary is
 portable across repository versions.
 
+Schema and semantic validation enforce one of the exact per-record profiles
+below and require an explicitly clean worktree. This is a necessary claim
+gate, not sufficient evidence by itself: a reported comparison must also pass
+the correctness gate, bind to the completed export, and retain auditable raw
+samples and inspection evidence.
+Paired validation additionally requires the hardware artifact's `method` and
+`dose` to equal the completed experiment's operator family and dose, preventing
+post-hoc comparison labels.
+
 ## Comparison rules
 
 1. Compare artifacts only within a **runtime stratum**: the same engine,
@@ -42,6 +51,7 @@ Freeze one bundle before benchmarking:
 - Tokenizer and any restricted-vocabulary mapping.
 - Model configuration and generation configuration.
 - Experiment manifest and source checkpoint revision.
+- A fresh, content-addressed inspection report for the exact exported artifact.
 - A SHA-256 manifest covering every bundle file.
 - Fixed token-controlled workloads.
 - Fixed real-terminal prompts and their public, non-sealed identifiers.
@@ -101,7 +111,9 @@ Before collecting performance data:
 
 1. Load the artifact in the selected runtime.
 2. Confirm model parameter and serialized-byte accounting against the export
-   manifest.
+   manifest and its fresh inspection report. The schema enforces a necessary
+   parameter/average-bit/weight-byte lower bound, but that arithmetic check is
+   not a format-aware proof by itself.
 3. Tokenize the fixed smoke prompts and record token counts.
 4. Generate deterministically with temperature zero and the frozen stop rules.
 5. Compare generated token hashes and executable outcomes with the artifact's
@@ -151,6 +163,20 @@ that token-controlled tests intentionally remove. Do not substitute it for the
 sealed model-quality evaluation.
 
 ## Measurement procedure
+
+Every result record uses exactly one of these profiles:
+
+| Workload kind | Process model | Cold start | Warmups | Measured repetitions | Synchronized timing | Randomized workload/prompt order |
+|---|---|---:|---:|---:|---:|---:|
+| `cold_load` | new independent process per repetition | yes | 0 | 5 | no | no |
+| `token_controlled` | one loaded process | no | 10 | 30 | yes | yes |
+| `real_terminal` | one loaded process | no | 0 | 1 prompt/seed attempt | yes | yes |
+
+For `cold_load`, only the load-time summary is present. For inference records,
+load time is absent while first-token and wall-time summaries are required.
+Prefill and decode summaries must either both be present or both be marked
+unavailable. Every present timing summary has exactly the profile's measured
+sample count, and peak host RSS is always recorded.
 
 ### Cold load
 
@@ -256,13 +282,14 @@ than averaging away the thermal effect.
 Each summary JSON must:
 
 - Validate against the repository schema.
-- Reference immutable artifact and workload hashes.
+- Reference immutable artifact, inspection-report, completed-manifest, and
+  workload hashes.
 - Contain exactly one machine, runtime stratum, and workload.
 - Retain `null` for unsupported measurements.
 - Link to raw samples through `raw_samples_sha256`.
 - State correctness-gate status.
 
-The future `merge-results` command must reject duplicate `run_id` values,
+The implemented `merge-results` command rejects duplicate `run_id` values,
 schema-version mismatches, hash mismatches, and summaries whose sample count
 does not match the protocol. It may aggregate repeated sessions on the same
 stratum, but it must never pool samples across hardware or runtimes.

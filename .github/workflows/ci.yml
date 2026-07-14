@@ -37,13 +37,56 @@ jobs:
           python -m venv /tmp/cbds-wheel-venv
           /tmp/cbds-wheel-venv/bin/pip install --no-deps /tmp/cbds-wheel/*.whl
           cd /tmp
-          /tmp/cbds-wheel-venv/bin/python -c "import json; from importlib.resources import files; root = files('cbds.schemas'); names = ('experiment-manifest.schema.json', 'hardware-result.schema.json', 'task-result.schema.json'); assert all(json.loads(root.joinpath(name).read_bytes()) for name in names)"
+          /tmp/cbds-wheel-venv/bin/cbds --version
+          /tmp/cbds-wheel-venv/bin/cbds train --run-spec "$GITHUB_WORKSPACE/examples/run-spec.example.json" --campaign-policy "$GITHUB_WORKSPACE/configs/campaign-policy.json" --output /tmp/cbds-wheel-plan.json --dry-run
+          /tmp/cbds-wheel-venv/bin/cbds validate-run-spec --run-spec "$GITHUB_WORKSPACE/examples/run-spec.example.json" --output /tmp/cbds-wheel-run-validation.json
+          /tmp/cbds-wheel-venv/bin/cbds validate-evaluation-spec --evaluation-spec "$GITHUB_WORKSPACE/examples/evaluation-spec.example.json" --experiment-manifest "$GITHUB_WORKSPACE/examples/experiment-manifest.example.json" --output /tmp/cbds-wheel-evaluation-validation.json
+          /tmp/cbds-wheel-venv/bin/cbds inspect-model --help >/dev/null
+          /tmp/cbds-wheel-venv/bin/cbds probe-model-runtime --help >/dev/null
+          /tmp/cbds-wheel-venv/bin/cbds sandbox-preflight --help >/dev/null
+          /tmp/cbds-wheel-venv/bin/python -c "import json; from importlib.resources import files; root = files('cbds.schemas'); names = ('campaign-policy.schema.json', 'campaign-registry.schema.json', 'evaluation-spec.schema.json', 'experiment-manifest.schema.json', 'hardware-result.schema.json', 'run-spec.schema.json', 'task-result.schema.json'); assert all(json.loads(root.joinpath(name).read_bytes()) for name in names)"
+          /tmp/cbds-wheel-venv/bin/python - <<'PY'
+          import importlib
+          import os
+          from pathlib import Path
+
+          source_root = (Path(os.environ["GITHUB_WORKSPACE"]) / "src" / "cbds").resolve()
+          package = importlib.import_module("cbds")
+          installed_root = Path(package.__file__).resolve().parent
+          assert installed_root != source_root and source_root not in installed_root.parents
+
+          expected_files = sorted(path.name for path in source_root.glob("*.py"))
+          missing_files = [name for name in expected_files if not (installed_root / name).is_file()]
+          assert not missing_files, f"wheel is missing top-level cbds modules: {missing_files}"
+
+          module_names = [
+              "cbds" if name == "__init__.py" else f"cbds.{Path(name).stem}"
+              for name in expected_files
+          ]
+          imported = {name: importlib.import_module(name) for name in module_names}
+          wrong_root = {
+              name: str(Path(module.__file__).resolve())
+              for name, module in imported.items()
+              if Path(module.__file__).resolve().parent != installed_root
+          }
+          assert not wrong_root, f"modules were not imported from the wheel: {wrong_root}"
+          PY
 
       - name: Validate JSON schemas
         run: |
           python -m json.tool hardware-result.schema.json >/dev/null
+          python -m json.tool campaign-policy.schema.json >/dev/null
+          python -m json.tool campaign-registry.schema.json >/dev/null
           python -m json.tool experiment-manifest.schema.json >/dev/null
+          python -m json.tool evaluation-spec.schema.json >/dev/null
+          python -m json.tool run-spec.schema.json >/dev/null
           python -m json.tool task-result.schema.json >/dev/null
           python -m json.tool configs/benchmark-smoke.json >/dev/null
           python -m json.tool configs/benchmark-plan.json >/dev/null
+          python -m json.tool configs/campaign-policy.json >/dev/null
+          python -m json.tool examples/campaign-registry.example.json >/dev/null
+          python -m json.tool examples/evaluation-spec.example.json >/dev/null
           python -m json.tool examples/experiment-manifest.example.json >/dev/null
+          python -m json.tool examples/run-spec.example.json >/dev/null
+          PYTHONPATH=src python -c "from cbds.manifests import load_document; [load_document(name) for name in ('hardware-result.schema.json', 'campaign-policy.schema.json', 'campaign-registry.schema.json', 'experiment-manifest.schema.json', 'evaluation-spec.schema.json', 'run-spec.schema.json', 'task-result.schema.json')]"
+          python -c "import json, pathlib; from jsonschema import Draft202012Validator; [Draft202012Validator.check_schema(json.loads(pathlib.Path(name).read_text())) for name in ('hardware-result.schema.json', 'campaign-policy.schema.json', 'campaign-registry.schema.json', 'experiment-manifest.schema.json', 'evaluation-spec.schema.json', 'run-spec.schema.json', 'task-result.schema.json')]"

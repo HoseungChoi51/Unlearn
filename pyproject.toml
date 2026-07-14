@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cbds-research"
-version = "0.1.0"
+version = "0.3.0"
 description = "Reproducible tooling for capability-budgeted dense specialization experiments"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -16,6 +16,11 @@ dependencies = []
 [project.optional-dependencies]
 yaml = ["PyYAML>=6.0"]
 schema = ["jsonschema>=4.19"]
+runtime = [
+  "safetensors>=0.4",
+  "torch>=2.4",
+  "transformers>=4.45,<6",
+]
 dev = [
   "jsonschema>=4.19",
   "PyYAML>=6.0",

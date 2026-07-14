@@ -1,0 +1,1060 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/evaluation-spec.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Prospective Evaluation Specification",
+  "description": "Immutable decisions fixed before scored static or interactive evaluation. Prompt text, fixture contents, generated programs, measurements, and outcomes are intentionally excluded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evaluation_id",
+    "created_at",
+    "git_revision",
+    "mode",
+    "artifact",
+    "benchmark",
+    "task_commitments",
+    "execution",
+    "decoding",
+    "parser",
+    "limits",
+    "environment",
+    "tool_policy",
+    "fixture_policy",
+    "outcome_policy",
+    "task_result",
+    "seeds",
+    "analysis_plan",
+    "output_policy"
+  ],
+  "properties": {
+    "schema_version": { "const": "3.0.0" },
+    "evaluation_id": { "$ref": "#/$defs/identifier" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "git_revision": { "$ref": "#/$defs/sha1" },
+    "mode": { "enum": ["static", "interactive"] },
+    "artifact": { "$ref": "#/$defs/artifact" },
+    "benchmark": { "$ref": "#/$defs/benchmark" },
+    "task_commitments": { "$ref": "#/$defs/taskCommitments" },
+    "execution": { "$ref": "#/$defs/execution" },
+    "decoding": { "$ref": "#/$defs/decoding" },
+    "parser": { "$ref": "#/$defs/parser" },
+    "limits": { "$ref": "#/$defs/limits" },
+    "environment": { "$ref": "#/$defs/environment" },
+    "tool_policy": { "$ref": "#/$defs/toolPolicy" },
+    "fixture_policy": { "$ref": "#/$defs/fixturePolicy" },
+    "outcome_policy": { "$ref": "#/$defs/outcomePolicy" },
+    "task_result": { "$ref": "#/$defs/taskResult" },
+    "seeds": { "$ref": "#/$defs/seeds" },
+    "analysis_plan": { "$ref": "#/$defs/analysisPlan" },
+    "output_policy": { "$ref": "#/$defs/outputPolicy" }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "anyOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "null" }
+      ]
+    },
+    "immutableRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 192,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "opaqueTaskIdentifier": {
+      "type": "string",
+      "pattern": "^task-[0-9a-f]{64}$"
+    },
+    "terminalStatus": {
+      "enum": [
+        "passed",
+        "extraction_failure",
+        "truncation",
+        "syntax_failure",
+        "syntax_check_failure",
+        "disallowed_tool",
+        "tool_policy_check_failure",
+        "timeout",
+        "runtime_failure",
+        "functional_failure",
+        "resource_limit",
+        "verifier_failure",
+        "action_limit",
+        "internal_error"
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "architecture",
+        "training_seed",
+        "physical_parameters",
+        "format",
+        "artifact_sha256",
+        "bundle_sha256",
+        "tokenizer_sha256",
+        "completed_run_id",
+        "completed_experiment_record_sha256",
+        "inspection_report_sha256"
+      ],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "architecture": { "const": "dense" },
+        "training_seed": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "physical_parameters": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999999
+        },
+        "format": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "artifact_sha256": { "$ref": "#/$defs/sha256" },
+        "bundle_sha256": { "$ref": "#/$defs/sha256" },
+        "tokenizer_sha256": { "$ref": "#/$defs/sha256" },
+        "completed_run_id": { "$ref": "#/$defs/identifier" },
+        "completed_experiment_record_sha256": { "$ref": "#/$defs/sha256" },
+        "inspection_report_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Canonical report_sha256 emitted by the external artifact inspector; this contract does not inspect the report."
+        }
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "sha256", "sealed", "open_once"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "role": {
+          "enum": [
+            "method_development",
+            "shadow_validation",
+            "sealed_id",
+            "sealed_ood",
+            "independent_benchmark"
+          ]
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "sealed": { "type": "boolean" },
+        "open_once": { "type": "boolean" }
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "benchmark_id",
+        "repository",
+        "revision",
+        "dataset_sha256",
+        "manifest_sha256",
+        "semantic_graph_sha256",
+        "tasks_sha256",
+        "fixtures_sha256",
+        "suite",
+        "split",
+        "task_count",
+        "fixture_count"
+      ],
+      "properties": {
+        "benchmark_id": { "$ref": "#/$defs/identifier" },
+        "repository": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "revision": { "$ref": "#/$defs/immutableRevision" },
+        "dataset_sha256": { "$ref": "#/$defs/sha256" },
+        "manifest_sha256": { "$ref": "#/$defs/sha256" },
+        "semantic_graph_sha256": { "$ref": "#/$defs/sha256" },
+        "tasks_sha256": { "$ref": "#/$defs/sha256" },
+        "fixtures_sha256": { "$ref": "#/$defs/sha256" },
+        "suite": { "enum": ["static", "interactive"] },
+        "split": { "$ref": "#/$defs/split" },
+        "task_count": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "fixture_count": { "type": "integer", "minimum": 5, "maximum": 6400000 }
+      }
+    },
+    "taskCommitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prompt_id",
+        "task_record_sha256",
+        "fixture_ids_sha256",
+        "ordered_fixture_ids_sha256",
+        "fixture_count"
+      ],
+      "properties": {
+        "prompt_id": { "$ref": "#/$defs/opaqueTaskIdentifier" },
+        "task_record_sha256": { "$ref": "#/$defs/sha256" },
+        "fixture_ids_sha256": { "$ref": "#/$defs/sha256" },
+        "ordered_fixture_ids_sha256": { "$ref": "#/$defs/sha256" },
+        "fixture_count": { "type": "integer", "minimum": 1, "maximum": 64 }
+      }
+    },
+    "taskCommitments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "hash_algorithm",
+        "commitments",
+        "commitment_set_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "hash_algorithm": { "const": "canonical-json-sha256" },
+        "commitments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100000,
+          "items": { "$ref": "#/$defs/taskCommitment" }
+        },
+        "commitment_set_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime",
+        "runtime_version",
+        "runtime_executable_sha256",
+        "rootless_required",
+        "container_image_repository",
+        "container_image_digest",
+        "container_recipe_revision",
+        "container_recipe_sha256",
+        "verifier_repository",
+        "verifier_revision",
+        "verifier_sha256",
+        "sandbox_measurement_method",
+        "sandbox_measurement_implementation_sha256",
+        "sandbox_policy_sha256"
+      ],
+      "properties": {
+        "runtime": { "enum": ["docker", "podman"] },
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "runtime_executable_sha256": { "$ref": "#/$defs/sha256" },
+        "rootless_required": { "const": true },
+        "container_image_repository": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "container_image_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "container_recipe_revision": { "$ref": "#/$defs/immutableRevision" },
+        "container_recipe_sha256": { "$ref": "#/$defs/sha256" },
+        "verifier_repository": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "verifier_revision": { "$ref": "#/$defs/immutableRevision" },
+        "verifier_sha256": { "$ref": "#/$defs/sha256" },
+        "sandbox_measurement_method": { "const": "cgroup-v2-procfs-rusage-v1" },
+        "sandbox_measurement_implementation_sha256": { "$ref": "#/$defs/sha256" },
+        "sandbox_policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "decoding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "do_sample",
+        "num_beams",
+        "num_return_sequences",
+        "maximum_new_tokens",
+        "eos_token_ids",
+        "pad_token_id",
+        "stop_sequences",
+        "tokenizer_add_special_tokens",
+        "skip_special_tokens",
+        "clean_up_tokenization_spaces",
+        "prompt_serialization_sha256",
+        "policy_sha256"
+      ],
+      "properties": {
+        "algorithm": { "const": "greedy" },
+        "do_sample": { "const": false },
+        "num_beams": { "const": 1 },
+        "num_return_sequences": { "const": 1 },
+        "maximum_new_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "eos_token_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "pad_token_id": { "type": "integer", "minimum": 0 },
+        "stop_sequences": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "tokenizer_add_special_tokens": { "type": "boolean" },
+        "skip_special_tokens": { "type": "boolean" },
+        "clean_up_tokenization_spaces": { "type": "boolean" },
+        "prompt_serialization_sha256": { "$ref": "#/$defs/sha256" },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "fenceLabels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bash", "python"],
+      "properties": {
+        "bash": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "string" }
+        },
+        "python": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grammar",
+        "version",
+        "raw_default_language",
+        "program_language",
+        "allowed_languages",
+        "fence_labels",
+        "surrounding_prose_allowed",
+        "multiple_fences_allowed",
+        "newline_normalization",
+        "nul_allowed",
+        "empty_program_allowed",
+        "policy_sha256"
+      ],
+      "properties": {
+        "grammar": { "const": "raw-or-one-triple-backtick-fence" },
+        "version": { "const": "1.0.0" },
+        "raw_default_language": { "const": "bash" },
+        "program_language": { "enum": ["bash", "python"] },
+        "allowed_languages": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "enum": ["bash", "python"] }
+        },
+        "fence_labels": { "$ref": "#/$defs/fenceLabels" },
+        "surrounding_prose_allowed": { "const": false },
+        "multiple_fences_allowed": { "const": false },
+        "newline_normalization": { "const": "crlf-and-cr-to-lf" },
+        "nul_allowed": { "const": false },
+        "empty_program_allowed": { "const": false },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maximum_prompt_tokens",
+        "maximum_sequence_tokens",
+        "maximum_response_bytes",
+        "syntax_timeout_seconds",
+        "fixture_timeout_seconds",
+        "kill_grace_seconds",
+        "cpu_time_seconds",
+        "memory_bytes",
+        "pids",
+        "open_files",
+        "stdout_bytes",
+        "stderr_bytes",
+        "workspace_bytes",
+        "action_limit",
+        "observation_bytes"
+      ],
+      "properties": {
+        "maximum_prompt_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "maximum_sequence_tokens": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 1048576
+        },
+        "maximum_response_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216,
+          "description": "Maximum raw generated-response bytes; an over-limit record must be classified as truncation."
+        },
+        "syntax_timeout_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 300
+        },
+        "fixture_timeout_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 3600,
+          "description": "Candidate-execution limit applied independently to every static fixture and accepted interactive action. Timeout cleanup is additionally bounded by kill_grace_seconds."
+        },
+        "kill_grace_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 60
+        },
+        "cpu_time_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 3600
+        },
+        "memory_bytes": {
+          "type": "integer",
+          "minimum": 6291456,
+          "maximum": 1099511627776
+        },
+        "pids": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+        "open_files": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 1048576
+        },
+        "stdout_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1073741824
+        },
+        "stderr_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1073741824
+        },
+        "workspace_bytes": {
+          "type": "integer",
+          "minimum": 1048576,
+          "maximum": 1099511627776
+        },
+        "action_limit": { "type": "integer", "minimum": 0, "maximum": 8 },
+        "observation_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777216,
+          "description": "Maximum observation bytes returned by any one interactive action; static evaluation requires zero."
+        }
+      }
+    },
+    "environmentVariable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z_][A-Z0-9_]{0,63}$"
+        },
+        "value": {
+          "type": "string",
+          "maxLength": 4096,
+          "pattern": "^[^\\u0000\\r\\n]*$"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "locale",
+        "timezone",
+        "umask",
+        "uid",
+        "gid",
+        "working_directory",
+        "inherit_host_environment",
+        "variables",
+        "shell_options",
+        "network",
+        "read_only_root",
+        "no_new_privileges",
+        "capabilities_added",
+        "host_mounts_allowed",
+        "container_socket_allowed",
+        "policy_sha256"
+      ],
+      "properties": {
+        "locale": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "timezone": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "umask": { "type": "integer", "minimum": 0, "maximum": 511 },
+        "uid": { "type": "integer", "minimum": 1, "maximum": 2147483647 },
+        "gid": { "type": "integer", "minimum": 1, "maximum": 2147483647 },
+        "working_directory": {
+          "type": "string",
+          "pattern": "^/[A-Za-z0-9._/-]+$",
+          "maxLength": 256
+        },
+        "inherit_host_environment": { "const": false },
+        "variables": {
+          "type": "array",
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/environmentVariable" }
+        },
+        "shell_options": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "network": { "const": "none" },
+        "read_only_root": { "const": true },
+        "no_new_privileges": { "const": true },
+        "capabilities_added": {
+          "type": "array",
+          "maxItems": 0,
+          "items": { "type": "string" }
+        },
+        "host_mounts_allowed": { "const": false },
+        "container_socket_allowed": { "const": false },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "toolPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "track",
+        "allowlist_sha256",
+        "allowed_executables",
+        "shell_builtins_allowed",
+        "python_allowed",
+        "perl_allowed",
+        "compilers_allowed",
+        "network_tools_allowed",
+        "resolution",
+        "unknown_tool_action",
+        "policy_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "track": { "enum": ["bash_native", "python_permitted"] },
+        "allowlist_sha256": { "$ref": "#/$defs/sha256" },
+        "allowed_executables": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$"
+          }
+        },
+        "shell_builtins_allowed": { "type": "boolean" },
+        "python_allowed": { "type": "boolean" },
+        "perl_allowed": { "const": false },
+        "compilers_allowed": { "const": false },
+        "network_tools_allowed": { "const": false },
+        "resolution": { "const": "exact-basename-allowlist" },
+        "unknown_tool_action": { "const": "fail" },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "fixturePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixtures_per_task",
+        "aggregation",
+        "fixture_order",
+        "fixture_order_sha256",
+        "fresh_workspace_per_fixture",
+        "state_property_checks_required",
+        "independent_reference_required",
+        "stop_after_first_failure",
+        "policy_sha256"
+      ],
+      "properties": {
+        "fixtures_per_task": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 64
+        },
+        "aggregation": { "const": "all_must_pass" },
+        "fixture_order": { "const": "deterministic_sha256" },
+        "fixture_order_sha256": { "$ref": "#/$defs/sha256" },
+        "fresh_workspace_per_fixture": { "const": true },
+        "state_property_checks_required": { "const": true },
+        "independent_reference_required": { "const": true },
+        "stop_after_first_failure": { "type": "boolean" },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "rerunPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "mode",
+        "maximum_attempts",
+        "eligible_terminal_statuses",
+        "scored_attempt_rule",
+        "policy_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "mode": { "enum": ["never", "infrastructure_only"] },
+        "maximum_attempts": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "eligible_terminal_statuses": {
+          "type": "array",
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/terminalStatus" }
+        },
+        "scored_attempt_rule": {
+          "enum": ["first_attempt", "first_noninfrastructure_attempt"]
+        },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "exclusionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "mode",
+        "manifest_sha256",
+        "allowed_reason_codes",
+        "locked_before_sealed_open",
+        "policy_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "mode": { "enum": ["none", "preregistered_manifest"] },
+        "manifest_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "allowed_reason_codes": {
+          "type": "array",
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "verifier_audit",
+              "benchmark_contamination",
+              "duplicate_semantic_graph"
+            ]
+          }
+        },
+        "locked_before_sealed_open": { "const": true },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "timeoutPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "syntax_timeout_status",
+        "fixture_timeout_status",
+        "action_timeout_status",
+        "counts_as_failure",
+        "rerunnable",
+        "policy_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "syntax_timeout_status": { "const": "syntax_check_failure" },
+        "fixture_timeout_status": { "const": "timeout" },
+        "action_timeout_status": { "const": "timeout" },
+        "counts_as_failure": { "const": true },
+        "rerunnable": { "const": false },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "failureTaxonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "terminal_statuses", "precedence", "policy_sha256"],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "terminal_statuses": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/terminalStatus" }
+        },
+        "precedence": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/terminalStatus" }
+        },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "outcomePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rerun", "exclusion", "timeout", "failure_taxonomy"],
+      "properties": {
+        "rerun": { "$ref": "#/$defs/rerunPolicy" },
+        "exclusion": { "$ref": "#/$defs/exclusionPolicy" },
+        "timeout": { "$ref": "#/$defs/timeoutPolicy" },
+        "failure_taxonomy": { "$ref": "#/$defs/failureTaxonomy" }
+      }
+    },
+    "taskResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "schema_sha256",
+        "record_format",
+        "record_hash_algorithm"
+      ],
+      "properties": {
+        "schema_version": { "const": "3.0.0" },
+        "schema_sha256": { "$ref": "#/$defs/sha256" },
+        "record_format": { "const": "canonical-json" },
+        "record_hash_algorithm": { "const": "sha256" }
+      }
+    },
+    "seeds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation",
+        "task_order",
+        "fixture_order",
+        "action_loop",
+        "environment",
+        "rerun"
+      ],
+      "properties": {
+        "generation": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "task_order": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "fixture_order": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "action_loop": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "environment": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "rerun": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 }
+      }
+    },
+    "referenceContrastArmRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "arm_id"],
+      "properties": {
+        "role": { "const": "reference" },
+        "arm_id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "comparisonContrastArmRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "arm_id"],
+      "properties": {
+        "role": { "const": "comparison" },
+        "arm_id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "contrastPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "direction",
+        "ordered_arm_roles",
+        "ordered_arm_roles_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "direction": { "const": "comparison_minus_reference" },
+        "ordered_arm_roles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/referenceContrastArmRole" },
+            { "$ref": "#/$defs/comparisonContrastArmRole" }
+          ],
+          "items": {
+            "anyOf": [
+              { "$ref": "#/$defs/referenceContrastArmRole" },
+              { "$ref": "#/$defs/comparisonContrastArmRole" }
+            ]
+          }
+        },
+        "ordered_arm_roles_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "nullableContrastPlan": {
+      "anyOf": [
+        { "$ref": "#/$defs/contrastPlan" },
+        { "type": "null" }
+      ]
+    },
+    "bootstrapPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "resamples",
+        "random_seed",
+        "percentile_interpolation",
+        "resampling_unit",
+        "fixtures_nested_within_task",
+        "training_seed_crossed_with_task"
+      ],
+      "properties": {
+        "method": { "const": "crossed_seed_task_percentile_bootstrap" },
+        "resamples": { "type": "integer", "minimum": 1000, "maximum": 1000000 },
+        "random_seed": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 },
+        "percentile_interpolation": { "const": "linear_r7" },
+        "resampling_unit": { "const": "semantic_task" },
+        "fixtures_nested_within_task": { "const": true },
+        "training_seed_crossed_with_task": { "const": true }
+      }
+    },
+    "randomizationPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "unit",
+        "alternative",
+        "exact_max_units",
+        "monte_carlo_draws",
+        "random_seed"
+      ],
+      "properties": {
+        "method": { "const": "paired_sign_flip_randomization" },
+        "unit": {
+          "const": "task",
+          "description": "Statistics-API task unit; each value is already a fixture-nested semantic-task outcome."
+        },
+        "alternative": { "const": "two_sided" },
+        "exact_max_units": { "const": 20 },
+        "monte_carlo_draws": { "type": "integer", "minimum": 100, "maximum": 10000000 },
+        "random_seed": { "type": "integer", "minimum": 0, "maximum": 9223372036854775807 }
+      }
+    },
+    "multiplicityPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "p_values",
+        "confidence_intervals",
+        "family_size",
+        "family_confidence_level",
+        "per_contrast_confidence_level"
+      ],
+      "properties": {
+        "p_values": { "const": "holm_step_down" },
+        "confidence_intervals": { "const": "bonferroni_simultaneous" },
+        "family_size": { "const": 2 },
+        "family_confidence_level": { "const": 0.95 },
+        "per_contrast_confidence_level": { "const": 0.975 }
+      }
+    },
+    "noninferiorityMargins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "static_absolute_points",
+        "bounded_terminal_absolute_points"
+      ],
+      "properties": {
+        "static_absolute_points": {
+          "anyOf": [
+            { "type": "number", "minimum": 0, "maximum": 100 },
+            { "type": "null" }
+          ]
+        },
+        "bounded_terminal_absolute_points": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "successThresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule",
+        "static_gain_absolute_points",
+        "serialized_bytes_reduction_fraction",
+        "physical_parameters_reduction_fraction",
+        "simultaneous_lower_bound_above_zero"
+      ],
+      "properties": {
+        "rule": { "enum": ["development_only", "fixed_size", "compression_or"] },
+        "static_gain_absolute_points": { "type": "number", "minimum": 0, "maximum": 100 },
+        "serialized_bytes_reduction_fraction": {
+          "anyOf": [
+            { "type": "number", "minimum": 0, "maximum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "physical_parameters_reduction_fraction": {
+          "anyOf": [
+            { "type": "number", "minimum": 0, "maximum": 1 },
+            { "type": "null" }
+          ]
+        },
+        "simultaneous_lower_bound_above_zero": { "type": "boolean" }
+      }
+    },
+    "analysisPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "phase",
+        "lane",
+        "external_plan_sha256",
+        "analysis_code_revision",
+        "analysis_code_sha256",
+        "seed_evidence_scope",
+        "contrast",
+        "training_seed_set_sha256",
+        "training_seed_count",
+        "pairing_units",
+        "metric_unit",
+        "points_to_proportion_divisor",
+        "bootstrap",
+        "randomization_test",
+        "multiplicity_correction",
+        "confirmatory_lane_contrast_count",
+        "noninferiority_margins",
+        "success_thresholds",
+        "policy_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "phase": { "enum": ["development", "confirmatory"] },
+        "lane": { "enum": ["development", "fixed_size", "compression"] },
+        "external_plan_sha256": { "$ref": "#/$defs/sha256" },
+        "analysis_code_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "analysis_code_sha256": { "$ref": "#/$defs/sha256" },
+        "seed_evidence_scope": {
+          "const": "per_artifact_only",
+          "description": "This spec proves one artifact training seed only; the multi-seed set requires a validated campaign registry and paired statistics inputs."
+        },
+        "contrast": { "$ref": "#/$defs/nullableContrastPlan" },
+        "training_seed_set_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Prospective set commitment only; not evidence that every seed artifact exists."
+        },
+        "training_seed_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64,
+          "description": "Planned count only; registry validation must prove membership and completeness."
+        },
+        "pairing_units": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "enum": ["training_seed", "data_order", "teacher_corpus", "task", "fixture"]
+          }
+        },
+        "metric_unit": { "const": "proportion" },
+        "points_to_proportion_divisor": { "const": 100 },
+        "bootstrap": { "$ref": "#/$defs/bootstrapPlan" },
+        "randomization_test": { "$ref": "#/$defs/randomizationPlan" },
+        "multiplicity_correction": { "$ref": "#/$defs/multiplicityPlan" },
+        "confirmatory_lane_contrast_count": { "const": 2 },
+        "noninferiority_margins": { "$ref": "#/$defs/noninferiorityMargins" },
+        "success_thresholds": { "$ref": "#/$defs/successThresholds" },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "outputPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "hash_algorithm",
+        "hash_input",
+        "text_encoding",
+        "generated_text",
+        "extracted_code",
+        "stdout",
+        "stderr",
+        "diagnostics",
+        "verifier_results",
+        "action_payloads",
+        "retain_plaintext",
+        "sealed_identifiers_only",
+        "task_result_record_hash",
+        "policy_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "hash_algorithm": { "const": "sha256" },
+        "hash_input": { "const": "raw_bytes" },
+        "text_encoding": { "const": "utf-8" },
+        "generated_text": { "const": "hash_and_byte_count_only" },
+        "extracted_code": { "const": "hash_only" },
+        "stdout": { "const": "hash_and_byte_count_only" },
+        "stderr": { "const": "hash_and_byte_count_only" },
+        "diagnostics": { "const": "hash_only" },
+        "verifier_results": { "const": "hash_only" },
+        "action_payloads": { "const": "hash_only" },
+        "retain_plaintext": { "const": false },
+        "sealed_identifiers_only": { "const": true },
+        "task_result_record_hash": { "const": "canonical-json-sha256" },
+        "policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

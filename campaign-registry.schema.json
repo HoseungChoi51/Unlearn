@@ -1,0 +1,389 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HoseungChoi51/Unlearn/raw/main/campaign-registry.schema.json",
+  "title": "Capability-Budgeted Dense Specialization Campaign Registry",
+  "description": "Content-addressed cross-run registry. Shape validation is necessary but not sufficient: cbds.campaign_registry jointly verifies every declared digest and pairing against campaign policy, prospective run specs, completed experiment records, and declared evaluations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "registry_id",
+    "created_at",
+    "campaign_policy",
+    "scope",
+    "arms",
+    "cohorts",
+    "runs"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "registry_id": { "$ref": "#/$defs/identifier" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "campaign_policy": { "$ref": "#/$defs/campaignPolicy" },
+    "scope": { "$ref": "#/$defs/scope" },
+    "arms": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/arm" }
+    },
+    "cohorts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/cohort" }
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 65536,
+      "items": { "$ref": "#/$defs/run" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableSha256": {
+      "anyOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "null" }
+      ]
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 192,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "nullableIdentifier": {
+      "anyOf": [
+        { "$ref": "#/$defs/identifier" },
+        { "type": "null" }
+      ]
+    },
+    "profile": {
+      "enum": ["screening", "confirmation", "runner_up"]
+    },
+    "nullableAnalysisLane": {
+      "anyOf": [
+        { "enum": ["fixed_size", "compression"] },
+        { "type": "null" }
+      ]
+    },
+    "campaignPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "schema_version", "sha256"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/identifier" },
+        "schema_version": { "const": "1.0.0" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arm_roster_authority",
+        "contrast_role_authority",
+        "promotion_validation",
+        "backbone_selection_validation",
+        "evaluation_suite_roster_authority",
+        "training_seed_set_hash_algorithm"
+      ],
+      "properties": {
+        "arm_roster_authority": { "const": "registry_declaration" },
+        "contrast_role_authority": {
+          "const": "prospective_run_spec_campaign_fields"
+        },
+        "promotion_validation": { "const": "declared_link_integrity_only" },
+        "backbone_selection_validation": { "const": "declared_identity_only" },
+        "evaluation_suite_roster_authority": { "const": "registry_declaration" },
+        "training_seed_set_hash_algorithm": {
+          "const": "canonical-json-sha256-of-replicate-index-and-all-run-seeds"
+        }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mechanism", "family", "configuration_sha256"],
+      "properties": {
+        "mechanism": {
+          "enum": [
+            "baseline",
+            "recycle",
+            "prune",
+            "quantize",
+            "factorize",
+            "distill",
+            "hybrid"
+          ]
+        },
+        "family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "configuration_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "referenceContrastArmRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "arm_id"],
+      "properties": {
+        "role": { "const": "reference" },
+        "arm_id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "comparisonContrastArmRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "arm_id"],
+      "properties": {
+        "role": { "const": "comparison" },
+        "arm_id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "contrastPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "direction",
+        "ordered_arm_roles",
+        "ordered_arm_roles_sha256"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "direction": { "const": "comparison_minus_reference" },
+        "ordered_arm_roles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/referenceContrastArmRole" },
+            { "$ref": "#/$defs/comparisonContrastArmRole" }
+          ],
+          "items": {
+            "anyOf": [
+              { "$ref": "#/$defs/referenceContrastArmRole" },
+              { "$ref": "#/$defs/comparisonContrastArmRole" }
+            ]
+          }
+        },
+        "ordered_arm_roles_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "nullableContrastPlan": {
+      "anyOf": [
+        { "$ref": "#/$defs/contrastPlan" },
+        { "type": "null" }
+      ]
+    },
+    "armRunProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "run_protocol_sha256"],
+      "properties": {
+        "profile": { "$ref": "#/$defs/profile" },
+        "run_protocol_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arm_id",
+        "label",
+        "operator",
+        "run_protocols",
+        "source_arm_id"
+      ],
+      "properties": {
+        "arm_id": { "$ref": "#/$defs/identifier" },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "operator": { "$ref": "#/$defs/operator" },
+        "run_protocols": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/armRunProtocol" }
+        },
+        "source_arm_id": { "$ref": "#/$defs/nullableIdentifier" }
+      }
+    },
+    "promotionLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["arm_id", "source_arm_id"],
+      "properties": {
+        "arm_id": { "$ref": "#/$defs/identifier" },
+        "source_arm_id": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "evaluationCube": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cube_id",
+        "benchmark_id",
+        "benchmark_split_sha256",
+        "task_commitment_set_sha256",
+        "task_count",
+        "training_seed_count",
+        "training_seed_set_sha256",
+        "ordered_arm_roles_sha256",
+        "paired_cube_sha256",
+        "result_coverage"
+      ],
+      "properties": {
+        "cube_id": { "$ref": "#/$defs/identifier" },
+        "benchmark_id": { "$ref": "#/$defs/identifier" },
+        "benchmark_split_sha256": { "$ref": "#/$defs/sha256" },
+        "task_commitment_set_sha256": { "$ref": "#/$defs/sha256" },
+        "task_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "training_seed_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "training_seed_set_sha256": { "$ref": "#/$defs/sha256" },
+        "ordered_arm_roles_sha256": { "$ref": "#/$defs/sha256" },
+        "paired_cube_sha256": { "$ref": "#/$defs/sha256" },
+        "result_coverage": {
+          "enum": ["evaluation_specs_only", "complete_task_results"]
+        }
+      }
+    },
+    "nullableEvaluationCube": {
+      "anyOf": [
+        { "$ref": "#/$defs/evaluationCube" },
+        { "type": "null" }
+      ]
+    },
+    "cohort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cohort_id",
+        "profile",
+        "analysis_lane",
+        "backbone_role",
+        "backbone_label",
+        "backbone_identity_sha256",
+        "pairing_commitments_sha256",
+        "completed_pairing_sha256",
+        "arm_ids",
+        "contrast",
+        "source_cohort_id",
+        "promotion_links",
+        "evaluation_cubes"
+      ],
+      "properties": {
+        "cohort_id": { "$ref": "#/$defs/identifier" },
+        "profile": { "$ref": "#/$defs/profile" },
+        "analysis_lane": { "$ref": "#/$defs/nullableAnalysisLane" },
+        "backbone_role": { "enum": ["primary", "runner_up"] },
+        "backbone_label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "backbone_identity_sha256": { "$ref": "#/$defs/sha256" },
+        "pairing_commitments_sha256": { "$ref": "#/$defs/sha256" },
+        "completed_pairing_sha256": { "$ref": "#/$defs/sha256" },
+        "arm_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "contrast": { "$ref": "#/$defs/nullableContrastPlan" },
+        "source_cohort_id": { "$ref": "#/$defs/nullableIdentifier" },
+        "promotion_links": {
+          "type": "array",
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/promotionLink" }
+        },
+        "evaluation_cubes": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/evaluationCube" }
+        }
+      }
+    },
+    "evaluationBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cube_id",
+        "evaluation_id",
+        "evaluation_spec_sha256",
+        "task_result_collection_sha256",
+        "task_result_record_count"
+      ],
+      "properties": {
+        "cube_id": { "$ref": "#/$defs/identifier" },
+        "evaluation_id": { "$ref": "#/$defs/identifier" },
+        "evaluation_spec_sha256": { "$ref": "#/$defs/sha256" },
+        "task_result_collection_sha256": { "$ref": "#/$defs/nullableSha256" },
+        "task_result_record_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6400000
+        }
+      }
+    },
+    "nullableEvaluationBinding": {
+      "anyOf": [
+        { "$ref": "#/$defs/evaluationBinding" },
+        { "type": "null" }
+      ]
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "arm_id",
+        "cohort_id",
+        "profile",
+        "replicate_index",
+        "run_spec_sha256",
+        "completed_record_sha256",
+        "evaluations"
+      ],
+      "properties": {
+        "run_id": { "$ref": "#/$defs/identifier" },
+        "arm_id": { "$ref": "#/$defs/identifier" },
+        "cohort_id": { "$ref": "#/$defs/identifier" },
+        "profile": { "$ref": "#/$defs/profile" },
+        "replicate_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "run_spec_sha256": { "$ref": "#/$defs/sha256" },
+        "completed_record_sha256": { "$ref": "#/$defs/sha256" },
+        "evaluations": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/evaluationBinding" }
+        }
+      }
+    }
+  }
+}

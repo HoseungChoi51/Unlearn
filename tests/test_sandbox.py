@@ -7,7 +7,7 @@ from cbds.response import ProgramLanguage
 from cbds.sandbox import ContainerRuntime, SandboxConfig, build_sandbox_argv
 
 
-PINNED_IMAGE = "registry.example/cbds/eval:1.0@sha256:" + "a" * 64
+PINNED_IMAGE = "registry.example/cbds/eval@sha256:" + "a" * 64
 
 
 class SandboxConfigTests(unittest.TestCase):
@@ -21,6 +21,7 @@ class SandboxConfigTests(unittest.TestCase):
         invalid = (
             "ubuntu:latest",
             "ubuntu@sha256:abc",
+            "ubuntu:22.04@sha256:" + "a" * 64,
             "ubuntu@sha256:" + "A" * 64,
             "ubuntu @sha256:" + "a" * 64,
             "ubuntu@sha512:" + "a" * 64,
@@ -84,6 +85,7 @@ class BuildSandboxArgvTests(unittest.TestCase):
             "--interactive",
             "--init",
             "--network=none",
+            "--pull=never",
             "--read-only",
             "--cap-drop=ALL",
             "--security-opt=no-new-privileges:true",
