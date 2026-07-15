@@ -13,6 +13,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+import cbds.executable_compound_path_query as compound  # noqa: E402
 from cbds.executable_compound_path_query import (  # noqa: E402
     COMPOUND_PATH_EXPRESSIONS,
     COMPOUND_PATH_NAME_PATTERNS,
@@ -20,16 +21,21 @@ from cbds.executable_compound_path_query import (  # noqa: E402
     COMPOUND_PATH_QUERY_GENERATOR_VERSION,
     COMPOUND_PATH_QUERY_OUTPUT,
     COMPOUND_PATH_QUERY_VERIFIER_IDENTITY,
+    COMPOUND_PATH_QUERY_WORKSPACE_SCANS_PROVE_GLOBAL_QUIESCENCE,
+    COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE,
     CompoundPathQueryError,
     CompoundPathQueryParameters,
     build_compound_path_query_fixture_bundle,
     build_compound_path_query_tasks,
     derive_compound_path_query_output,
+    materialize_compound_path_query_fixture,
+    reference_compound_path_query_output,
     validate_compound_path_query_fixture_bundle,
     validate_compound_path_query_fixture_for_task_profile,
     verify_compound_path_query_fixture_bundle,
     verify_compound_path_query_fixture_for_task_profile,
     verify_compound_path_query_output,
+    verify_compound_path_query_workspace,
 )
 from cbds.executable_fixture_profiles import (  # noqa: E402
     PUBLIC_DEVELOPMENT_FIXTURE_PROFILES,
@@ -39,7 +45,6 @@ from cbds.executable_workspace import (  # noqa: E402
     FixtureDefinition,
     InputFile,
     InputSymlink,
-    materialize_fixture,
 )
 
 
@@ -222,11 +227,24 @@ class CompoundPathQueryTests(unittest.TestCase):
                         COMPOUND_PATH_QUERY_VERIFIER_IDENTITY,
                     )
                     output = bundle.oracle.outputs[0]
-                    independent = independently_derive_output(
+                    primary = derive_compound_path_query_output(
                         bundle.definition,
                         task.parameters,
                     )
-                    self.assertEqual(output.content, independent)
+                    reference = reference_compound_path_query_output(
+                        bundle.definition,
+                        task.parameters,
+                    )
+                    test_only_reference = independently_derive_output(
+                        bundle.definition,
+                        task.parameters,
+                    )
+                    self.assertEqual(
+                        output.content,
+                        primary,
+                    )
+                    self.assertEqual(primary, reference)
+                    self.assertEqual(reference, test_only_reference)
                     self.assertEqual(output.path, COMPOUND_PATH_QUERY_OUTPUT)
                     self.assertEqual(output.mode, 0o644)
                     self.assertEqual(
@@ -234,7 +252,7 @@ class CompoundPathQueryTests(unittest.TestCase):
                         (
                             ExpectedFile(
                                 COMPOUND_PATH_QUERY_OUTPUT,
-                                maximum_bytes=len(independent),
+                                maximum_bytes=len(reference),
                                 mode=0o644,
                             ),
                         ),
@@ -758,6 +776,45 @@ class CompoundPathQueryTests(unittest.TestCase):
 
         self.assertTrue(all(count > 0 for count in killed.values()), killed)
 
+    def test_production_reference_disagreement_fails_closed(self) -> None:
+        task = self.task("*.txt", "readable-regular-and-name")
+        profile = _profile("spaces-unicode")
+        bundle = self.by_pair[(task.task_id, profile.profile_id)]
+        expected = bundle.oracle.outputs[0].content
+        self.assertNotEqual(expected, b"corrupt\n")
+
+        with mock.patch.object(
+            compound,
+            "derive_compound_path_query_output",
+            return_value=b"corrupt\n",
+        ):
+            self.assertFalse(
+                verify_compound_path_query_output(
+                    bundle.definition, task.parameters, expected
+                )
+            )
+            with self.assertRaisesRegex(
+                CompoundPathQueryError,
+                "implementations disagree",
+            ):
+                build_compound_path_query_fixture_bundle(task, profile)
+
+        with mock.patch.object(
+            compound,
+            "reference_compound_path_query_output",
+            return_value=b"corrupt\n",
+        ):
+            self.assertFalse(
+                verify_compound_path_query_output(
+                    bundle.definition, task.parameters, expected
+                )
+            )
+            with self.assertRaisesRegex(
+                CompoundPathQueryError,
+                "implementations disagree",
+            ):
+                build_compound_path_query_fixture_bundle(task, profile)
+
     def test_generation_and_python_verification_never_invoke_a_process(self) -> None:
         with mock.patch.object(
             subprocess,
@@ -784,6 +841,13 @@ class CompoundPathQueryTests(unittest.TestCase):
                         bundle.definition,
                         task.parameters,
                     )
+                    self.assertEqual(
+                        expected,
+                        reference_compound_path_query_output(
+                            bundle.definition,
+                            task.parameters,
+                        ),
+                    )
                     self.assertTrue(
                         verify_compound_path_query_output(
                             bundle.definition,
@@ -792,10 +856,18 @@ class CompoundPathQueryTests(unittest.TestCase):
                         )
                     )
 
-    def test_bundles_materialize_without_output_scaffolding_or_execution(self) -> None:
+    def test_authenticated_materialization_has_no_output_scaffold(self) -> None:
         task = self.task(
             "report-*",
             "readable-regular-and-name-or-symlink",
+        )
+        self.assertIs(
+            COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE,
+            True,
+        )
+        self.assertIs(
+            COMPOUND_PATH_QUERY_WORKSPACE_SCANS_PROVE_GLOBAL_QUIESCENCE,
+            False,
         )
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -803,9 +875,210 @@ class CompoundPathQueryTests(unittest.TestCase):
                 with self.subTest(profile=profile.profile_id):
                     bundle = self.by_pair[(task.task_id, profile.profile_id)]
                     workspace = root / profile.profile_id
-                    with materialize_fixture(bundle.definition, workspace) as handle:
+                    with materialize_compound_path_query_fixture(
+                        task, profile, bundle, workspace
+                    ) as handle:
                         self.assertTrue(handle.scan_inputs().entries)
                         self.assertEqual(handle.scan_outputs().entries, ())
+                        self.assertEqual(
+                            handle.baseline.fixture_id,
+                            bundle.definition.fixture_id,
+                        )
+
+    def test_workspace_verifier_accepts_only_the_exact_preserved_tree(self) -> None:
+        task = self.task(
+            "report-*",
+            "readable-regular-and-name-or-symlink",
+        )
+        profile = _profile("symlinks-ordering")
+        bundle = self.by_pair[(task.task_id, profile.profile_id)]
+        input_file = next(
+            item
+            for item in bundle.definition.inputs
+            if type(item) is InputFile and item.mode & 0o200
+        )
+        input_link = next(
+            item
+            for item in bundle.definition.inputs
+            if type(item) is InputSymlink
+        )
+
+        def populate_correct_output(workspace: Path) -> None:
+            output = workspace / "output"
+            output.mkdir(mode=0o755)
+            os.chmod(output, 0o755)
+            matches = workspace / COMPOUND_PATH_QUERY_OUTPUT
+            matches.write_bytes(bundle.oracle.outputs[0].content)
+            os.chmod(matches, 0o644)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "passing"
+            with materialize_compound_path_query_fixture(
+                task, profile, bundle, workspace
+            ) as handle:
+                populate_correct_output(workspace)
+                self.assertTrue(
+                    verify_compound_path_query_workspace(
+                        task, profile, bundle, handle
+                    )
+                )
+            self.assertFalse(
+                verify_compound_path_query_workspace(
+                    task, profile, bundle, handle
+                )
+            )
+        self.assertFalse(
+            verify_compound_path_query_workspace(
+                task, profile, bundle, object()  # type: ignore[arg-type]
+            )
+        )
+
+        def mutate_input_bytes(workspace: Path, _temporary: Path) -> None:
+            path = workspace / input_file.path
+            path.write_bytes(path.read_bytes() + b"mutation")
+
+        def mutate_input_mode(workspace: Path, _temporary: Path) -> None:
+            os.chmod(workspace / input_file.path, 0o600)
+
+        def mutate_input_directory_mode(
+            workspace: Path, _temporary: Path
+        ) -> None:
+            os.chmod(workspace / "input/query", 0o700)
+
+        def mutate_input_mtime(workspace: Path, _temporary: Path) -> None:
+            path = workspace / input_file.path
+            metadata = path.stat(follow_symlinks=False)
+            os.utime(
+                path,
+                ns=(metadata.st_atime_ns, metadata.st_mtime_ns + 1_000_000),
+                follow_symlinks=False,
+            )
+
+        def add_external_input_hardlink(
+            workspace: Path, temporary: Path
+        ) -> None:
+            os.link(workspace / input_file.path, temporary / "outside-input-link")
+
+        def add_extra_input(workspace: Path, _temporary: Path) -> None:
+            (workspace / "input/query/extra.txt").write_bytes(b"extra\n")
+
+        def remove_input(workspace: Path, _temporary: Path) -> None:
+            (workspace / input_file.path).unlink()
+
+        def mutate_input_symlink(workspace: Path, _temporary: Path) -> None:
+            path = workspace / input_link.path
+            path.unlink()
+            path.symlink_to("different-target.txt")
+
+        def add_extra_output(workspace: Path, _temporary: Path) -> None:
+            (workspace / "output/extra.txt").write_bytes(b"extra")
+
+        def replace_output_with_symlink(
+            workspace: Path, _temporary: Path
+        ) -> None:
+            path = workspace / COMPOUND_PATH_QUERY_OUTPUT
+            path.unlink()
+            path.symlink_to("../input/query/extra-target")
+
+        def add_external_output_hardlink(
+            workspace: Path, temporary: Path
+        ) -> None:
+            os.link(
+                workspace / COMPOUND_PATH_QUERY_OUTPUT,
+                temporary / "outside-output-link",
+            )
+
+        def mutate_output_mode(workspace: Path, _temporary: Path) -> None:
+            os.chmod(workspace / COMPOUND_PATH_QUERY_OUTPUT, 0o600)
+
+        def mutate_output_bytes(workspace: Path, _temporary: Path) -> None:
+            (workspace / COMPOUND_PATH_QUERY_OUTPUT).write_bytes(b"wrong\n")
+
+        def remove_output(workspace: Path, _temporary: Path) -> None:
+            (workspace / COMPOUND_PATH_QUERY_OUTPUT).unlink()
+
+        def mutate_output_directory_mode(
+            workspace: Path, _temporary: Path
+        ) -> None:
+            os.chmod(workspace / "output", 0o700)
+
+        mutations = (
+            ("input-content", mutate_input_bytes),
+            ("input-mode", mutate_input_mode),
+            ("input-directory-mode", mutate_input_directory_mode),
+            ("input-mtime", mutate_input_mtime),
+            ("input-hardlink", add_external_input_hardlink),
+            ("input-extra", add_extra_input),
+            ("input-missing", remove_input),
+            ("input-symlink", mutate_input_symlink),
+            ("extra-output", add_extra_output),
+            ("output-symlink", replace_output_with_symlink),
+            ("output-hardlink", add_external_output_hardlink),
+            ("output-mode", mutate_output_mode),
+            ("output-bytes", mutate_output_bytes),
+            ("output-missing", remove_output),
+            ("output-directory-mode", mutate_output_directory_mode),
+        )
+        for name, mutation in mutations:
+            with self.subTest(mutation=name):
+                with tempfile.TemporaryDirectory() as temporary:
+                    temporary_path = Path(temporary)
+                    workspace = temporary_path / "workspace"
+                    with materialize_compound_path_query_fixture(
+                        task, profile, bundle, workspace
+                    ) as handle:
+                        populate_correct_output(workspace)
+                        mutation(workspace, temporary_path)
+                        self.assertFalse(
+                            verify_compound_path_query_workspace(
+                                task, profile, bundle, handle
+                            )
+                        )
+
+    def test_workspace_verifier_rejects_handle_and_oracle_disagreement(self) -> None:
+        task = self.task("*.txt", "readable-regular-and-name")
+        profile = _profile("spaces-unicode")
+        other_profile = _profile("leading-dashes-globs")
+        bundle = self.by_pair[(task.task_id, profile.profile_id)]
+        other_bundle = self.by_pair[(task.task_id, other_profile.profile_id)]
+
+        def populate(workspace: Path) -> None:
+            (workspace / "output").mkdir(mode=0o755)
+            path = workspace / COMPOUND_PATH_QUERY_OUTPUT
+            path.write_bytes(bundle.oracle.outputs[0].content)
+            os.chmod(path, 0o644)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            wrong_workspace = root / "wrong-binding"
+            with materialize_compound_path_query_fixture(
+                task, other_profile, other_bundle, wrong_workspace
+            ) as wrong_handle:
+                (wrong_workspace / "output").mkdir(mode=0o755)
+                wrong_output = wrong_workspace / COMPOUND_PATH_QUERY_OUTPUT
+                wrong_output.write_bytes(other_bundle.oracle.outputs[0].content)
+                os.chmod(wrong_output, 0o644)
+                self.assertFalse(
+                    verify_compound_path_query_workspace(
+                        task, profile, bundle, wrong_handle
+                    )
+                )
+
+            workspace = root / "oracle-disagreement"
+            with materialize_compound_path_query_fixture(
+                task, profile, bundle, workspace
+            ) as handle:
+                populate(workspace)
+                with mock.patch.object(
+                    compound,
+                    "reference_compound_path_query_output",
+                    return_value=b"corrupt\n",
+                ):
+                    self.assertFalse(
+                        verify_compound_path_query_workspace(
+                            task, profile, bundle, handle
+                        )
+                    )
 
     def test_nested_tampering_changes_or_invalidates_every_binding(self) -> None:
         task = self.tasks[0]

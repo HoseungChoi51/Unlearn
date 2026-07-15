@@ -9,6 +9,7 @@ ability loss as a result unless target performance or deployed footprint
 improves.
 
 - [Research plan](PLAN.md)
+- [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
 - [Portable hardware benchmarking guide](HARDWARE.md)
@@ -295,15 +296,21 @@ fixtures total are staged locally but are not part of those closed catalogs or
 their invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
 payload snapshot, fixed-protocol descriptor-handoff canary, and candidate-input-free
-fixed-BusyBox namespace-transfer canary are also implemented, but none is a
-candidate execution path. Evaluation specs validate and
+fixed-BusyBox namespace-transfer canary are also implemented. A separate
+candidate-input-free native PID1 lifecycle canary covers nine fixed fork,
+timeout, output, CPU, seccomp, and spoof scenarios. One frozen first-catalog
+fixture and reviewed Bash response are now bound into a private, nonexecuting
+integration case, and a separate fixed binary protocol binds the identities
+and limits a future native candidate supervisor must consume and return. None
+is a candidate execution path. Evaluation specs validate and
 hash prospective contracts; they do not open benchmark assets or execute
 candidates. The development fixtures are test assets, not sealed evaluation
 data. A bounded public-development namespace/cgroup preflight and
 catalog-bound candidate launch-plan builder are implemented, but candidate
 execution remains unconditionally blocked until the externally trusted Bash
-runtime closure, trusted supervisor/PID1, child seccomp, cumulative CPU
-watcher, output classification, quiescence, and exact-tool-policy gates exist.
+runtime closure and candidate supervisor integrate a Bash-specific seccomp
+policy, cumulative CPU enforcement, workspace quiescence, exact-tool policy,
+and scored outcome binding.
 Complete semantic-family coverage, claim-eligible curated data, research
 training runs, and research results are not yet present. A 2M-visible-token
 Qwen3 dense-SFT canary has completed solely to qualify the training/export
@@ -357,9 +364,12 @@ independent checkers, or execution traces.
 
 `src/cbds/executable_compound_path_query.py` separately stages 20 additional
 public-development tasks and five deterministic profiles per task (100
-fixtures). Family-local tests cover its Python reference, mutations,
-materialization, exact types, and normal/optimized modes, but it has not been
-independently verified in production. The family is absent from the
+fixtures). Two structurally independent production oracles must agree, and a
+pinned-workspace property verifier checks authenticated inputs, complete output
+state, no-follow reads, final rescans, and 15 workspace mutations in normal and
+optimized modes. Sequential scans still require a trusted supervisor to hold
+the workspace quiescent, and the family has not completed independent human
+production review. The family is absent from the
 closed first/second registries and catalogs, the cumulative 200-task/1,000-
 fixture identities, and `DevelopmentInvocation`; those counts therefore do
 not change. Its fixture model represents file and symlink leaves but not
@@ -394,6 +404,28 @@ The reverse protocol admits only a content-bound blocked result. The executor
 accepts only an exact validated `DevelopmentInvocation`, produces a reviewable
 launch plan with hard blockers including unpinned host `/usr`, and always
 raises before launching a candidate.
+
+`src/cbds/development_reviewed_bash_fixture.py` narrows the next integration
+step to one exact public-development case. It exhaustively admits the frozen
+first catalog, selects the `spaces-unicode` fixture for one path-suffix
+inventory task, binds a fixed fenced Bash response through the existing parser
+and invocation protocol, and authenticates before descriptor-relative
+materialization. The reviewed program uses Bash builtins plus only the task's
+declared `find`, `mkdir`, and `sort` tools. The private case retains trusted
+objects; its public projection contains answer-free audit metadata. It does not
+execute the program, verify a post-execution workspace, or authorize candidate
+execution, scoring, model selection, or a claim.
+
+`src/cbds/development_candidate_protocol.py` separately fixes the binary
+transport contract for that future canary: a 384-byte request binds the nonce,
+invocation, program, fixture definition, initial workspace, runtime snapshot,
+allowed tools, policy, and resource ceilings; the protocol version separately
+fixes the descriptor roles. A
+512-byte result repeats those identities and binds process status, classified
+outcome, cap-plus-one stream observations, cumulative `wait4` CPU accounting,
+descendant reaping, wall time, and a workspace snapshot. Strict parsing and
+mutation tests cover the request/result relationship, but the module has no
+launch API and every canonical authority field is permanently false.
 
 `src/cbds/development_runtime_bundle.py` builds a source-closure manifest for
 explicitly named ELF executables. It records the `PT_INTERP`/`DT_NEEDED`
@@ -440,6 +472,29 @@ Bash runtime-data/`dlopen` closure, a trusted supervisor/PID1, child seccomp,
 a cumulative CPU watcher, candidate output-overflow classification,
 descendant quiescence, exact-tool policy, or any candidate/scored/claim
 authority. The generic candidate executor remains unconditionally blocked.
+
+`native/cbds-development-supervisor.c` and
+`src/cbds/development_supervisor_canary.py` add a narrower native lifecycle
+proof. The Python controller compiles the pinned descriptor for one checked-in
+static-PIE source,
+requires byte agreement with a caller-pinned binary, seals it behind a file
+descriptor, and launches it as PID1 in a fresh rootless Bubblewrap namespace
+inside a user-systemd cgroup envelope. An exact authenticated binary protocol
+admits only nine fixed scenario IDs: normal, real double-fork/`setsid`, zombie,
+wall timeout, stdout overflow, stderr overflow, CPU fan-out, forbidden syscall,
+and result-frame spoof. The C supervisor installs child-only `no_new_privs`,
+non-dumpability, and a fixed raw-BPF seccomp filter, captures cap-plus-one
+streams, kills and reaps the namespace process set with `wait4` accounting,
+checks that only PID1 remains, and returns a request-bound result frame. Both
+normal and abnormal controller paths then require the transient unit to report
+inactive/dead with no control-group path and synchronously reap the wrapper.
+
+The live development-host suite passes, but this is deliberately not a generic
+supervisor. It accepts no candidate, command, fixture, workspace, or verifier;
+the fixed child filter is not a Bash policy; summed CPU is measured but not
+limited; and local source/compiler/launcher hashes are not external trust
+anchors. General supervisor, seccomp, CPU, tool-policy, candidate execution,
+scoring, model-selection, and claim fields therefore remain false.
 
 BashBench release v1 is also diagnostic-only. A non-executing audit of its
 released source and data did not establish candidate handoff from the general

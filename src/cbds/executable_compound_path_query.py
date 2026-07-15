@@ -6,14 +6,17 @@ family is reviewed.  It nevertheless uses the same task, profile, workspace,
 oracle, and opaque-fixture hash domains so a later registry integration can be
 mechanical.
 
-The trusted implementation operates only on immutable ``FixtureDefinition``
-records.  It does not inspect the host filesystem, invoke a shell, execute a
-candidate, or authorize execution, model selection, or a research claim.
+Both independently structured trusted implementations operate only on
+immutable ``FixtureDefinition`` records and must agree.  The authenticated
+workspace facade uses descriptor-relative materialization and bounded reads;
+it does not invoke a shell, execute a candidate, or authorize execution,
+model selection, or a research claim.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
+import os
 from pathlib import PurePosixPath
 import re
 from typing import Final, Literal, TypeAlias
@@ -40,10 +43,14 @@ from .executable_static_types import (
     task_id_from_contract,
 )
 from .executable_workspace import (
+    ExecutableWorkspaceError,
     ExpectedFile,
     FixtureDefinition,
     InputFile,
     InputSymlink,
+    WorkspaceHandle,
+    materialize_fixture,
+    validate_expected_output_policy,
 )
 
 
@@ -62,6 +69,10 @@ COMPOUND_PATH_QUERY_ROOT: Final[PurePosixPath] = PurePosixPath("input/query")
 COMPOUND_PATH_QUERY_OUTPUT: Final[str] = "output/matches.txt"
 COMPOUND_PATH_QUERY_OUTPUT_MODE: Final[int] = 0o644
 COMPOUND_PATH_DIRECTORY_PERMISSION_ERRORS_COVERED: Final[bool] = False
+COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE: Final[
+    bool
+] = True
+COMPOUND_PATH_QUERY_WORKSPACE_SCANS_PROVE_GLOBAL_QUIESCENCE: Final[bool] = False
 COMPOUND_PATH_QUERY_ALLOWED_TOOLS: Final[tuple[str, ...]] = (
     "find",
     "mkdir",
@@ -100,6 +111,12 @@ _SHA256_RE: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{64}\Z")
 _TASK_ID_RE: Final[re.Pattern[str]] = re.compile(r"mds-[0-9a-f]{24}\Z")
 _READ_BITS: Final[int] = 0o444
 _EXECUTE_BITS: Final[int] = 0o111
+_REFERENCE_PATTERN_BYTES: Final[dict[str, bytes]] = {
+    "*.txt": rb".*\.txt\Z",
+    "report-*": rb"report-.*\Z",
+    "[a-z]*.log": rb"[a-z].*\.log\Z",
+    "*.[0-9]": rb".*\.[0-9]\Z",
+}
 
 
 class CompoundPathQueryError(ValueError):
@@ -791,7 +808,7 @@ def derive_compound_path_query_output(
     definition: FixtureDefinition,
     parameters: CompoundPathQueryParameters,
 ) -> bytes:
-    """Derive trusted output from immutable records without running a candidate."""
+    """Primary trusted derivation over immutable fixture records."""
 
     selected_definition = _revalidate_definition(definition)
     if type(parameters) is not CompoundPathQueryParameters:
@@ -810,20 +827,111 @@ def derive_compound_path_query_output(
     return b"".join(value.encode("utf-8") + b"\n" for value in selected)
 
 
+def reference_compound_path_query_output(
+    definition: FixtureDefinition,
+    parameters: CompoundPathQueryParameters,
+) -> bytes:
+    """Independently derive the answer with byte regexes and set algebra.
+
+    This production reference deliberately does not call the primary path
+    projection, wildcard matcher, entry predicate, or line encoder.  It first
+    classifies every in-scope record into disjoint index sets, then evaluates
+    the closed expression as set operations.  The only shared step is strict
+    reconstruction of the immutable fixture and parameter values at the trust
+    boundary.
+    """
+
+    selected_definition = _revalidate_definition(definition)
+    if type(parameters) is not CompoundPathQueryParameters:
+        raise CompoundPathQueryError("parameters have the wrong exact type")
+    parameters.__post_init__()
+    pattern_bytes = _REFERENCE_PATTERN_BYTES.get(parameters.name_pattern)
+    if type(pattern_bytes) is not bytes:
+        raise CompoundPathQueryError("reference pattern is outside the closed grid")
+    try:
+        name_expression = re.compile(pattern_bytes, flags=re.ASCII)
+    except re.error as exc:
+        raise CompoundPathQueryError("reference pattern failed to compile") from exc
+
+    # (relative bytes, is regular, is symlink, mode, depth, name matches)
+    records: list[tuple[bytes, bool, bool, int, int, bool]] = []
+    for item in selected_definition.inputs:
+        path_parts = item.path.split("/")
+        if len(path_parts) < 3 or path_parts[:2] != ["input", "query"]:
+            continue
+        relative_parts = path_parts[2:]
+        relative_bytes = "/".join(relative_parts).encode("utf-8", "strict")
+        basename_bytes = relative_parts[-1].encode("utf-8", "strict")
+        regular = type(item) is InputFile
+        symlink = type(item) is InputSymlink
+        mode = item.mode if regular else 0
+        records.append(
+            (
+                relative_bytes,
+                regular,
+                symlink,
+                mode,
+                len(relative_parts),
+                name_expression.fullmatch(basename_bytes) is not None,
+            )
+        )
+
+    readable = {
+        index
+        for index, record in enumerate(records)
+        if record[1] and record[3] & 0o444
+    }
+    symlinks = {
+        index for index, record in enumerate(records) if record[2]
+    }
+    executable = {
+        index
+        for index, record in enumerate(records)
+        if record[1] and record[3] & 0o111
+    }
+    named = {
+        index for index, record in enumerate(records) if record[5]
+    }
+    shallow = {
+        index for index, record in enumerate(records) if record[4] <= 3
+    }
+    universe = set(range(len(records)))
+
+    if parameters.expression == "readable-regular-and-name":
+        accepted = readable & named
+    elif parameters.expression == "readable-regular-and-not-name":
+        accepted = readable & (universe - named)
+    elif parameters.expression == "readable-regular-and-name-or-symlink":
+        accepted = (readable & named) | symlinks
+    elif parameters.expression == "readable-regular-and-name-or-executable":
+        accepted = readable & (named | executable)
+    elif parameters.expression == "readable-regular-and-name-depth-at-most-three":
+        accepted = readable & named & shallow
+    else:
+        raise CompoundPathQueryError("unsupported reference compound expression")
+
+    output = bytearray()
+    for relative_bytes in sorted(records[index][0] for index in accepted):
+        output.extend(relative_bytes)
+        output.append(0x0A)
+    return bytes(output)
+
+
 def verify_compound_path_query_output(
     definition: FixtureDefinition,
     parameters: CompoundPathQueryParameters,
     candidate_output: bytes,
 ) -> bool:
-    """Verify supplied bytes only; never execute or locate a candidate program."""
+    """Verify bytes only, requiring both production derivations to agree."""
 
     if type(candidate_output) is not bytes:
         return False
     try:
-        expected = derive_compound_path_query_output(definition, parameters)
+        primary = derive_compound_path_query_output(definition, parameters)
+        reference = reference_compound_path_query_output(definition, parameters)
     except (CompoundPathQueryError, TypeError, ValueError):
         return False
-    return candidate_output == expected
+    return primary == reference == candidate_output
 
 
 def _compute_oracle_sha256(outputs: tuple[OracleOutputRecord, ...]) -> str:
@@ -1044,10 +1152,19 @@ def build_compound_path_query_fixture_bundle(
             ),
         ),
     )
-    expected = derive_compound_path_query_output(
+    primary = derive_compound_path_query_output(
         provisional_definition,
         selected_task.parameters,
     )
+    reference = reference_compound_path_query_output(
+        provisional_definition,
+        selected_task.parameters,
+    )
+    if primary != reference:
+        raise CompoundPathQueryError(
+            "primary and reference implementations disagree"
+        )
+    expected = primary
     definition = FixtureDefinition(
         fixture_id=provisional_definition.fixture_id,
         inputs=inputs,
@@ -1140,6 +1257,109 @@ def verify_compound_path_query_fixture_for_task_profile(
     return True
 
 
+def materialize_compound_path_query_fixture(
+    task: CompoundPathQueryTask,
+    profile: ExecutableFixtureProfile,
+    bundle: CompoundPathQueryFixtureBundle,
+    workspace: str | os.PathLike[str],
+) -> WorkspaceHandle:
+    """Authenticate the family binding before safe materialization."""
+
+    validate_compound_path_query_fixture_for_task_profile(task, profile, bundle)
+    return materialize_fixture(bundle.definition, workspace)
+
+
+def verify_compound_path_query_workspace(
+    task: CompoundPathQueryTask,
+    profile: ExecutableFixtureProfile,
+    bundle: CompoundPathQueryFixtureBundle,
+    handle: WorkspaceHandle,
+) -> bool:
+    """Verify one complete pinned workspace without executing a candidate.
+
+    The task/profile reconstruction authenticates the fixture, oracle, and
+    public descriptor.  The exact pinned handle must retain the corresponding
+    baseline and output policy.  Descriptor-relative stable scans require the
+    complete input tree to remain unchanged and reject every missing, extra,
+    linked, oversized, or incorrectly moded output path.  Candidate bytes are
+    released only through the handle's bounded no-follow egress and must agree
+    with both independently structured production derivations and the bound
+    oracle.  Final scans close changes observed during verification.
+
+    A trusted harness must first stop and reap every candidate descendant and
+    keep the workspace quiescent through this return.  Repeated scans cannot
+    prove global quiescence or exclude a mutation after their last observation.
+    """
+
+    if type(handle) is not WorkspaceHandle:
+        return False
+    try:
+        validate_compound_path_query_fixture_for_task_profile(
+            task, profile, bundle
+        )
+        baseline = handle.baseline
+        if (
+            baseline.fixture_id != bundle.definition.fixture_id
+            or baseline.fixture_sha256 != bundle.definition.fixture_sha256
+            or handle.expected_files != bundle.definition.expected_files
+            or baseline.output_scaffold_entries
+        ):
+            return False
+
+        input_scan = handle.scan_inputs()
+        if (
+            input_scan.scope != "inputs"
+            or input_scan.baseline_sha256 != baseline.baseline_sha256
+            or input_scan.entries != baseline.input_entries
+            or input_scan.tree_sha256 != baseline.input_tree_sha256
+        ):
+            return False
+
+        output_scan = handle.scan_outputs()
+        output_entries = validate_expected_output_policy(
+            bundle.definition, output_scan
+        )
+        if (
+            len(output_entries) != 1
+            or output_entries[0].path != COMPOUND_PATH_QUERY_OUTPUT
+            or output_entries[0].mode != COMPOUND_PATH_QUERY_OUTPUT_MODE
+        ):
+            return False
+        payload = handle.read_output_bytes(
+            output_scan, COMPOUND_PATH_QUERY_OUTPUT
+        )
+        primary = derive_compound_path_query_output(
+            bundle.definition, task.parameters
+        )
+        reference = reference_compound_path_query_output(
+            bundle.definition, task.parameters
+        )
+        if (
+            primary != reference
+            or payload != primary
+            or payload != bundle.oracle.outputs[0].content
+            or bundle.oracle.outputs[0].mode != COMPOUND_PATH_QUERY_OUTPUT_MODE
+        ):
+            return False
+
+        final_input_scan = handle.scan_inputs()
+        final_output_scan = handle.scan_outputs()
+        return (
+            final_input_scan == input_scan
+            and final_output_scan == output_scan
+            and final_input_scan.entries == baseline.input_entries
+            and final_input_scan.tree_sha256 == baseline.input_tree_sha256
+        )
+    except (
+        CompoundPathQueryError,
+        ExecutableWorkspaceError,
+        OSError,
+        TypeError,
+        ValueError,
+    ):
+        return False
+
+
 __all__ = [
     "COMPOUND_PATH_EXPRESSIONS",
     "COMPOUND_PATH_NAME_PATTERNS",
@@ -1149,6 +1369,8 @@ __all__ = [
     "COMPOUND_PATH_QUERY_GENERATOR_VERSION",
     "COMPOUND_PATH_QUERY_OUTPUT",
     "COMPOUND_PATH_QUERY_VERIFIER_IDENTITY",
+    "COMPOUND_PATH_QUERY_WORKSPACE_SCANS_PROVE_GLOBAL_QUIESCENCE",
+    "COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE",
     "CompoundPathQueryError",
     "CompoundPathQueryFixtureBundle",
     "CompoundPathQueryOracle",
@@ -1158,9 +1380,12 @@ __all__ = [
     "build_compound_path_query_tasks",
     "compute_compound_path_query_task_sha256",
     "derive_compound_path_query_output",
+    "materialize_compound_path_query_fixture",
+    "reference_compound_path_query_output",
     "validate_compound_path_query_fixture_bundle",
     "validate_compound_path_query_fixture_for_task_profile",
     "verify_compound_path_query_fixture_bundle",
     "verify_compound_path_query_fixture_for_task_profile",
     "verify_compound_path_query_output",
+    "verify_compound_path_query_workspace",
 ]

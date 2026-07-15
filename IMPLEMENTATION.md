@@ -127,15 +127,19 @@ evidence that a model or research hypothesis has succeeded.
 - [x] Staged, family-local `compound-path-query` public-development slice with
   20 typed task contracts and five deterministic profiles per task (100
   fixtures). Its fixed basename-pattern and parenthesized kind/mode/depth
-  predicates have independent Python-reference, mutation, exact-type,
-  materialization, and normal/optimized-mode tests, including 20 genuine
-  zero-byte results. This slice is not integrated into either closed catalog,
-  the cumulative suite, or `DevelopmentInvocation`; it has not been
-  independently verified in production. Because the workspace
-  fixture type cannot represent explicit directory modes, its
-  `partial-permissions` profile covers mode-denied leaves, not directory
-  permission errors. The frozen cumulative inventory therefore remains 200
-  tasks and 1,000 fixtures.
+  predicates have two structurally independent production oracles that must
+  agree, plus mutation, exact-type, materialization, pinned-workspace,
+  no-follow, and normal/optimized-mode tests, including 20 genuine zero-byte
+  results and 15 workspace-state mutations. Its workspace verifier binds the
+  task/profile/bundle to an already-open directory, requires the exact input
+  baseline and complete output policy, and repeats bounded scans after reads.
+  Those scans cannot establish global quiescence without a trusted supervisor.
+  This slice is not integrated into either closed catalog, the cumulative
+  suite, or `DevelopmentInvocation`, and has not completed independent human
+  production review. Because the fixture type cannot represent explicit
+  directory modes, its `partial-permissions` profile covers mode-denied leaves,
+  not directory permission errors. The frozen cumulative inventory therefore
+  remains 200 tasks and 1,000 fixtures.
 - [x] Staged, family-local `regex-log-group-aggregation` slice with another 20
   task contracts and 100 fixtures. It covers recursive no-follow `.log`
   selection, byte-oriented ERE filters, strict UTF-8/TSV/integer parsing, five
@@ -202,6 +206,26 @@ evidence that a model or research hypothesis has succeeded.
   frames bind the original response, the frozen-parser Bash extraction, and
   answer-free fixture inputs/output policy without oracle answer bytes. The
   reverse protocol admits only an invocation-bound blocked result.
+- [x] One fixed, reviewed, nonexecuting Bash integration case. It exhaustively
+  admits the frozen first catalog, pins an exact path-suffix-inventory task and
+  `spaces-unicode` fixture, binds one fenced response through the frozen parser
+  and invocation protocol, and authenticates the case before existing
+  descriptor-relative materialization. The source uses Bash builtins plus only
+  `find`, `mkdir`, and `sort`. Its audit projection excludes fixture, oracle,
+  response, and program bytes, and all execution, scoring, selection, and
+  claim fields remain false.
+- [x] Fixed reviewed-candidate binary transport protocol with exact 384-byte
+  request and 512-byte result layouts. The request binds invocation, program,
+  fixture definition, workspace baseline, runtime snapshot, allowed tools,
+  policy, nonce, and resource ceilings; the protocol version separately fixes
+  descriptor roles. The result repeats
+  every identity and binds classified process outcome, cap-plus-one stream
+  observations and digests, cumulative `wait4` CPU, wall time, descendants
+  reaped, and the post-run workspace snapshot. Strict parsing, cross-record
+  binding, malformed-frame, mutation, and normal/optimized-mode tests are
+  complete. This is transport only: it opens no descriptor, constructs no
+  namespace, executes no program, verifies no workspace, and permanently
+  denies candidate, scoring, model-selection, and claim authority.
 - [x] Public-development systemd-user/bubblewrap namespace and cgroup canary
   inspection plus a content-safe candidate launch-plan builder that accepts
   only an exact validated `DevelopmentInvocation`. The execution entry point
@@ -260,6 +284,33 @@ evidence that a model or research hypothesis has succeeded.
   classification, descendant quiescence, exact-tool policy, or
   synthesized-candidate/scored/claim authority. The sole snapshot payload is
   still executable program bytes and is not semantically proven to be BusyBox.
+- [x] Candidate-input-free native supervisor lifecycle canary with an exact
+  64-byte request and 256-byte authenticated result protocol. The runner
+  rebuilds the pinned descriptor for the checked-in C source with one fixed
+  static-PIE compiler contract,
+  requires a caller-pinned source digest and byte-for-byte agreement with the
+  supplied binary, seals that binary behind an already-open descriptor, and
+  projects it as PID1 in a fresh Bubblewrap user/PID namespace inside a
+  user-systemd cgroup envelope. Nine closed scenarios exercise normal exit, a
+  real double-fork plus `setsid`, an unreaped intermediate zombie, wall-time
+  termination, independent stdout/stderr cap-plus-one overflow, CPU fan-out,
+  a forbidden syscall, and result-frame spoof bytes. The fixed supervisor
+  installs child-only `no_new_privs`, non-dumpability, and raw-BPF seccomp;
+  captures streams itself; kills the namespace process set; reaps every child
+  with cumulative `wait4` accounting; requires itself to be the sole remaining
+  PID; and emits one request-bound digest-protected result. On normal and
+  abnormal controller paths, pinned `systemctl` kill/stop operations are
+  followed by an exact inactive/dead/empty-control-group query and synchronous
+  wrapper reap. Evidence binds the
+  suite nonce, every request/result pair, compiler/build identity, source and
+  binary, launch contract, and all nine results. The default live suite passes
+  on the development host; its protocol and controller unit suites also pass
+  in normal and optimized Python modes. This is still a fixed-child lifecycle
+  canary: local hashes are not an external
+  trust anchor, the seccomp filter is not a synthesized-Bash policy, CPU time
+  is observed but not cumulatively limited, and no candidate, workspace,
+  runtime closure, tool policy, score, model selection, or claim is admitted.
+  All corresponding authority fields remain false.
 - [x] Real-text dense full-model SFT engineering canary with authenticated
   source/schedule reconstruction, response-plus-EOS loss, actual-supervised-
   token accumulation including the final partial update, optimizer-update LR
@@ -308,11 +359,12 @@ Separately, `src/cbds/executable_compound_path_query.py` and
 families with 200 public-development fixtures in total. Both are deliberately
 absent from the closed first/second registries, their checked hash-only
 catalogs, the cumulative 200/1,000 identities, and the V1 invocation
-dispatcher. The compound family has not undergone independent production-
-evaluator verification and cannot exercise directory permission errors. The
-log family requires two production-oracle implementations to agree and has a
-complete pinned-workspace property verifier, but likewise remains public,
-unsealed, unscored, and nonauthorizing.
+dispatcher. Both families require two production-oracle implementations to
+agree and have complete pinned-workspace property verifiers with mutation
+coverage. Neither sequential verifier can prove global quiescence, and the
+compound family cannot exercise directory permission errors. Both still await
+independent human production review and remain public, unsealed, unscored, and
+nonauthorizing.
 
 The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
@@ -374,6 +426,20 @@ is a diagnostic whose executable hash is recorded; scored syntax and execution
 must run in the digest-pinned image. Python syntax uses a frozen 3.11 feature
 grammar, but is also only a host diagnostic at this stage.
 
+The separate native supervisor lifecycle canary narrows one of those gaps
+without opening the candidate boundary. It rebuilds one checked-in static C
+supervisor, seals and launches it as namespace PID1, and sends only nine closed
+scenario identifiers. Authenticated observations exercise the fixed program's
+fork/setsid/zombie cleanup, timeout, cap-plus-one stream classification,
+CPU-fan-out reaping, child-only seccomp kill, and resistance to child-emitted
+frame-spoof bytes. A user-systemd wrapper requests memory, swap, task, CPU-rate,
+NOFILE, core, runtime, and kill-mode controls. The program and launcher are
+still locally identified rather than externally trusted, the scenario child is
+not Bash, its seccomp policy is not general, cumulative CPU is accounted but
+not bounded, and no workspace or tool allowlist is involved. Consequently the
+generic candidate executor remains blocked and every execution/scoring/claim
+flag remains false.
+
 ## Remaining gates before model experiments
 
 - [ ] Independently review and promote the 40 staged method-development
@@ -391,11 +457,14 @@ grammar, but is also only a host diagnostic at this stage.
   reopening mutable source paths. The candidate-input-free namespace canary is
   parser/transport-request development evidence only and does not authorize
   launch.
-- [ ] Implement and test the trusted supervisor/PID1, child seccomp,
-  cumulative CPU watcher, explicit output-overflow classification, descendant
-  quiescence, and exact-tool policy. The fixed namespace-canary runner has
-  bounded wall time and capture plus systemd quotas, but those controls do not
-  establish candidate `resource_limit` outcomes.
+- [ ] Promote the fixed native lifecycle design into an externally reviewed
+  and trusted candidate supervisor: accept only the authenticated invocation,
+  apply a Bash/runtime-specific child seccomp policy, enforce a cumulative CPU
+  ceiling, hold the workspace quiescent through verification, enforce the
+  exact-tool policy, and bind every classified outcome into the scored result.
+  The fixed native canary now exercises PID1, reaping, timeout and cap-plus-one
+  overflow behavior under systemd quotas, but it has no candidate API and does
+  not establish candidate `resource_limit` outcomes.
 - [ ] Extend verifier mutation tests beyond the ten implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.

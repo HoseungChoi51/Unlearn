@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
+import fcntl
 from hashlib import sha256
 import json
 import os
@@ -1147,6 +1148,49 @@ class WorkspaceHandle:
                     "output tree changed while verifier bytes were released"
                 )
             return payload
+
+    def duplicate_launch_directory(self) -> int:
+        """Return one close-on-exec duplicate of the pinned workspace directory.
+
+        This is a transport primitive for a separately reviewed namespace
+        controller.  It does not make the workspace executable or authorize a
+        candidate.  The caller owns the returned descriptor and must close it.
+        Revalidating the named workspace on both sides of ``dup`` prevents a
+        caller from silently converting a stale handle into a launch path.
+        """
+
+        duplicate: int | None = None
+        with self._lock:
+            descriptor = self._require_open()
+            self._assert_named_workspace(descriptor)
+            try:
+                duplicate = os.dup(descriptor)
+                os.set_inheritable(duplicate, False)
+                source_metadata = os.fstat(descriptor)
+                duplicate_metadata = os.fstat(duplicate)
+                access_mode = fcntl.fcntl(duplicate, fcntl.F_GETFL) & os.O_ACCMODE
+                if (
+                    not _static._same_inode(source_metadata, duplicate_metadata)
+                    or not stat.S_ISDIR(duplicate_metadata.st_mode)
+                    or access_mode != os.O_RDONLY
+                    or os.get_inheritable(duplicate)
+                ):
+                    raise WorkspaceScanError(
+                        "workspace launch descriptor is not an exact read-only duplicate"
+                    )
+                self._assert_named_workspace(descriptor)
+                result = duplicate
+                duplicate = None
+                return result
+            except WorkspaceScanError:
+                raise
+            except (OSError, TypeError, ValueError) as exc:
+                raise WorkspaceScanError(
+                    "workspace launch descriptor could not be duplicated"
+                ) from exc
+            finally:
+                if duplicate is not None:
+                    os.close(duplicate)
 
     def close(self) -> None:
         """Close every retained descriptor; repeated calls are harmless."""

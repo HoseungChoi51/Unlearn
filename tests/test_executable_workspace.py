@@ -990,6 +990,47 @@ class OutputEgressTests(unittest.TestCase):
                 handle.read_output_bytes(scan, "output.txt")
 
 
+class LaunchDescriptorTests(unittest.TestCase):
+    def test_launch_duplicate_is_same_directory_close_on_exec_and_caller_owned(self) -> None:
+        definition = sample_definition()
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "workspace"
+            handle = materialize_fixture(definition, workspace)
+            descriptor = handle.duplicate_launch_directory()
+            try:
+                self.assertFalse(os.get_inheritable(descriptor))
+                self.assertTrue(stat.S_ISDIR(os.fstat(descriptor).st_mode))
+                self.assertEqual(
+                    (os.fstat(descriptor).st_dev, os.fstat(descriptor).st_ino),
+                    (workspace.stat().st_dev, workspace.stat().st_ino),
+                )
+                handle.close()
+                self.assertTrue(stat.S_ISDIR(os.fstat(descriptor).st_mode))
+            finally:
+                os.close(descriptor)
+
+    def test_closed_or_replaced_named_workspace_cannot_mint_launch_descriptor(self) -> None:
+        definition = sample_definition()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            workspace = root / "workspace"
+            handle = materialize_fixture(definition, workspace)
+            handle.close()
+            with self.assertRaises(WorkspaceClosedError):
+                handle.duplicate_launch_directory()
+
+            handle = materialize_fixture(definition, root / "replacement-case")
+            workspace = handle.workspace
+            moved = root / "moved"
+            workspace.rename(moved)
+            workspace.mkdir(mode=0o700)
+            try:
+                with self.assertRaisesRegex(WorkspaceScanError, "no longer names"):
+                    handle.duplicate_launch_directory()
+            finally:
+                handle.close()
+
+
 class BaselineIntegrityTests(unittest.TestCase):
     def test_baseline_content_address_cannot_be_resigned_locally(self) -> None:
         definition = sample_definition()

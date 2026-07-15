@@ -231,6 +231,39 @@ properties. Until the Bash runtime-data/`dlopen` closure, externally trusted
 launcher, independent namespace validation, and supervisor gates are complete,
 the sandbox cannot execute synthesized candidates for research scoring.
 
+The native lifecycle canary now tests the supervisor mechanics separately from
+candidate semantics. A reproducibly built, sealed static program runs as PID1
+and receives only nine fixed binary requests covering normal exit,
+double-fork/`setsid`, zombie cleanup, wall timeout, both stream overflows, CPU
+fan-out, a forbidden syscall, and child-emitted frame-spoof bytes. It applies a
+fixed child-only seccomp filter, kills and reaps the namespace process set,
+sums `wait4` resource usage, confirms that PID1 alone remains, and returns an
+authenticated request-bound record. The outer controller also kills/stops the
+unique transient unit, requires it to report inactive/dead with no cgroup path,
+and synchronously reaps the wrapper. Running it inside the same rootless
+namespace and user-systemd envelope is important because lifecycle bugs are
+not meaningfully tested by an in-process mock.
+
+That canary intentionally has no candidate, command, workspace, fixture,
+verifier, or score input. It therefore validates a design seam without turning
+development machinery into a security claim. The fixed filter cannot stand in
+for a Bash/runtime policy; measured cumulative CPU is not yet an enforced
+ceiling; local binary hashes are not external trust; and the canary does not
+hold a scored workspace quiescent. Those distinctions keep every general
+execution and claim-authority flag false while making the next implementation
+step smaller and testable.
+
+The next seam is also fixed without opening it. One private development case
+now binds an exhaustively admitted first-catalog fixture to a source-reviewed
+Bash response, but stops after authenticated materialization. A separate exact
+binary protocol specifies how a future native canary must bind the invocation,
+program, fixture definition, initial workspace, runtime, tool policy, resource
+limits, process outcome, captured-stream digests, cumulative CPU, descendant
+reaping, and post-run workspace snapshot. This is valuable because controller
+and native implementations can be mutation-tested against one byte-level
+contract. Neither module launches Bash or asserts that the requested controls
+were enforced; every authority projection remains permanently false.
+
 ## 8. Dense model inspection and sub-1B accounting
 
 The local Safetensors inspector reads a flat artifact without importing model
@@ -413,24 +446,31 @@ The repository currently has a substantial validation foundation:
 - generic dense/MoE artifact inspection and bounded local runtime checks;
 - reproducible corpus/schedule and dense-SFT engineering canaries;
 - runtime source-closure, materialization, sealed descriptor, handoff, and
-  candidate-input-free namespace-canary components.
+  candidate-input-free namespace-canary components;
+- a candidate-input-free native PID1 lifecycle canary whose fixed scenarios
+  exercise descendant cleanup, timeout, output classification, CPU accounting,
+  child seccomp, and result framing under the development cgroup envelope;
+- one catalog-bound reviewed Bash fixture case and a separate request/result
+  protocol for the next nonauthorizing candidate-boundary canary.
 
 None of this is a completed scored experiment. The public benchmark inventory
 is method-development data, the two staged families are not in its frozen
 identity, the large generated suite remains semantic scaffolding, sealed assets
 are unfinished, raw training rows are not admitted, the production supervisor
-is incomplete, and no backbone has passed the preregistered feasibility and
-capability gates. All relevant authority flags remain false.
+has not been promoted from fixed lifecycle scenarios to an externally trusted
+candidate boundary, and no backbone has passed the preregistered feasibility
+and capability gates. All relevant authority flags remain false.
 
 The critical path is now:
 
 1. independently review and integrate the two staged families, then implement
    the remaining 260 method-development specifications with concrete fixtures,
    independent verifiers, and mutation coverage;
-2. complete the Bash runtime-data/`dlopen` closure, trusted launcher and PID1,
-   child seccomp, cumulative CPU/output controls, descendant quiescence, and
-   exact-tool enforcement, then validate them independently on the target
-   hardware;
+2. complete the Bash runtime-data/`dlopen` closure and promote the native
+   lifecycle design into an externally reviewed candidate supervisor with a
+   Bash-specific child seccomp policy, cumulative CPU enforcement, workspace
+   quiescence, exact-tool enforcement, and scored-result binding; then validate
+   the complete boundary independently on the target hardware;
 3. finish row-level training admission, license resolution, AST/execution
    verification, decontamination, and utility balancing;
 4. finish architecture-specific model accounting, production training, exact
