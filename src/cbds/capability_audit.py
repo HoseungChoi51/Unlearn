@@ -55,7 +55,7 @@ PLAN_CANDIDATE_FAMILY_IDS: Final[tuple[str, ...]] = (
     "creative-long-form-prose",
 )
 SOURCE_PLAN_SHA256: Final[str] = (
-    "b907788a93af17127152d4028f237e663b99d29b96604a54a60a8cb221abc172"
+    "8f1aae8e663aad65c5e0b3ebc52a643b7fabca3c4fc6dd4af08578cc66746af0"
 )
 PLAN_CANDIDATE_ROSTER_HASH_DOMAIN: Final[str] = (
     "cbds.capability-audit.plan-candidate-roster.v1"

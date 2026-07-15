@@ -9,6 +9,7 @@ ability loss as a result unless target performance or deployed footprint
 improves.
 
 - [Research plan](PLAN.md)
+- [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
 - [Portable hardware benchmarking guide](HARDWARE.md)
 - [Hardware result JSON Schema](hardware-result.schema.json)
@@ -22,6 +23,8 @@ improves.
 - [Non-claiming GPU engineering pilot](reports/engineering-pilot/manifest.json)
 - [Non-claiming corpus/token-schedule pilot](reports/engineering-data-pilot/manifest.json)
 - [Non-claiming dense-SFT canary](reports/engineering-dense-sft-canary/manifest.json)
+- [Executable first-tranche hash manifest](reports/executable-first-tranche/manifest.json)
+- [Executable additive second-tranche hash manifest](reports/executable-second-tranche/manifest.json)
 
 ## Quick start
 
@@ -285,26 +288,167 @@ preflight, prospective run and scored-evaluation specifications,
 completed-record accounting, completed-export evaluation/hardware binding,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and four public-development static
-fixture/verifier families are implemented. Evaluation specs validate and hash
-prospective contracts; they do not open benchmark assets or execute
+fail-closed claim-policy evaluation, and ten cataloged public-development
+static fixture/verifier families are implemented. Two separate 20-task
+families—`compound-path-query` and `regex-log-group-aggregation`—with 200
+fixtures total are staged locally but are not part of those closed catalogs or
+their invocation protocol. A catalog-admitted
+development invocation protocol, bounded runtime-bundle materializer, sealed regular-
+payload snapshot, fixed-protocol descriptor-handoff canary, and candidate-input-free
+fixed-BusyBox namespace-transfer canary are also implemented, but none is a
+candidate execution path. Evaluation specs validate and
+hash prospective contracts; they do not open benchmark assets or execute
 candidates. The development fixtures are test assets, not sealed evaluation
-data. A bounded public-development namespace/cgroup preflight and candidate
-launch-plan builder are implemented, but candidate execution remains
-unconditionally blocked until the trusted supervisor, child seccomp, CPU-time
-watcher, bounded capture, quiescence, and exact-tool-policy gates exist.
+data. A bounded public-development namespace/cgroup preflight and
+catalog-bound candidate launch-plan builder are implemented, but candidate
+execution remains unconditionally blocked until the externally trusted Bash
+runtime closure, trusted supervisor/PID1, child seccomp, cumulative CPU
+watcher, output classification, quiescence, and exact-tool-policy gates exist.
 Complete semantic-family coverage, claim-eligible curated data, research
 training runs, and research results are not yet present. A 2M-visible-token
 Qwen3 dense-SFT canary has completed solely to qualify the training/export
 plumbing; it is not a backbone score or campaign run.
 
-The four public-development verifier families are a narrow executable-fixture
-exception to the bulk semantic scaffold: their trusted APIs materialize
-deterministic filesystem fixtures through pinned, no-follow directory
-descriptors and verify post-execution state, but never invoke candidate code.
-The generated 20,250-record benchmark scaffold still carries only semantic
-graphs and fixture descriptors; it does not materialize the complete sealed
-evaluation fixtures, independent checkers, or execution traces.
+The executable-static first tranche contains exactly 100 public
+method-development semantic specifications across five families, each paired
+with five concrete edge-case profiles: 500 content-bound fixture bundles in
+total. The bundles contain real deterministic `FixtureDefinition` inputs and
+trusted oracles. Trusted APIs materialize them through descriptor-relative,
+no-follow paths and produce content-addressed semantic verifier evidence.
+Separate reference constructions are tested for all five families, and the
+full-catalog tests materialize and verify the trusted oracle for all 500
+bundles without executing candidate code, then show that a one-byte or size
+mutation is rejected for every bundle. The checked-in hash-only catalog is
+[`reports/executable-first-tranche/manifest.json`](reports/executable-first-tranche/manifest.json),
+with registry SHA-256
+`ada6043b345e48f69ad602581030aab1bafcb3ff9dc453f9d02342faaf6a7f9a`,
+suite SHA-256
+`eb64bb4cdb60ab8e0e228f688cf54810fae2ef56768e8b34ac039bdc1aec42ae`,
+and catalog SHA-256
+`1fc71f89830739a53b69d771b7d0bd6a79a4d78ff698b1c1c2258211e7776c99`.
+Its `candidate_execution_authorized`, `model_selection_eligible`, and
+`claim_authorized` fields are all hard-coded false.
+
+An additive second tranche contributes another 100 semantic specifications
+and 500 bundles across byte-transform mirrors, mode-normalized mirrors, strict
+JSONL inner joins, raw POSIX-ustar extraction, and synthetic process-snapshot
+reports. It preserves all first-tranche hashes, independently regenerates each
+new task/profile answer, and materializes and verifies all 500 added bundles.
+The checked-in hash-only additive catalog is
+[`reports/executable-second-tranche/manifest.json`](reports/executable-second-tranche/manifest.json),
+with added-registry SHA-256
+`27e4721036c4870fec463e880cb3a36fcd72ebe530368cb45179f600ee694ab4`,
+cumulative-suite SHA-256
+`0020c1e5c7907d979d7fa97dead79f199fff59d97184c33fae81bc98df3ef8fb`,
+and additive-catalog SHA-256
+`e2ad6a3124491bc25410d40278400aeac9cd8791a9f08a530c823d5f14c09e18`.
+Its execution, selection, and claim-authority flags are also hard false.
+
+Together the two tranches provide 200 of the 500 required
+method-development specifications and 1,000 concrete fixture bundles. They
+remain public, unsealed, and unscored. The remaining 300 specifications and
+the trusted sandbox/supervisor still block candidate execution. The V1
+`DevelopmentInvocation` below deliberately admits only the frozen first
+tranche; a cumulative invocation protocol has not been authorized. Separately,
+the generated 20,250-record
+benchmark scaffold continues to carry only semantic graphs and fixture
+descriptors; it does not materialize the complete sealed evaluation fixtures,
+independent checkers, or execution traces.
+
+`src/cbds/executable_compound_path_query.py` separately stages 20 additional
+public-development tasks and five deterministic profiles per task (100
+fixtures). Family-local tests cover its Python reference, mutations,
+materialization, exact types, and normal/optimized modes, but it has not been
+independently verified in production. The family is absent from the
+closed first/second registries and catalogs, the cumulative 200-task/1,000-
+fixture identities, and `DevelopmentInvocation`; those counts therefore do
+not change. Its fixture model represents file and symlink leaves but not
+explicit directory modes, so it does not cover directory permission errors.
+
+`src/cbds/executable_log_aggregation_pipeline.py` stages another 20 tasks and
+100 fixtures over recursive no-follow log discovery, strict byte-level TSV
+parsing, ERE filtering, malformed-row policies, grouped count/sum aggregation,
+and raw-byte ordering. Its two independently structured production oracles
+must agree. A local property verifier authenticates the task/profile/bundle
+and pinned workspace, requires exact input preservation, enforces the complete
+output mode/link/size/tree policy, reads through bounded descriptor-relative
+egress, and repeats the scans after reading. Directory permission and
+effective-access failures remain explicitly outside its fixture coverage. It
+is public, unsealed, unscored, nonauthorizing, and absent from the frozen
+catalogs and invocation dispatcher. The staged total is therefore 40 tasks and
+200 fixtures; the frozen cumulative identity remains 200 tasks/1,000 fixtures.
+
+`src/cbds/development_invocation.py` admits the frozen first-tranche catalog
+through its registry, suite, and catalog digests, then binds each request to
+one selected task, profile, and fixture bundle. Its canonical framed request
+contains the original model response, the Bash program reproduced by the
+frozen response parser, and the answer-free fixture inputs and output policy;
+it contains no trusted-oracle answer bytes. Repeated requests may use a typed
+catalog admission created by one exhaustive catalog validation, while every
+invocation still revalidates the admitted catalog shell and selected objects.
+The typed admission and `DevelopmentInvocation` are private trusted-controller
+handles that transitively retain the catalog's oracle bytes; they must never
+cross into a candidate process. Only their framed request and hash-only audit
+projections are answer-free boundary objects.
+The reverse protocol admits only a content-bound blocked result. The executor
+accepts only an exact validated `DevelopmentInvocation`, produces a reviewable
+launch plan with hard blockers including unpinned host `/usr`, and always
+raises before launching a candidate.
+
+`src/cbds/development_runtime_bundle.py` builds a source-closure manifest for
+explicitly named ELF executables. It records the `PT_INTERP`/`DT_NEEDED`
+closure, ordered library searches and negative lookups, and declared usr-merge
+aliases under pinned roots. Aggregate-payload and entry ceilings plus strict
+source replay and path-race checks bound that inspection. The separate runtime
+materializer requires a trusted expected manifest digest, copies the validated
+projection into a newly created descriptor-relative no-follow destination,
+normalizes regular-file modes to the source execute/read bits with all write
+and privilege bits removed, seals directories to mode `0555`, replays the
+source before and after copying, and records two agreeing final scans.
+
+That materialization evidence is non-authorizing. Live binding replays the
+trusted source and rescans the named destination, but proves only a
+point-in-time match. `src/cbds/development_runtime_fd_snapshot.py` closes the
+regular-payload portion of that race: it pins and rescans the full projection,
+copies authenticated regular bytes into content-sealed CLOEXEC memfds, and
+returns independent-offset read-only descriptors while serializing no FD
+numbers. A frozen, hash-checked helper canary separately proves CLOEXEC absence
+and an exact, exclusive explicit-`pass_fds` subprocess handoff while executing
+through the already-open, content-hashed interpreter FD. The interpreter does
+not yet have an external trust anchor, so the evidence does not call that child
+harmless.
+
+`src/cbds/development_runtime_namespace_canary.py` now constructs a narrower,
+candidate-input-free namespace-transfer request for one fixed snapshot-bound
+`/usr/bin/busybox` payload. It admits exactly `/`, `/usr`, and `/usr/bin`, one
+regular payload, and no symlinks or extra runtime files. User-systemd
+`OpenFile=` is asked to hand its sealed descriptor to Bubblewrap
+`--ro-bind-data`; the command applies the recorded mode and performs a final
+read-only root remount without reopening a mutable runtime source path. The
+built-in real runner bounds wall time and each captured stream, applies fixed
+cleanup, requests systemd memory, PID, open-file, CPU-quota, and runtime
+ceilings, and accepts only the hash-bound probe input and exact response frame.
+
+This canary exposes no synthesized-candidate, command, fixture, verifier, or
+score input parameter, but its sole snapshot payload is still executable
+program bytes. Local hashes do not establish external trust or harmlessness
+for systemd/Bubblewrap/systemctl or the purported BusyBox payload. Payload/root mutation resistance,
+descriptor closure, workspace/network/host-path isolation, the two handoffs,
+projected payload/mode, and probe execution are consequently untrusted
+self-reports, not verified security facts. It also does not establish the
+Bash runtime-data/`dlopen` closure, a trusted supervisor/PID1, child seccomp,
+a cumulative CPU watcher, candidate output-overflow classification,
+descendant quiescence, exact-tool policy, or any candidate/scored/claim
+authority. The generic candidate executor remains unconditionally blocked.
+
+BashBench release v1 is also diagnostic-only. A non-executing audit of its
+released source and data did not establish candidate handoff from the general
+harness into the tests, found inconsistent evaluation/test task identities and
+counts, and found direct host-temporary-directory execution without a sandbox
+boundary. It cannot serve as independent confirmation unless an audited port
+adds explicit handoff and task binding, independent verifier mutation
+evidence, and the pinned sandbox/resource controls required by
+[PLAN.md](PLAN.md).
 
 The three preregistered dense backbones have been downloaded locally and
 passed static inspection, CUDA loading, a finite-forward check, and

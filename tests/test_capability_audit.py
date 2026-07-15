@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import math
 import unittest
+from pathlib import Path
 
 from cbds.capability_audit import (
     PLAN_CANDIDATE_FAMILY_IDS,
@@ -19,6 +21,7 @@ from cbds.capability_audit import (
 )
 
 
+ROOT = Path(__file__).resolve().parents[1]
 OBJECTIVE_IDS = {
     "korean-language-use",
     "mandarin-language-use",
@@ -236,6 +239,12 @@ def resign_result(result: dict) -> dict:
 
 
 class CapabilityAuditContractTests(unittest.TestCase):
+    def test_source_plan_pin_identifies_exact_plan_bytes(self) -> None:
+        self.assertEqual(
+            SOURCE_PLAN_SHA256,
+            hashlib.sha256((ROOT / "PLAN.md").read_bytes()).hexdigest(),
+        )
+
     def setUp(self) -> None:
         self.spec = valid_spec()
         self.result = valid_result(self.spec)

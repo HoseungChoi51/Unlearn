@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "policy_id": "cbds-plan-2026-07-14",
   "created_at": "2026-07-14T00:00:00+09:00",
-  "source_plan_sha256": "b907788a93af17127152d4028f237e663b99d29b96604a54a60a8cb221abc172",
+  "source_plan_sha256": "8f1aae8e663aad65c5e0b3ebc52a643b7fabca3c4fc6dd4af08578cc66746af0",
   "profiles": [
     {
       "name": "screening",

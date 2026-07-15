@@ -15,20 +15,25 @@ from cbds.development_executor import (  # noqa: E402
     DevelopmentExecutionBlocked,
     DevelopmentExecutionError,
     DevelopmentExecutionPolicy,
-    PublicDevelopmentRequest,
     build_development_launch_argv,
     compute_development_execution_sha256,
     execute_public_development_candidate,
     prepare_public_development_execution,
     verify_development_execution_sha256,
 )
+from cbds.development_invocation import (  # noqa: E402
+    admit_development_catalog,
+    build_development_invocation,
+)
 from cbds.development_preflight import (  # noqa: E402
     DevelopmentExecutableIdentity,
     inspect_development_backend,
 )
-from cbds.static_families import (  # noqa: E402
-    COPY_MAP_FAMILY,
-    PublicStaticFamilySuite,
+from cbds.executable_fixture_catalog import (  # noqa: E402
+    build_first_tranche_fixture_catalog,
+)
+from cbds.executable_static_registry import (  # noqa: E402
+    build_public_method_development_registry,
 )
 
 
@@ -43,45 +48,11 @@ def stable_probe(
     )
 
 
-def request() -> PublicDevelopmentRequest:
-    suite = PublicStaticFamilySuite(COPY_MAP_FAMILY)
-    descriptor = suite.descriptors[0]
-    return PublicDevelopmentRequest(
-        family=COPY_MAP_FAMILY,
-        fixture_id=descriptor.fixture_id,
-        fixture_sha256=descriptor.fixture_sha256,
-    )
-
-
 def preflight() -> dict[str, object]:
     return inspect_development_backend(executable_probe=stable_probe)
 
 
-class RequestAndPolicyTests(unittest.TestCase):
-    def test_real_public_descriptor_is_accepted(self) -> None:
-        item = request()
-        self.assertEqual(item.split_role, "method_development")
-        self.assertTrue(item.public_fixture)
-        self.assertFalse(item.sealed)
-        self.assertEqual(item.program_language, "bash")
-
-    def test_nonpublic_sealed_shadow_and_python_requests_are_rejected(self) -> None:
-        valid = request()
-        mutations = (
-            {"family": "private-family"},
-            {"split_role": "shadow_validation"},
-            {"public_fixture": False},
-            {"sealed": True},
-            {"program_language": "python"},
-            {"fixture_id": "fixture-secret"},
-        )
-        baseline = valid.to_record()
-        for mutation in mutations:
-            with self.subTest(mutation=mutation):
-                candidate = {**baseline, **mutation}
-                with self.assertRaises(ValueError):
-                    PublicDevelopmentRequest(**candidate)  # type: ignore[arg-type]
-
+class PolicyTests(unittest.TestCase):
     def test_policy_rejects_invalid_limits(self) -> None:
         for kwargs in (
             {"fixture_timeout_seconds": True},
@@ -97,6 +68,34 @@ class RequestAndPolicyTests(unittest.TestCase):
 
 
 class LaunchPlanTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.catalog = build_first_tranche_fixture_catalog(
+            build_public_method_development_registry()
+        )
+        cls.admission = admit_development_catalog(cls.catalog)
+        cls.marker = "SECRET_PROGRAM_MARKER_9173"
+        cls.invocation = build_development_invocation(
+            cls.admission,
+            fixture_id=cls.catalog.bundles[0].descriptor.fixture_id,
+            response_text=f"printf '%s\\n' {cls.marker}\n",
+        )
+        path_task = next(
+            task
+            for task in cls.catalog.source_registry.tasks
+            if task.family_id == "path-suffix-inventory"
+        )
+        path_bundle = next(
+            bundle
+            for bundle in cls.catalog.bundles
+            if bundle.task_contract_sha256 == path_task.task_contract_sha256
+        )
+        cls.other_invocation = build_development_invocation(
+            cls.admission,
+            fixture_id=path_bundle.descriptor.fixture_id,
+            response_text="mkdir -p output\n",
+        )
+
     def test_fixed_launch_has_no_rw_host_bind_and_requires_pid1_isolation(self) -> None:
         policy = DevelopmentExecutionPolicy(
             workspace_bytes=8 * 1024 * 1024,
@@ -140,15 +139,11 @@ class LaunchPlanTests(unittest.TestCase):
                 supervisor="/tmp/supervisor",
             )
 
-    def test_plan_is_content_safe_and_permanently_blocked(self) -> None:
-        marker = "SECRET_PROGRAM_MARKER_9173"
-        program = f"printf '%s\\n' {marker}\n"
-        plan = prepare_public_development_execution(
-            request(), program, preflight()
-        )
+    def test_plan_is_catalog_bound_content_safe_and_permanently_blocked(self) -> None:
+        plan = prepare_public_development_execution(self.invocation, preflight())
         serialized = json.dumps(plan, sort_keys=True)
 
-        self.assertNotIn(marker, serialized)
+        self.assertNotIn(self.marker, serialized)
         self.assertFalse(plan["candidate_execution_authorized"])
         self.assertFalse(plan["candidate_executed"])
         self.assertFalse(plan["scored_evaluation_eligible"])
@@ -157,39 +152,64 @@ class LaunchPlanTests(unittest.TestCase):
         self.assertFalse(plan["trusted_pid1_supervisor_implemented"])
         self.assertFalse(plan["child_seccomp_filter_implemented"])
         self.assertEqual(plan["program_plaintext_retained"], False)
+        self.assertEqual(
+            plan["invocation_sha256"], self.invocation.invocation_sha256
+        )
+        request = plan["request"]
+        self.assertEqual(
+            request["fixture_id"],  # type: ignore[index]
+            self.invocation.bundle.descriptor.fixture_id,
+        )
+        self.assertEqual(
+            request["family_id"],  # type: ignore[index]
+            "active-jsonl-labels",
+        )
         argv = plan["launch"]["argv"]  # type: ignore[index]
-        self.assertFalse(any(marker in argument for argument in argv))
+        self.assertFalse(any(self.marker in argument for argument in argv))
         self.assertEqual(plan["launch"]["host_read_write_binds"], [])  # type: ignore[index]
         blockers = plan["decision"]["blockers"]  # type: ignore[index]
         self.assertIn("blocked_trusted_pid1_supervisor_missing", blockers)
         self.assertIn("blocked_child_seccomp_filter_missing", blockers)
         self.assertIn("blocked_candidate_execution_not_implemented", blockers)
+        self.assertIn("blocked_host_usr_unpinned", blockers)
         self.assertTrue(verify_development_execution_sha256(plan))
 
-    def test_execution_entrypoint_always_raises_before_launch(self) -> None:
-        program = "printf safe\n"
-        plan = prepare_public_development_execution(
-            request(), program, preflight()
+    def test_path_suffix_invocation_is_reachable_without_legacy_request_ids(self) -> None:
+        self.assertEqual(
+            self.other_invocation.task.family_id, "path-suffix-inventory"
         )
+        plan = prepare_public_development_execution(
+            self.other_invocation, preflight()
+        )
+        self.assertEqual(
+            plan["request"]["family_id"],  # type: ignore[index]
+            "path-suffix-inventory",
+        )
+
+    def test_execution_entrypoint_always_raises_before_launch(self) -> None:
+        plan = prepare_public_development_execution(self.invocation, preflight())
         with self.assertRaises(DevelopmentExecutionBlocked) as captured:
-            execute_public_development_candidate(plan, program)
+            execute_public_development_candidate(plan, self.invocation)
         self.assertIn(
             "blocked_trusted_pid1_supervisor_missing", captured.exception.blockers
         )
 
-    def test_program_mismatch_and_plan_mutation_fail_before_blocked_result(self) -> None:
-        program = "printf safe\n"
-        plan = prepare_public_development_execution(
-            request(), program, preflight()
-        )
+    def test_invocation_mismatch_and_plan_mutation_fail_before_blocked_result(self) -> None:
+        plan = prepare_public_development_execution(self.invocation, preflight())
         with self.assertRaises(DevelopmentExecutionError):
-            execute_public_development_candidate(plan, "printf other\n")
+            execute_public_development_candidate(plan, self.other_invocation)
 
         mutated = copy.deepcopy(plan)
         mutated["candidate_execution_authorized"] = True
         mutated["record_sha256"] = compute_development_execution_sha256(mutated)
         with self.assertRaises(DevelopmentExecutionError):
-            execute_public_development_candidate(mutated, program)
+            execute_public_development_candidate(mutated, self.invocation)
+
+        rebound = copy.deepcopy(plan)
+        rebound["request"]["invocation_sha256"] = "0" * 64
+        rebound["record_sha256"] = compute_development_execution_sha256(rebound)
+        with self.assertRaises(DevelopmentExecutionError):
+            execute_public_development_candidate(rebound, self.invocation)
 
     def test_forged_preflight_authorization_is_rejected_even_with_valid_digest(self) -> None:
         from cbds.development_preflight import compute_development_preflight_sha256
@@ -198,7 +218,7 @@ class LaunchPlanTests(unittest.TestCase):
         forged["candidate_execution_authorized"] = True
         forged["report_sha256"] = compute_development_preflight_sha256(forged)
         with self.assertRaises(DevelopmentExecutionError):
-            prepare_public_development_execution(request(), "true\n", forged)
+            prepare_public_development_execution(self.invocation, forged)
 
     def test_unverified_preflight_executable_cannot_produce_a_plan(self) -> None:
         def missing_probe(
@@ -210,17 +230,30 @@ class LaunchPlanTests(unittest.TestCase):
 
         blocked = inspect_development_backend(executable_probe=missing_probe)
         with self.assertRaises(DevelopmentExecutionError):
-            prepare_public_development_execution(request(), "true\n", blocked)
+            prepare_public_development_execution(self.invocation, blocked)
 
-    def test_oversize_empty_and_nontext_programs_are_rejected(self) -> None:
+    def test_policy_ceiling_and_noninvocation_inputs_are_rejected(self) -> None:
         selected = preflight()
         policy = DevelopmentExecutionPolicy(maximum_program_bytes=4)
-        for program in ("", "12345", "bad\x00program", b"\xff", object()):
-            with self.subTest(program=program):
-                with self.assertRaises((DevelopmentExecutionError, TypeError)):
-                    prepare_public_development_execution(
-                        request(), program, selected, policy=policy  # type: ignore[arg-type]
+        with self.assertRaises(DevelopmentExecutionError):
+            prepare_public_development_execution(
+                self.invocation, selected, policy=policy
+            )
+        for value in (None, object(), self.invocation.to_audit_record()):
+            with self.subTest(value=type(value).__name__):
+                with self.assertRaises(TypeError):
+                    prepare_public_development_execution(  # type: ignore[arg-type]
+                        value, selected
                     )
+
+    def test_low_level_invocation_mutation_is_rejected_before_plan_creation(self) -> None:
+        original = self.invocation.response_bytes
+        try:
+            object.__setattr__(self.invocation, "response_bytes", 0)
+            with self.assertRaises(DevelopmentExecutionError):
+                prepare_public_development_execution(self.invocation, preflight())
+        finally:
+            object.__setattr__(self.invocation, "response_bytes", original)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,310 @@
+{
+  "audit_hash_scope": "canonical_json_excluding_audit_sha256",
+  "audit_sha256": "9ba34477e981b581ba15165fb304a11a89476d5fc7c41417b254786a7a64dc65",
+  "auditor_version": "1.0.0",
+  "decision": {
+    "benchmark_eligible": false,
+    "candidate_execution_authorized": false,
+    "claim_authorized": false,
+    "model_selection_authorized": false,
+    "required_follow_up": [
+      "derive one typed task identity shared by prompts and tests",
+      "independently review and mutation-test every verifier",
+      "make candidate handoff explicit and prove candidate dependence",
+      "port fixtures and checks into the pinned project sandbox",
+      "exclude the harness-audit subset before scored use"
+    ],
+    "status": "diagnostic_only_released_harness_rejected"
+  },
+  "findings": [
+    {
+      "code": "released_candidate_handoff_not_proven",
+      "evidence": "Both selected harnesses write a solution.sh file but their execute_test_script path launches bash test_path. Across the selected test scripts, no literal solution.sh reference was found, and the harness supplies no candidate argument. Static evidence therefore does not establish that functional outcomes depend on candidate code.",
+      "severity": "blocking"
+    },
+    {
+      "code": "released_counts_and_alignment_disagree",
+      "evidence": "Evaluation rows, test rows, unique prompts, sample IDs, and index-aligned prompts do not form one one-to-one task identity.",
+      "severity": "blocking"
+    },
+    {
+      "code": "released_execute_path_is_direct_subprocess",
+      "evidence": "The selected execute_test_script functions invoke the test file as a direct `bash test_path` subprocess. The selected execution path does not itself establish an OS isolation boundary; an external caller could still wrap the entire harness.",
+      "severity": "blocking"
+    }
+  ],
+  "limitations": [
+    "This is a non-executing audit of six selected archive members.",
+    "The Zenodo MD5 is recorded from metadata; the full archive digest was not recomputed.",
+    "Static scans cannot rule out every indirect shell data flow.",
+    "No upstream test script, reference answer, generated program, or Python module was executed or imported.",
+    "This report does not measure any model or benchmark pass rate."
+  ],
+  "member_projection": {
+    "all_members_match_expected_release_v1": true,
+    "archive_crc_members_rechecked_during_extraction": false,
+    "expected_release_v1_member_set_sha256": "752f138c9e389d63818295a5f6b553e213f602d92755f1c92bc58ec1d4ee8ccb",
+    "expected_release_v1_members": [
+      {
+        "path": "data/evaluation/command/evaluation_single-line_command.json",
+        "sha256": "1531cd03579b7eb13dbb12c2a3198a032eadb961b8e221b0a47542b60a355c3f",
+        "size_bytes": 1688265
+      },
+      {
+        "path": "data/evaluation/script/evaluation_multi-line_script.json",
+        "sha256": "803142cee32d0266c78bdc9f383cb804cd17e251bc0312a0e058d64045c67213",
+        "size_bytes": 1242823
+      },
+      {
+        "path": "test_cases/command_test_cases_validated.json",
+        "sha256": "235bad3c762229ec49c2b72d480de1c7c0f3bda81b6b84a6bf6a0003170cccd8",
+        "size_bytes": 2888568
+      },
+      {
+        "path": "test_cases/script_test_cases_validated.json",
+        "sha256": "43bcfd071ee4981e009e6c1cdfecc4dbc9e94ef5b53fbcb58aa95db1869387eb",
+        "size_bytes": 1348605
+      },
+      {
+        "path": "test/test_our_command_general_LLMs.py",
+        "sha256": "c4cca1bdda6d257480958016ececf0b228412c00e43e75119820d2ca4e4c9c46",
+        "size_bytes": 40129
+      },
+      {
+        "path": "test/test_our_script_general_LLMs.py",
+        "sha256": "2fe2928a044c8a70f90aa36de1c746a2d008438a58996b6dad9b89474c46ece4",
+        "size_bytes": 33169
+      }
+    ],
+    "member_count": 6,
+    "members": [
+      {
+        "path": "data/evaluation/command/evaluation_single-line_command.json",
+        "sha256": "1531cd03579b7eb13dbb12c2a3198a032eadb961b8e221b0a47542b60a355c3f",
+        "size_bytes": 1688265
+      },
+      {
+        "path": "data/evaluation/script/evaluation_multi-line_script.json",
+        "sha256": "803142cee32d0266c78bdc9f383cb804cd17e251bc0312a0e058d64045c67213",
+        "size_bytes": 1242823
+      },
+      {
+        "path": "test_cases/command_test_cases_validated.json",
+        "sha256": "235bad3c762229ec49c2b72d480de1c7c0f3bda81b6b84a6bf6a0003170cccd8",
+        "size_bytes": 2888568
+      },
+      {
+        "path": "test_cases/script_test_cases_validated.json",
+        "sha256": "43bcfd071ee4981e009e6c1cdfecc4dbc9e94ef5b53fbcb58aa95db1869387eb",
+        "size_bytes": 1348605
+      },
+      {
+        "path": "test/test_our_command_general_LLMs.py",
+        "sha256": "c4cca1bdda6d257480958016ececf0b228412c00e43e75119820d2ca4e4c9c46",
+        "size_bytes": 40129
+      },
+      {
+        "path": "test/test_our_script_general_LLMs.py",
+        "sha256": "2fe2928a044c8a70f90aa36de1c746a2d008438a58996b6dad9b89474c46ece4",
+        "size_bytes": 33169
+      }
+    ],
+    "selected_member_set_sha256": "752f138c9e389d63818295a5f6b553e213f602d92755f1c92bc58ec1d4ee8ccb"
+  },
+  "record_type": "cbds.bashbench-release-audit",
+  "released_data": {
+    "command": {
+      "alignment": {
+        "evaluation_prompt_duplicates": {
+          "duplicate_groups": 169,
+          "duplicate_records_beyond_first": 210,
+          "maximum_multiplicity": 16,
+          "records": 927,
+          "unique_values": 717
+        },
+        "evaluation_records": 927,
+        "index_aligned_prompt_matches": 925,
+        "index_compared_records": 927,
+        "one_to_one_index_identity": false,
+        "test_prompt_duplicates": {
+          "duplicate_groups": 169,
+          "duplicate_records_beyond_first": 210,
+          "maximum_multiplicity": 16,
+          "records": 927,
+          "unique_values": 717
+        },
+        "test_records": 927,
+        "test_records_with_prompt_anywhere_in_evaluation": 925,
+        "unique_evaluation_only": 1,
+        "unique_prompt_intersection": 716,
+        "unique_test_only": 1
+      },
+      "tests": {
+        "candidate_handoff_scan": {
+          "literal_solution_sh_references": 0,
+          "positional_parameter_lexeme_scripts": 53,
+          "scripts_with_test_passed_marker": 773
+        },
+        "is_safe_to_execute_values": {
+          "null": 154,
+          "true": 773
+        },
+        "records": 927,
+        "risk_lexemes": {
+          "network_or_package_tool_scripts": 0,
+          "privileged_or_service_tool_scripts": 2
+        },
+        "sample_ids": {
+          "id_equals_list_index": 872,
+          "integer_ids": 927,
+          "maximum_integer_id": 1005,
+          "minimum_integer_id": 0,
+          "unique_integer_ids": 894
+        },
+        "test_case_presence": {
+          "missing_or_empty": 154,
+          "present_nonempty": 773
+        },
+        "validated_values": {
+          "false": 154,
+          "true": 773
+        }
+      }
+    },
+    "script": {
+      "alignment": {
+        "evaluation_prompt_duplicates": {
+          "duplicate_groups": 0,
+          "duplicate_records_beyond_first": 0,
+          "maximum_multiplicity": 1,
+          "records": 179,
+          "unique_values": 179
+        },
+        "evaluation_records": 179,
+        "index_aligned_prompt_matches": 2,
+        "index_compared_records": 154,
+        "one_to_one_index_identity": false,
+        "test_prompt_duplicates": {
+          "duplicate_groups": 0,
+          "duplicate_records_beyond_first": 0,
+          "maximum_multiplicity": 1,
+          "records": 154,
+          "unique_values": 154
+        },
+        "test_records": 154,
+        "test_records_with_prompt_anywhere_in_evaluation": 40,
+        "unique_evaluation_only": 139,
+        "unique_prompt_intersection": 40,
+        "unique_test_only": 114
+      },
+      "tests": {
+        "candidate_handoff_scan": {
+          "literal_solution_sh_references": 0,
+          "positional_parameter_lexeme_scripts": 36,
+          "scripts_with_test_passed_marker": 40
+        },
+        "is_safe_to_execute_values": {
+          "false": 114,
+          "true": 40
+        },
+        "records": 154,
+        "risk_lexemes": {
+          "network_or_package_tool_scripts": 10,
+          "privileged_or_service_tool_scripts": 8
+        },
+        "sample_ids": {
+          "id_equals_list_index": 154,
+          "integer_ids": 154,
+          "maximum_integer_id": 153,
+          "minimum_integer_id": 0,
+          "unique_integer_ids": 154
+        },
+        "test_case_presence": {
+          "missing_or_empty": 0,
+          "present_nonempty": 154
+        },
+        "validated_values": {
+          "true": 154
+        }
+      }
+    }
+  },
+  "released_harness": {
+    "candidate_handoff": {
+      "both_harnesses_launch_only_bash_test_path": true,
+      "candidate_handoff_proven": false,
+      "harness_candidate_arguments_after_test_path": 0,
+      "literal_solution_sh_references_across_test_scripts": 0
+    },
+    "command": {
+      "execute_test_script_definitions": 1,
+      "execute_test_script_subprocess_invocations": [
+        {
+          "callee": "subprocess.run",
+          "first_argument": [
+            "bash",
+            {
+              "name": "test_path"
+            }
+          ],
+          "keyword_names": [
+            "capture_output",
+            "cwd",
+            "env",
+            "text",
+            "timeout"
+          ]
+        }
+      ],
+      "python_ast_parsed": true,
+      "source_mentions_bwrap": 0,
+      "source_mentions_docker": 1,
+      "source_mentions_podman": 0,
+      "source_mentions_solution_sh": 1
+    },
+    "script": {
+      "execute_test_script_definitions": 1,
+      "execute_test_script_subprocess_invocations": [
+        {
+          "callee": "subprocess.run",
+          "first_argument": [
+            "bash",
+            {
+              "arguments": [
+                {
+                  "name": "test_path"
+                }
+              ],
+              "call": "str",
+              "keyword_names": []
+            }
+          ],
+          "keyword_names": [
+            "capture_output",
+            "cwd",
+            "env",
+            "text",
+            "timeout"
+          ]
+        }
+      ],
+      "python_ast_parsed": true,
+      "source_mentions_bwrap": 0,
+      "source_mentions_docker": 0,
+      "source_mentions_podman": 0,
+      "source_mentions_solution_sh": 1
+    }
+  },
+  "schema_version": "1.0.0",
+  "source": {
+    "archive_declared_md5": "e2cef192c89ee8f14fe4c59152f213bf",
+    "archive_digest_source": "zenodo_record_metadata",
+    "archive_key": "BashCoder-R1.zip",
+    "archive_size_bytes": 1108526600,
+    "full_archive_digest_recomputed": false,
+    "license_id": "cc-by-4.0",
+    "record_id": 18408692,
+    "record_revision": 4,
+    "record_url": "https://zenodo.org/records/18408692"
+  }
+}

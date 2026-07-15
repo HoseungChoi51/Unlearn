@@ -560,7 +560,7 @@ class CliIntegrationTests(unittest.TestCase):
             self.assertEqual(first_document["campaign_replicate_index"], 0)
             self.assertEqual(
                 first_document["campaign_policy_sha256"],
-                "f88fddcc824799b7ef639371c10a9b3c0a3cf9db7ff44d2e59420492feaff620",
+                "f0b3e172e4006dd119a22c9d1cbd44c7dc9c8d123ddf0c47fa49c6550552026e",
             )
 
             mismatch_status, _, mismatch_error = run_cli(
@@ -692,7 +692,7 @@ class CliIntegrationTests(unittest.TestCase):
         self.assertEqual(document["campaign_profile"], "screening")
         self.assertEqual(
             document["campaign_policy_sha256"],
-            "f88fddcc824799b7ef639371c10a9b3c0a3cf9db7ff44d2e59420492feaff620",
+            "f0b3e172e4006dd119a22c9d1cbd44c7dc9c8d123ddf0c47fa49c6550552026e",
         )
 
         with tempfile.TemporaryDirectory() as directory:

@@ -4,7 +4,7 @@
   "run_id": "example-train-run-0001",
   "stage": "train",
   "run_spec_schema_version": "2.0.0",
-  "run_spec_sha256": "310d6c96490c282da83f8078c06a00e7b1c52a3d65185f5228176e865d7d1b4c",
+  "run_spec_sha256": "ae8cea1d9036e1b85c9965875ac6a28e726939f6656ba2ba24069c81446b6bb6",
   "created_at": "2026-07-14T12:00:00+09:00",
   "git_revision": "1111111111111111111111111111111111111111",
   "model": {

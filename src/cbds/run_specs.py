@@ -995,7 +995,7 @@ def _semantic_errors(spec: Mapping[str, Any]) -> list[str]:
 _CAMPAIGN_POLICY_ID = "cbds-plan-2026-07-14"
 _CAMPAIGN_CREATED_AT = "2026-07-14T00:00:00+09:00"
 _CAMPAIGN_SOURCE_PLAN_SHA256 = (
-    "b907788a93af17127152d4028f237e663b99d29b96604a54a60a8cb221abc172"
+    "8f1aae8e663aad65c5e0b3ebc52a643b7fabca3c4fc6dd4af08578cc66746af0"
 )
 _CAMPAIGN_PROFILE_CONTRACTS: dict[str, dict[str, Any]] = {
     "screening": {

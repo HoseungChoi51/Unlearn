@@ -253,7 +253,7 @@ class _TreeEntry:
 
 @dataclass(slots=True)
 class _PinnedRegular:
-    """Trusted read descriptor retained for a mode-unreadable fixture file."""
+    """Trusted descriptor retained when pathname reads are not effective."""
 
     path: str
     descriptor: int
@@ -644,9 +644,7 @@ def _open_or_create_workspace_no_follow(
                 if created:
                     os.fchmod(child, 0o755)
                 named = os.stat(part, dir_fd=current, follow_symlinks=False)
-                if _filesystem_snapshot(named) != _filesystem_snapshot(
-                    os.fstat(child)
-                ):
+                if not _same_inode(named, os.fstat(child)):
                     raise OSError("workspace component changed while opening")
             except BaseException:
                 os.close(child)
@@ -773,6 +771,28 @@ def _same_inode(left: os.stat_result, right: os.stat_result) -> bool:
     )
 
 
+def _regular_is_effectively_readable(metadata: os.stat_result) -> bool:
+    """Return the current process's Unix-mode read decision for one inode.
+
+    Permission classes are exclusive: when the EUID owns a file, group and
+    other bits do not supplement a missing owner-read bit.  Likewise, a group
+    match selects only the group class.  Linux root may read a regular file
+    regardless of its read bits.
+    """
+
+    effective_uid = os.geteuid()
+    if effective_uid == 0:
+        return True
+    mode = stat.S_IMODE(metadata.st_mode)
+    if metadata.st_uid == effective_uid:
+        return bool(mode & stat.S_IRUSR)
+    effective_groups = set(os.getgroups())
+    effective_groups.add(os.getegid())
+    if metadata.st_gid in effective_groups:
+        return bool(mode & stat.S_IRGRP)
+    return bool(mode & stat.S_IROTH)
+
+
 def _write_relative_file(
     root_descriptor: int,
     relative: PurePosixPath,
@@ -856,7 +876,7 @@ def _write_relative_file(
             != _filesystem_snapshot(named)
         ):
             raise OSError("published fixture file is not stable")
-        if not mode & 0o444:
+        if not _regular_is_effectively_readable(final_metadata):
             return _PinnedRegular(relative.as_posix(), os.dup(descriptor))
         return None
     except BaseException:
@@ -1039,7 +1059,7 @@ def _hash_regular_entry(
     metadata: os.stat_result,
     pinned: _PinnedRegular | None = None,
 ) -> str | None:
-    if stat.S_IMODE(metadata.st_mode) & 0o444:
+    if _regular_is_effectively_readable(metadata):
         payload = _read_regular_entry(
             directory_descriptor,
             name,
@@ -1204,7 +1224,11 @@ def _scan_tree(
         os.close(descriptor)
 
 
-def _reference_output_descriptor(root_descriptor: int) -> bytes:
+def _reference_output_descriptor(
+    root_descriptor: int,
+    *,
+    pinned_regulars: Mapping[str, _PinnedRegular] | None = None,
+) -> bytes:
     """Build the trusted answer below an already pinned workspace root."""
 
     labels: set[bytes] = set()
@@ -1256,12 +1280,28 @@ def _reference_output_descriptor(root_descriptor: int) -> bytes:
                     mode = stat.S_IMODE(metadata.st_mode)
                     if not name.endswith(".jsonl") or not mode & 0o444:
                         continue
-                    payload = _read_regular_entry(
-                        directory_descriptor,
-                        name,
-                        metadata,
-                        maximum_bytes=MAX_TREE_ENTRY_BYTES,
-                    )
+                    if _regular_is_effectively_readable(metadata):
+                        payload = _read_regular_entry(
+                            directory_descriptor,
+                            name,
+                            metadata,
+                            maximum_bytes=MAX_TREE_ENTRY_BYTES,
+                        )
+                    else:
+                        pinned = (
+                            None
+                            if pinned_regulars is None
+                            else pinned_regulars.get(relative.as_posix())
+                        )
+                        if pinned is None:
+                            raise OSError(
+                                "trusted fixture lacks its retained read descriptor"
+                            )
+                        payload = _read_pinned_regular(
+                            pinned,
+                            metadata,
+                            maximum_bytes=MAX_TREE_ENTRY_BYTES,
+                        )
                     if payload is None:
                         raise MaterializationError("trusted fixture file is oversized")
                     for line_number, raw_line in enumerate(
@@ -1482,7 +1522,10 @@ class StaticSliceSuite:
                     "cannot snapshot materialized fixture: " + "; ".join(errors)
                 )
             _validate_materialized_projection(definition, baseline)
-            expected_output = _reference_output_descriptor(root_descriptor)
+            expected_output = _reference_output_descriptor(
+                root_descriptor,
+                pinned_regulars=pinned_by_path,
+            )
             if len(expected_output) > MAX_OUTPUT_BYTES:
                 raise MaterializationError("trusted fixture exceeds output byte limit")
             reopened, reopened_metadata = _open_absolute_directory_no_follow(

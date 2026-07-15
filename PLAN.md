@@ -237,9 +237,23 @@ co-primary endpoint.
 
 - Use [NL2SH](https://aclanthology.org/2025.naacl-long.555/) and NL2Bash as
   exposure-prone command-generation diagnostics.
-- Use [BashBench](https://arxiv.org/abs/2606.27733) as an independent static
-  executable benchmark after auditing and excluding 50 harness-development
-  items.
+- Keep [BashBench](https://arxiv.org/abs/2606.27733) release v1
+  ([Zenodo record 18408692](https://zenodo.org/records/18408692))
+  diagnostic-only and ineligible for independent confirmation. A
+  non-executing static audit of the released artifacts found that the general
+  harness writes a candidate to `solution.sh` but launches `bash` on the test
+  script, while the released tests do not establish a reference to that
+  candidate. Evaluation/test row counts and task identities also do not align
+  consistently, and the released general harness directly uses host temporary
+  directories without a sandbox boundary. These source-level observations do
+  not show how an unpublished or externally wrapped evaluator behaves, but
+  they mean the release does not yet establish candidate-dependent,
+  task-bound, isolated functional measurement.
+- Admit a future BashBench port only after it binds an explicit candidate
+  handoff and canonical task identity into every result, passes an independent
+  verifier mutation audit, and runs through the same digest-pinned sandbox and
+  resource-enforcement review as the primary suite. The 50-item harness audit
+  set must remain excluded from any subsequently scored subset.
 - Treat [InterCode-Bash](https://intercode-benchmark.github.io/) as
   exposure-prone because NL2SH-ALFA train includes InterCode-Bash lineage.
   It becomes an independent bounded-interaction diagnostic only after an
@@ -444,7 +458,9 @@ Required secondary endpoints:
 
 - Sealed compositional-OOD static pass@1.
 - Bounded-terminal semantic success rate.
-- Independent NL2SH, BashBench, and InterCode-Bash results.
+- NL2SH and any claim-eligible independent static and interactive benchmark
+  results. BashBench release v1 is diagnostic-only under the audit above;
+  InterCode-Bash remains conditional on its stated decontamination gate.
 - Syntax validity, static diagnostics, disallowed-tool rate, timeouts, output
   length, action count, and failure taxonomy.
 - Single- versus multi-step tasks and difficulty strata.
@@ -482,8 +498,9 @@ Fixed-size success requires all of:
    artifact bytes within metadata tolerance.
 4. Bounded-terminal decline no greater than 2 points under a simultaneous
    non-inferiority interval.
-5. Replication on the runner-up backbone and the independent static and
-   interactive benchmarks.
+5. Replication on the runner-up backbone and claim-eligible independent static
+   and interactive benchmarks. BashBench release v1 cannot satisfy this
+   condition.
 
 Compression success requires all of:
 
@@ -494,7 +511,8 @@ Compression success requires all of:
 3. Bounded-terminal decline no greater than 2 points under a simultaneous
    non-inferiority interval.
 4. A measured peak-memory reduction.
-5. Replication on the runner-up backbone and independent benchmarks.
+5. Replication on the runner-up backbone and claim-eligible independent
+   benchmarks. BashBench release v1 cannot satisfy this condition.
 
 An architectural compression claim additionally requires at least 20% fewer
 physical parameters. A quantization-only winner is a valid
@@ -603,8 +621,9 @@ meaningfully separate expertise.
 6. Freeze one promoted arm per lane and at most one two-operator hybrid.
 7. Train five fresh confirmation seeds, run capability add-backs, and replicate
    on the runner-up backbone.
-8. Lock methods and analysis, open sealed suites once, then run independent
-   benchmarks.
+8. Lock methods and analysis, open sealed suites once, then run only
+   independent benchmarks that have passed their handoff, identity, verifier,
+   decontamination, and isolation gates.
 9. Benchmark artifacts on the RTX 5090 and export the portable bundle for later
    laptop, Intel iGPU, AMD APU, and CPU measurements.
 10. Consider the expert appendix only if its preregistered trigger fires.

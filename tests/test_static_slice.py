@@ -8,6 +8,7 @@ from pathlib import Path
 import stat
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -150,6 +151,150 @@ class DescriptorAndContractTests(unittest.TestCase):
 
 
 class MaterializationTests(unittest.TestCase):
+    def test_shared_ancestor_content_changes_do_not_change_its_identity(self) -> None:
+        real_stat = os.stat
+        root_descriptor: int | None = None
+        with tempfile.TemporaryDirectory() as temporary:
+            ancestor_name = Path(temporary).name
+
+            def stat_with_changed_directory_metadata(
+                path: object, *args: object, **kwargs: object
+            ) -> object:
+                metadata = real_stat(path, *args, **kwargs)
+                if path != ancestor_name:
+                    return metadata
+                return SimpleNamespace(
+                    st_dev=metadata.st_dev,
+                    st_ino=metadata.st_ino,
+                    st_mode=metadata.st_mode,
+                    st_nlink=metadata.st_nlink + 1,
+                    st_size=metadata.st_size + 1,
+                    st_mtime_ns=metadata.st_mtime_ns + 1,
+                    st_ctime_ns=metadata.st_ctime_ns + 1,
+                )
+
+            try:
+                with mock.patch.object(
+                    static_slice.os,
+                    "stat",
+                    side_effect=stat_with_changed_directory_metadata,
+                ):
+                    root_descriptor, _ = (
+                        static_slice._open_or_create_workspace_no_follow(
+                            Path(temporary) / "workspace"
+                        )
+                    )
+            finally:
+                if root_descriptor is not None:
+                    os.close(root_descriptor)
+
+    def test_effective_readability_uses_one_posix_access_class(self) -> None:
+        def metadata(mode: int, *, uid: int, gid: int) -> os.stat_result:
+            return os.stat_result(
+                (stat.S_IFREG | mode, 1, 1, 1, uid, gid, 0, 0, 0, 0)
+            )
+
+        with mock.patch.object(
+            static_slice.os, "geteuid", return_value=1000
+        ), mock.patch.object(
+            static_slice.os, "getegid", return_value=2000
+        ), mock.patch.object(
+            static_slice.os, "getgroups", return_value=[2000, 3000]
+        ):
+            # Owner class wins even if group/other grant read access.
+            self.assertFalse(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o004, uid=1000, gid=4000)
+                )
+            )
+            self.assertFalse(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o040, uid=1000, gid=3000)
+                )
+            )
+            self.assertTrue(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o400, uid=1000, gid=4000)
+                )
+            )
+            # A matching supplementary group similarly excludes other bits.
+            self.assertTrue(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o040, uid=4000, gid=3000)
+                )
+            )
+            self.assertFalse(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o004, uid=4000, gid=3000)
+                )
+            )
+            self.assertTrue(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o004, uid=4000, gid=5000)
+                )
+            )
+
+        with mock.patch.object(static_slice.os, "geteuid", return_value=0):
+            self.assertTrue(
+                static_slice._regular_is_effectively_readable(
+                    metadata(0o000, uid=1000, gid=3000)
+                )
+            )
+
+    @unittest.skipIf(
+        os.geteuid() == 0,
+        "root can pathname-read every regular file regardless of read bits",
+    )
+    def test_reference_keeps_any_read_bit_semantics_via_pinned_files(self) -> None:
+        pinned: list[static_slice._PinnedRegular] = []
+        root_descriptor: int | None = None
+        with tempfile.TemporaryDirectory() as temporary:
+            try:
+                root_descriptor, _ = (
+                    static_slice._open_or_create_workspace_no_follow(
+                        Path(temporary) / "workspace"
+                    )
+                )
+                static_slice._ensure_relative_directory(
+                    root_descriptor, static_slice.PurePosixPath("input")
+                )
+                definitions = (
+                    (
+                        "input/owner-other.jsonl",
+                        b'{"active":true,"label":"other-bit"}\n',
+                        0o004,
+                    ),
+                    (
+                        "input/owner-group.jsonl",
+                        b'{"active":true,"label":"group-bit"}\n',
+                        0o040,
+                    ),
+                )
+                for path, payload, mode in definitions:
+                    retained = static_slice._write_relative_file(
+                        root_descriptor,
+                        static_slice.PurePosixPath(path),
+                        payload,
+                        mode,
+                    )
+                    self.assertIsNotNone(retained)
+                    if retained is not None:
+                        pinned.append(retained)
+
+                output = static_slice._reference_output_descriptor(
+                    root_descriptor,
+                    pinned_regulars={item.path: item for item in pinned},
+                )
+                self.assertEqual(output, b"group-bit\nother-bit\n")
+                for item in pinned:
+                    self.assertGreaterEqual(item.descriptor, 0)
+            finally:
+                static_slice._close_pinned_regulars(pinned)
+                if root_descriptor is not None:
+                    os.close(root_descriptor)
+
+        self.assertEqual([item.descriptor for item in pinned], [-1, -1])
+
     def test_materialization_requires_empty_real_workspace(self) -> None:
         suite = StaticSliceSuite()
         with tempfile.TemporaryDirectory() as temporary:

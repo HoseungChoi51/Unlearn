@@ -1695,7 +1695,7 @@ class EvaluationSchemaContractTests(unittest.TestCase):
         )
         self.assertEqual(
             evaluation_spec_sha256(example),
-            "7232b712cb5d3f6ebd4cd346359858e1d8397be4bcb82fd947016353ffc13733",
+            "79cf5be3ea246b98fbfe87264ce7d006c41d97a2d2e6356e36de96a883ade9aa",
         )
 
     def test_root_and_packaged_schemas_are_byte_identical(self) -> None:

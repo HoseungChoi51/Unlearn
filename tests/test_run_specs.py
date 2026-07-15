@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import tempfile
 import unittest
@@ -29,7 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SHA1 = "1" * 40
 CAMPAIGN_POLICY = ROOT / "configs" / "campaign-policy.json"
 EXAMPLE_RUN_SPEC = ROOT / "examples" / "run-spec.example.json"
-CAMPAIGN_POLICY_SHA256 = "f88fddcc824799b7ef639371c10a9b3c0a3cf9db7ff44d2e59420492feaff620"
+CAMPAIGN_POLICY_SHA256 = "f0b3e172e4006dd119a22c9d1cbd44c7dc9c8d123ddf0c47fa49c6550552026e"
 
 
 def valid_train_spec() -> dict:
@@ -522,6 +523,13 @@ class SchemaContractTests(unittest.TestCase):
 
 
 class CampaignPolicyTests(unittest.TestCase):
+    def test_checked_in_policy_identifies_exact_plan_bytes(self) -> None:
+        policy = load_document(CAMPAIGN_POLICY)
+        self.assertEqual(
+            policy["source_plan_sha256"],
+            hashlib.sha256((ROOT / "PLAN.md").read_bytes()).hexdigest(),
+        )
+
     def test_checked_in_policy_is_valid_content_addressed_and_loadable(self) -> None:
         policy = load_document(CAMPAIGN_POLICY)
         self.assertEqual(validate_campaign_policy(policy), policy)

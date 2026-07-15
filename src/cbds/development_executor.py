@@ -19,6 +19,11 @@ from pathlib import Path
 import re
 from typing import Final, NoReturn
 
+from .development_invocation import (
+    DEVELOPMENT_INVOCATION_PROTOCOL,
+    DevelopmentInvocation,
+    verify_development_invocation,
+)
 from .development_preflight import (
     DEVELOPMENT_BACKEND,
     DEVELOPMENT_SCOPE,
@@ -27,22 +32,14 @@ from .development_preflight import (
 )
 
 
-DEVELOPMENT_EXECUTION_SCHEMA_VERSION: Final[str] = "1.0.0"
-DEVELOPMENT_EXECUTION_VERSION: Final[str] = "1.0.0"
-DEVELOPMENT_SUPERVISOR_PROTOCOL: Final[str] = "public-development-v1"
+DEVELOPMENT_EXECUTION_SCHEMA_VERSION: Final[str] = "2.0.0"
+DEVELOPMENT_EXECUTION_VERSION: Final[str] = "2.0.0"
+DEVELOPMENT_SUPERVISOR_PROTOCOL: Final[str] = DEVELOPMENT_INVOCATION_PROTOCOL
 DEVELOPMENT_SUPERVISOR_BUNDLE: Final[str] = "/opt/cbds-development"
 DEVELOPMENT_SUPERVISOR: Final[str] = (
     "/opt/cbds-development/cbds-development-supervisor"
 )
 DEVELOPMENT_UNIT: Final[str] = "cbds-public-method-development-v1.service"
-PUBLIC_DEVELOPMENT_FAMILIES: Final[frozenset[str]] = frozenset(
-    {
-        "active-labels-jsonl",
-        "copy-map",
-        "csv-totals",
-        "checksum-mode",
-    }
-)
 _REQUIRED_BLOCKERS: Final[tuple[str, ...]] = (
     "blocked_trusted_pid1_supervisor_missing",
     "blocked_child_seccomp_filter_missing",
@@ -67,46 +64,6 @@ class DevelopmentExecutionBlocked(RuntimeError):
             "public development candidate execution is blocked: "
             + ", ".join(blockers)
         )
-
-
-@dataclass(frozen=True, slots=True)
-class PublicDevelopmentRequest:
-    """Opaque identity of one explicitly public method-development fixture."""
-
-    family: str
-    fixture_id: str
-    fixture_sha256: str
-    split_role: str = "method_development"
-    public_fixture: bool = True
-    sealed: bool = False
-    program_language: str = "bash"
-
-    def __post_init__(self) -> None:
-        if self.family not in PUBLIC_DEVELOPMENT_FAMILIES:
-            raise ValueError("family is not an implemented public development family")
-        if re.fullmatch(r"fx-[0-9a-f]{20}", self.fixture_id) is None:
-            raise ValueError("fixture_id must be an opaque public fixture id")
-        if re.fullmatch(r"[0-9a-f]{64}", self.fixture_sha256) is None:
-            raise ValueError("fixture_sha256 must be lowercase SHA-256")
-        if self.split_role != "method_development":
-            raise ValueError("development execution is restricted to method_development")
-        if self.public_fixture is not True:
-            raise ValueError("development execution requires an explicitly public fixture")
-        if self.sealed is not False:
-            raise ValueError("development execution cannot accept sealed fixtures")
-        if self.program_language != "bash":
-            raise ValueError("this development slice accepts Bash only")
-
-    def to_record(self) -> dict[str, object]:
-        return {
-            "family": self.family,
-            "fixture_id": self.fixture_id,
-            "fixture_sha256": self.fixture_sha256,
-            "split_role": self.split_role,
-            "public_fixture": self.public_fixture,
-            "sealed": self.sealed,
-            "program_language": self.program_language,
-        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -342,20 +299,21 @@ def build_development_launch_argv(
 
 
 def prepare_public_development_execution(
-    request: PublicDevelopmentRequest,
-    program: str | bytes,
+    invocation: DevelopmentInvocation,
     preflight_report: Mapping[str, object],
     *,
     policy: DevelopmentExecutionPolicy | None = None,
 ) -> dict[str, object]:
     """Return a content-safe, permanently blocked candidate launch plan."""
 
-    if not isinstance(request, PublicDevelopmentRequest):
-        raise TypeError("request must be PublicDevelopmentRequest")
+    if type(invocation) is not DevelopmentInvocation:
+        raise TypeError("invocation must be an exact DevelopmentInvocation")
+    if not verify_development_invocation(invocation):
+        raise DevelopmentExecutionError("development invocation is invalid")
     selected = policy if policy is not None else DevelopmentExecutionPolicy()
     if not isinstance(selected, DevelopmentExecutionPolicy):
         raise TypeError("policy must be DevelopmentExecutionPolicy")
-    payload = _program_bytes(program)
+    payload = invocation.program
     if not payload or len(payload) > selected.maximum_program_bytes:
         raise DevelopmentExecutionError(
             "program must be nonempty and within maximum_program_bytes"
@@ -387,7 +345,8 @@ def prepare_public_development_execution(
         "execution_version": DEVELOPMENT_EXECUTION_VERSION,
         "scope": DEVELOPMENT_SCOPE,
         "backend": DEVELOPMENT_BACKEND,
-        "request": request.to_record(),
+        "request": invocation.to_audit_record(),
+        "invocation_sha256": invocation.invocation_sha256,
         "scored_evaluation_eligible": False,
         "claim_pipeline_eligible": False,
         "tool_policy_enforced": False,
@@ -424,16 +383,22 @@ def prepare_public_development_execution(
 
 
 def execute_public_development_candidate(
-    plan: Mapping[str, object], program: str | bytes
+    plan: Mapping[str, object], invocation: DevelopmentInvocation
 ) -> NoReturn:
     """Fail closed; no candidate subprocess path exists in this implementation."""
 
     validated = _validate_plan(plan)
-    payload = _program_bytes(program)
-    if len(payload) != validated["program_bytes"] or sha256(payload).hexdigest() != validated[
-        "program_sha256"
-    ]:
-        raise DevelopmentExecutionError("program does not match the blocked plan")
+    if type(invocation) is not DevelopmentInvocation:
+        raise TypeError("invocation must be an exact DevelopmentInvocation")
+    if not verify_development_invocation(invocation):
+        raise DevelopmentExecutionError("development invocation is invalid")
+    payload = invocation.program
+    if (
+        invocation.invocation_sha256 != validated.get("invocation_sha256")
+        or len(payload) != validated["program_bytes"]
+        or sha256(payload).hexdigest() != validated["program_sha256"]
+    ):
+        raise DevelopmentExecutionError("invocation does not match the blocked plan")
     decision = validated["decision"]
     if not isinstance(decision, Mapping):  # defensive after validation
         raise DevelopmentExecutionError("development plan decision disappeared")
@@ -553,6 +518,32 @@ def _validate_plan(plan: Mapping[str, object]) -> Mapping[str, object]:
         raise DevelopmentExecutionError("development plan program_bytes is invalid")
     if re.fullmatch(r"[0-9a-f]{64}", str(plan.get("program_sha256"))) is None:
         raise DevelopmentExecutionError("development plan program_sha256 is invalid")
+    invocation_sha256 = plan.get("invocation_sha256")
+    if (
+        type(invocation_sha256) is not str
+        or re.fullmatch(r"[0-9a-f]{64}", invocation_sha256) is None
+    ):
+        raise DevelopmentExecutionError(
+            "development plan invocation_sha256 is invalid"
+        )
+    request = plan.get("request")
+    if not isinstance(request, Mapping):
+        raise DevelopmentExecutionError("development plan request is missing")
+    request_exact = {
+        "invocation_sha256": invocation_sha256,
+        "program_bytes": plan["program_bytes"],
+        "program_sha256": plan["program_sha256"],
+        "candidate_execution_authorized": False,
+        "candidate_executed": False,
+        "scored_evaluation_eligible": False,
+        "model_selection_eligible": False,
+        "claim_pipeline_eligible": False,
+    }
+    for name, expected in request_exact.items():
+        if request.get(name) != expected:
+            raise DevelopmentExecutionError(
+                f"development plan request field {name!r} is invalid"
+            )
     decision = plan.get("decision")
     if not isinstance(decision, Mapping) or decision.get("status") != "candidate_execution_blocked":
         raise DevelopmentExecutionError("development plan must remain blocked")
@@ -560,27 +551,6 @@ def _validate_plan(plan: Mapping[str, object]) -> Mapping[str, object]:
     if not isinstance(blockers, list) or not set(_REQUIRED_BLOCKERS).issubset(blockers):
         raise DevelopmentExecutionError("development plan omits mandatory blockers")
     return plan
-
-
-def _program_bytes(program: str | bytes) -> bytes:
-    if isinstance(program, bytes):
-        payload = bytes(program)
-        try:
-            payload.decode("utf-8", errors="strict")
-        except UnicodeDecodeError as exc:
-            raise DevelopmentExecutionError("program is not valid UTF-8 text") from exc
-        if b"\x00" in payload:
-            raise DevelopmentExecutionError("program contains a NUL byte")
-        return payload
-    if isinstance(program, str):
-        try:
-            payload = program.encode("utf-8")
-        except UnicodeEncodeError as exc:
-            raise DevelopmentExecutionError("program is not valid UTF-8 text") from exc
-        if b"\x00" in payload:
-            raise DevelopmentExecutionError("program contains a NUL byte")
-        return payload
-    raise TypeError("program must be str or bytes")
 
 
 def _validate_absolute_path(name: str, value: str) -> None:
@@ -609,8 +579,6 @@ __all__ = [
     "DevelopmentExecutionBlocked",
     "DevelopmentExecutionError",
     "DevelopmentExecutionPolicy",
-    "PUBLIC_DEVELOPMENT_FAMILIES",
-    "PublicDevelopmentRequest",
     "build_development_launch_argv",
     "compute_development_execution_sha256",
     "execute_public_development_candidate",
