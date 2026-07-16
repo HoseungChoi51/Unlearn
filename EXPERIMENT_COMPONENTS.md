@@ -159,9 +159,9 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Fourteen families/280 tasks have concrete oracles and 1,400 fixture
-bundles across five additive tranches; eleven families/220 tasks remain
-planned, beginning with `bounded-retry-state-machine`. The
+500 tasks. Fifteen families/300 tasks have concrete oracles and 1,500 fixture
+bundles across six additive tranches; ten families/200 tasks remain
+planned, beginning with `case-routed-batch-transform`. The
 [coverage record](configs/executable-method-development-coverage-v1.json) fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
@@ -169,6 +169,18 @@ candidate-execution authority, scoring, or model-selection evidence. All
 current development assets remain public, unsealed, unscored, and
 nonauthorizing; independent human review remains unattested, and V1 invocation
 still admits only the frozen first tranche.
+
+The [sixth-tranche manifest](reports/executable-sixth-tranche/manifest.json)
+binds the `bounded-retry-state-machine` task set, added registry, cumulative
+suite, additive catalog, and canonical report bytes with SHA-256 values
+`112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c`,
+`14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4`,
+`db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
+`9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
+and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+The updated coverage and config-byte identities are
+`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`
+and `b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
 
 The fifth `pipefail-atomic-report` family makes an important evaluator
 distinction concrete. Its exact semantics model complete logical streams, the
@@ -181,6 +193,20 @@ occurred, Bash `PIPESTATUS` supplied the vector, a claimed pipeline topology
 ran, or only allowed tools were used.
 It therefore requires trusted quiescence and makes no claim about global
 quiescence, directory-permission errors, or live effective-access failures.
+
+The sixth `bounded-retry-state-machine` family distinguishes success,
+transient failure, ordinary failure, and terminal failure across linear,
+branching, bounded-cyclic, and compensating workflows. Its five retry policies
+have distinct one-, two-, four-, and six-attempt per-state-visit behavior;
+budgets reset on each visit, ordinary failure separates transient-only from
+the broader retry policies, and terminal failure always stops retrying. Exact
+attempt and terminal reports expose routes, revisits, compensation, missing
+events, and causes. They remain extensional evidence: final-state verification
+cannot show that the candidate actually retried, waited, traversed states,
+compensated, used only allowed tools, published atomically, preserved inputs
+throughout execution, exited as claimed, or was globally quiescent. A trusted
+supervisor is required, and directory-permission/live-access failures remain
+uncovered.
 
 Lifecycle roles prevent feedback leakage:
 
@@ -289,7 +315,7 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 11-family/220-task remainder and independently review
+1. implement the locked 10-family/200-task remainder and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

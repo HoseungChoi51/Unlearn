@@ -145,13 +145,14 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The five executable tranches are pinned by
+secret. The six executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
 the [additive fourth manifest](reports/executable-fourth-tranche/manifest.json),
-and [the additive fifth manifest](reports/executable-fifth-tranche/manifest.json).
-They currently contain 280 public method-development specifications with five
+the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
+and [the additive sixth manifest](reports/executable-sixth-tranche/manifest.json).
+They currently contain 300 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -177,23 +178,31 @@ canonical 56,246-byte report SHA-256 values are respectively
 `27ea8064a72453a4e7a4bc52b125a924139088cd1c20d417a867aa9ddda96e00`,
 `cb24e42fc27500fa5076224dfc195a6fe2a4b08752724f09ff944961aa7221db`,
 and `80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
-The fifth manifest records `independent_human_review_attested: false`, and all
-five tranches remain public, unsealed, unscored, and nonauthorizing. V1
+The sixth addition contributes 20 `bounded-retry-state-machine` tasks and 100
+fixtures. Its task-set, added-registry, cumulative-suite, additive-catalog, and
+canonical-report-byte SHA-256 values are respectively
+`112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c`,
+`14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4`,
+`db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
+`9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
+and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+The sixth manifest records `independent_human_review_attested: false`, and all
+six tranches remain public, unsealed, unscored, and nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
 The separate
 [executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
 locks the 25-family/500-task allocation before the remaining implementations
-are written. It binds 14 integrated families/280 tasks to the five source
-registries and reserves 11 named families/220 tasks with exact parameter axes,
+are written. It binds 15 integrated families/300 tasks to the six source
+registries and reserves 10 named families/200 tasks with exact parameter axes,
 solution tracks, allowed tools, filesystem schemas, output contracts, and
 capability tags. Its semantic coverage and config-byte SHA-256 values are
-`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`
-and `a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`
+and `b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
 This is an allocation lock only: planned entries have no implied fixture,
 oracle, verifier, review, sealing, score, or execution status. The next family
-in canonical order is `bounded-retry-state-machine`.
+in canonical order is `case-routed-batch-transform`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -238,6 +247,23 @@ atomic rename, statuses came from Bash `PIPESTATUS`, the claimed pipeline
 topology was executed, or only allowed tools were invoked. Its fixtures
 likewise do not cover explicit directory permission errors or live effective-
 access failures, and sequential scans do not prove global quiescence.
+
+The sixth `bounded-retry-state-machine` family makes policy control flow
+observable without claiming to observe a candidate's internal execution. Its
+event ledger distinguishes success, transient failure, ordinary failure, and
+terminal failure. The five policies impose one-, two-, four-, or six-attempt
+per-state-visit limits; fixed and until-terminal policies retry transient and
+ordinary failures, transient-only stops on ordinary failure, and terminal
+failure always stops retrying. Budgets reset for each state/visit. The exact
+attempt and terminal reports expose branch choice, bounded revisits,
+compensation, empty input, missing events, and causes. Separately structured
+parsers, simulators, cause builders, and serializers must agree. The
+final-state verifier can check those bytes and the exact tree only after
+trusted quiescence. It cannot attest
+actual retry, waiting, state traversal, compensation, allowed-tool use, atomic
+publication, transient input preservation, global quiescence, or candidate
+exit status; explicit directory-permission and live effective-access failures
+also remain outside the fixtures.
 
 ## 6. Parser, decoding, and deterministic outcomes
 
@@ -526,9 +552,9 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 280 frozen public-development executable tasks and 1,400 concrete fixture
-  bundles across fourteen integrated families and five additive tranches;
-- a locked 25-family/500-task allocation with 11 families/220 tasks still
+- 300 frozen public-development executable tasks and 1,500 concrete fixture
+  bundles across fifteen integrated families and six additive tranches;
+- a locked 25-family/500-task allocation with 10 families/200 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, independent-reference, materialization, no-follow, and
   mutation tests for the integrated families;
@@ -555,7 +581,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through fifth additions have no
+is method-development data, its third through sixth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -572,10 +598,15 @@ quiescence requirement; its exact final-state check does not observe atomic
 rename, `PIPESTATUS`, pipeline topology, or tool history, and similarly does
 not cover directory-mode or live effective-access failures.
 
+The bounded-retry family likewise reports an extensional final trace only: it
+does not observe actual retries, waits, transitions, compensation, tool use,
+publication history, transient input history, global quiescence, or candidate
+exit status.
+
 The critical path is now:
 
-1. implement the remaining 220 method-development specifications, beginning
-   with `bounded-retry-state-machine`, with concrete fixtures, independent
+1. implement the remaining 200 method-development specifications, beginning
+   with `case-routed-batch-transform`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed

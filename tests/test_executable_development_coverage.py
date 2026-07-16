@@ -41,16 +41,19 @@ from cbds.evaluation_specs import FROZEN_BASH_NATIVE_EXECUTABLES  # noqa: E402
 
 CONFIG = ROOT / COVERAGE_CONFIG_RELATIVE_PATH
 EXPECTED_COVERAGE_SHA256 = (
-    "b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4"
+    "732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b"
 )
 EXPECTED_CONFIG_BYTES_SHA256 = (
-    "a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6"
+    "b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf"
 )
 EXPECTED_USTAR_TASK_SET_SHA256 = (
     "be044d13053e62e0a9f609e1654048de4c7b422e9bc93c659f0d265ddfd4e283"
 )
 EXPECTED_PIPEFAIL_TASK_SET_SHA256 = (
     "fc974695fe967094bcba6c6f8ff8c267c86f64215de78c43a8e693bed1252562"
+)
+EXPECTED_BOUNDED_RETRY_TASK_SET_SHA256 = (
+    "112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c"
 )
 EXPECTED_EXISTING_ORDER = (
     "active-jsonl-labels",
@@ -123,13 +126,13 @@ class CoverageContractTests(unittest.TestCase):
         self.assertEqual(FAMILY_COUNT, 25)
         self.assertEqual(TASKS_PER_FAMILY, 20)
         self.assertEqual(TOTAL_TASK_COUNT, 500)
-        self.assertEqual(INTEGRATED_FAMILY_COUNT, 14)
-        self.assertEqual(INTEGRATED_TASK_COUNT, 280)
-        self.assertEqual(PLANNED_FAMILY_COUNT, 11)
-        self.assertEqual(PLANNED_TASK_COUNT, 220)
+        self.assertEqual(INTEGRATED_FAMILY_COUNT, 15)
+        self.assertEqual(INTEGRATED_TASK_COUNT, 300)
+        self.assertEqual(PLANNED_FAMILY_COUNT, 10)
+        self.assertEqual(PLANNED_TASK_COUNT, 200)
         self.assertEqual(25 * 20, 500)
-        self.assertEqual(14 * 20, 280)
-        self.assertEqual(11 * 20, 220)
+        self.assertEqual(15 * 20, 300)
+        self.assertEqual(10 * 20, 200)
         self.assertEqual(
             tuple(family.family_id for family in self.coverage.families),
             CANONICAL_FAMILY_ORDER,
@@ -137,7 +140,7 @@ class CoverageContractTests(unittest.TestCase):
         self.assertEqual(CANONICAL_FAMILY_ORDER[:12], EXPECTED_EXISTING_ORDER)
         self.assertEqual(
             tuple(family.lifecycle_state for family in self.coverage.families),
-            ("integrated",) * 14 + ("planned",) * 11,
+            ("integrated",) * 15 + ("planned",) * 10,
         )
         self.assertEqual(
             sum(family.task_count for family in self.coverage.families), 500
@@ -183,8 +186,8 @@ class CoverageContractTests(unittest.TestCase):
         )
 
     def test_existing_families_bind_live_task_sets_and_frozen_registries(self) -> None:
-        integrated = self.coverage.families[:14]
-        planned = self.coverage.families[14:]
+        integrated = self.coverage.families[:15]
+        planned = self.coverage.families[15:]
         self.assertTrue(
             all(family.integrated_task_set_sha256 is not None for family in integrated)
         )
@@ -192,16 +195,16 @@ class CoverageContractTests(unittest.TestCase):
             all(family.integrated_task_set_sha256 is None for family in planned)
         )
         self.assertEqual(
-            len({family.integrated_task_set_sha256 for family in integrated}), 14
+            len({family.integrated_task_set_sha256 for family in integrated}), 15
         )
         sources = self.coverage.source_registry_commitments
         self.assertEqual(
             tuple(source.added_task_count for source in sources),
-            (100, 100, 40, 20, 20),
+            (100, 100, 40, 20, 20, 20),
         )
         self.assertEqual(
             tuple(source.cumulative_task_count for source in sources),
-            (100, 200, 240, 260, 280),
+            (100, 200, 240, 260, 280, 300),
         )
         self.assertEqual(
             tuple(source.registry_sha256 for source in sources),
@@ -211,6 +214,7 @@ class CoverageContractTests(unittest.TestCase):
                 "66a9ef43a6387f5f94f511aec3357f0e625427d161a0c6da0d9590a837761237",
                 "3dc5512139361a275afaf0b57b94528961615f9b4eee22ee6c333cc7d8bf4ea5",
                 "d562d462814b7fc6413e0e085d16f66def28157c1a6361adf28cd3d42eb5f88c",
+                "14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4",
             ),
         )
 
@@ -294,12 +298,45 @@ class CoverageContractTests(unittest.TestCase):
         self.assertEqual(family.filesystem_schema, "pipeline-record-streams")
         self.assertEqual(family.output_contract, "atomic-pipeline-status-json")
 
+    def test_fifteenth_integrated_family_is_the_exact_bounded_retry_grid(self) -> None:
+        family = self.coverage.families[14]
+        self.assertEqual(family.family_id, "bounded-retry-state-machine")
+        self.assertEqual(family.lifecycle_state, "integrated")
+        self.assertEqual(
+            family.integrated_task_set_sha256,
+            EXPECTED_BOUNDED_RETRY_TASK_SET_SHA256,
+        )
+        self.assertEqual(
+            family.parameter_axes,
+            (
+                CoverageParameterAxis(
+                    "transition_model",
+                    ("linear", "branching", "cyclic-bounded", "compensating"),
+                ),
+                CoverageParameterAxis(
+                    "retry_policy",
+                    (
+                        "never",
+                        "fixed-two",
+                        "fixed-four",
+                        "until-terminal",
+                        "retry-transient-only",
+                    ),
+                ),
+            ),
+        )
+        self.assertEqual(family.solution_track, "bash-native")
+        self.assertEqual(family.allowed_tools, ("awk", "mkdir", "sort"))
+        self.assertEqual(family.filesystem_schema, "workflow-event-ledger")
+        self.assertEqual(
+            family.output_contract, "terminal-state-and-attempt-report"
+        )
+
     def test_planned_roster_covers_requested_domains_and_python_track(self) -> None:
-        planned = self.coverage.families[14:]
+        planned = self.coverage.families[15:]
         by_id = {family.family_id: family for family in planned}
-        self.assertEqual(planned[0].family_id, "bounded-retry-state-machine")
+        self.assertEqual(planned[0].family_id, "case-routed-batch-transform")
         required = {
-            "bounded-retry-state-machine",
             "case-routed-batch-transform",
             "collision-safe-batch-rename",
             "hardlink-deduplicated-mirror",
@@ -330,10 +367,6 @@ class CoverageContractTests(unittest.TestCase):
                 {"python3"} if family.solution_track == "python-permitted" else set()
             )
             self.assertTrue(set(family.allowed_tools).issubset(permitted))
-        self.assertEqual(
-            by_id["bounded-retry-state-machine"].allowed_tools,
-            ("awk", "mkdir", "sort"),
-        )
         self.assertEqual(
             by_id["jsonl-csv-enrichment-compose"].allowed_tools,
             ("awk", "jq", "mkdir", "sort"),

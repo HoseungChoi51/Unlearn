@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 280
-integrated public method-development tasks with 1,400 concrete fixtures across
-five additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 300
+integrated public method-development tasks with 1,500 concrete fixtures across
+six additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -205,20 +205,31 @@ the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
 `cb24e42fc27500fa5076224dfc195a6fe2a4b08752724f09ff944961aa7221db`,
 and `80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
 
-The full allocation lock contains 14 integrated families/280 tasks and 11
-planned families/220 tasks. Its semantic coverage SHA-256 is
-`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`,
+The sixth addition contributes 20 `bounded-retry-state-machine` tasks/100
+fixtures. Its checked hash-only report is
+[reports/executable-sixth-tranche/manifest.json](reports/executable-sixth-tranche/manifest.json);
+the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
+report-byte SHA-256 values are
+`112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c`,
+`14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4`,
+`db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
+`9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
+and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+
+The full allocation lock contains 15 integrated families/300 tasks and 10
+planned families/200 tasks. Its semantic coverage SHA-256 is
+`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
 and its canonical config-byte SHA-256 is
-`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
 The lock fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through fifth manifests and the allocation lock explicitly record
+third through sixth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 220 method-development tasks, beginning with
-`bounded-retry-state-machine`, independent review of the complete development
+**Planned:** the remaining 200 method-development tasks, beginning with
+`case-routed-batch-transform`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -250,7 +261,7 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-fourteen integrated fixture/oracle families with independent constructions and
+fifteen integrated fixture/oracle families with independent constructions and
 mutation coverage; namespace, runtime-snapshot, and native PID1 canaries; and
 one exact reviewed Bash case connected through the local boundary.
 
@@ -269,6 +280,18 @@ atomic-rename history, Bash `PIPESTATUS`, executed pipeline topology, tool
 history, or global quiescence. Explicit
 directory-permission and live effective-access failures are also outside its
 fixtures.
+
+The sixth-family ledger distinguishes success, transient failure, ordinary
+failure, and terminal failure. Five behaviorally distinct retry policies apply
+one-, two-, four-, or six-attempt limits per state visit, with budgets reset on
+every visit; fixed and until-terminal policies retry transient and ordinary
+failures, transient-only retries only transient failures, and terminal failure
+always stops retrying. Separately structured trusted paths derive exact
+attempt and terminal reports for linear, branching, bounded-cyclic, and
+compensating models. The final-state verifier does not attest actual retry,
+waiting, transition, compensation, tool-use, atomic-publication, transient-input,
+global-quiescence, or candidate-exit history. Directory-permission and live
+effective-access behavior also remain outside the fixtures.
 
 **Planned:** a production, independently reviewed arbitrary-candidate service
 with a trusted Bash runtime closure, exact-tool enforcement, tmpfs/workspace

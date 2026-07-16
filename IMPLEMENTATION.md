@@ -161,9 +161,9 @@ evidence that a model or research hypothesis has succeeded.
   families, 20 tasks per family, and 500 tasks total. The canonical 4-by-5
   parameter grids bind each family's lifecycle state, Bash-native or
   Python-permitted solution track, allowed tools, filesystem schema, output
-  contract, and capability tags. It reconciles 14 integrated families/280
-  tasks to all five live cumulative registry identities and reserves 11
-  concrete families/220 tasks without pretending that planned entries have
+  contract, and capability tags. It reconciles 15 integrated families/300
+  tasks to all six live cumulative registry identities and reserves 10
+  concrete families/200 tasks without pretending that planned entries have
   fixtures or verifiers. The config is public, unsealed, unscored,
   nonauthorizing, and records no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
@@ -196,6 +196,22 @@ evidence that a model or research hypothesis has succeeded.
   history, Bash `PIPESTATUS`, pipeline topology, or tool history. Trusted
   quiescence is required; global quiescence, explicit directory-permission
   errors, and live effective-access failures remain unobserved.
+- [x] Additive sixth-tranche `bounded-retry-state-machine` family with 20 task
+  contracts and five deterministic profiles per task (100 fixtures). It
+  crosses four transition models with five behaviorally distinct retry
+  policies: one-, two-, four-, and six-attempt state-visit budgets, with
+  transient/ordinary retry eligibility separated while terminal failures
+  always stop retrying, and every budget resets per state/visit. Two
+  separately structured parsers and simulators agree on exact attempt and
+  terminal reports for branch selection, bounded cycles, compensation, empty
+  ledgers, missing events, and causes.
+  Checked-in materialization, mutation, parser, type, hash-seed, policy-
+  discrimination, and normal/optimized-mode tests do not execute a candidate.
+  Exact local task/bundle types preserve all predecessor identities and remain
+  outside V1 invocation. Final-state verification cannot attest actual retry,
+  wait, transition, compensation, tool-use, atomic-publication, transient-input,
+  global-quiescence, or candidate-exit history; directory-permission and live
+  effective-access failures remain uncovered.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -467,24 +483,38 @@ its additive-catalog SHA-256 is
 and its canonical 56,246-byte report SHA-256 is
 `80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
 
-The cumulative 280 specifications and 1,400 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the fifth manifest
+The additive sixth tranche is bound by
+[reports/executable-sixth-tranche/manifest.json](reports/executable-sixth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `bounded-retry-state-machine` through
+exact local types. Its family task-set SHA-256 is
+`112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c`,
+its added-registry SHA-256 is
+`14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4`,
+its cumulative-suite SHA-256 is
+`db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
+its additive-catalog SHA-256 is
+`9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
+and its canonical report-byte SHA-256 is
+`3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+
+The cumulative 300 specifications and 1,500 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the sixth manifest
 explicitly records `independent_human_review_attested: false`. The remaining
-220 specifications, independent human review, and a separately reviewed
+200 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
 
 The complete allocation is frozen separately in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
-It binds 14 integrated families/280 tasks and 11 planned families/220 tasks to
+It binds 15 integrated families/300 tasks and 10 planned families/200 tasks to
 the 25-family/500-task target. The semantic coverage SHA-256 is
-`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`,
+`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
 and the canonical config byte SHA-256 is
-`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
 This lock fixes allocation metadata only; a planned family is not implemented,
 reviewed, sealed, scored, or executable because it appears in the record. The
-next planned implementation is `bounded-retry-state-machine`.
+next planned implementation is `case-routed-batch-transform`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -569,10 +599,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 220 method-development specifications not yet implemented and
+- [ ] Add the 200 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 280-
+  development inventory before sealing. The frozen cumulative 300-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -590,7 +620,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the fourteen implemented families
+- [ ] Extend verifier mutation tests beyond the fifteen implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

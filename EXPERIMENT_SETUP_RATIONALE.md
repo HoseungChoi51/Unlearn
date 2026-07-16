@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Fourteen families/280 tasks currently have concrete oracles
-  and 1,400 authenticated fixture bundles across five additive tranches.
+  and 500 tasks. Fifteen families/300 tasks currently have concrete oracles
+  and 1,500 authenticated fixture bundles across six additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 11 families/220 tasks, beginning with
-  `bounded-retry-state-machine`, still need implementation and review.
+- The remaining 10 families/200 tasks, beginning with
+  `case-routed-batch-transform`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -172,6 +172,30 @@ not reporting a successful specialization or compression experiment.
 The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.md).
 The current public allocation and its exact content identity are in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
+Its semantic coverage SHA-256 is
+`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
+and the canonical config-byte SHA-256 is
+`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+
+The sixth
+[`bounded-retry-state-machine` manifest](reports/executable-sixth-tranche/manifest.json)
+binds 20 tasks and 100 fixtures. Its task-set, registry, cumulative-suite,
+catalog, and report-byte SHA-256 values are
+`112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c`,
+`14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4`,
+`db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
+`9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
+and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+The family separates transient, ordinary, and terminal failures across five
+retry policies: fixed and until-terminal policies retry transient and ordinary
+failures, transient-only retries only transient failures, terminal failure
+always stops retrying, and every state/visit gets a fresh budget. Exact reports bind
+branches, bounded cycles, compensation, missing events, and causes. These are
+final-state semantics only: the verifier does not observe actual retries,
+waits, state traversal, compensation, tool use, atomic publication, transient
+input preservation, global quiescence, or candidate exit status. The manifest
+is public, unsealed, unscored, nonauthorizing, outside first-tranche-only V1
+invocation, and records `independent_human_review_attested: false`.
 
 ## Where the detailed answers live
 

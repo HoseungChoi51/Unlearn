@@ -33,6 +33,7 @@ improves.
 - [Executable additive third-tranche hash manifest](reports/executable-third-tranche/manifest.json)
 - [Executable additive fourth-tranche hash manifest](reports/executable-fourth-tranche/manifest.json)
 - [Executable additive fifth-tranche hash manifest](reports/executable-fifth-tranche/manifest.json)
+- [Executable additive sixth-tranche hash manifest](reports/executable-sixth-tranche/manifest.json)
 - [Executable method-development coverage lock](configs/executable-method-development-coverage-v1.json)
 
 ## Quick start
@@ -352,13 +353,14 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and fourteen cataloged public-development
-static fixture/verifier families are implemented across five additive
+fail-closed claim-policy evaluation, and fifteen cataloged public-development
+static fixture/verifier families are implemented across six additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
 bundle types; and the fifth adds `pipefail-atomic-report` under the same
-additive rule. These additions remain outside the first-tranche-only V1
+additive rule. The sixth adds `bounded-retry-state-machine`. These additions
+remain outside the first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
 payload snapshot, fixed-protocol descriptor-handoff canary, and candidate-input-free
@@ -485,11 +487,35 @@ and additive-catalog SHA-256
 The canonical 56,246-byte report has SHA-256
 `80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
 
-Together the five tranches provide 280 of the 500 required
-method-development specifications and 1,400 concrete fixture bundles across
-14 integrated families. They remain public, unsealed, unscored, and
+An additive sixth tranche contributes 20 semantic specifications and 100
+bundles for deterministic bounded-retry workflow reporting.
+`bounded-retry-state-machine` crosses linear, branching, bounded-cyclic, and
+compensating transition models with five behaviorally distinct retry policies.
+The policies allow one, two, four, or six total attempts per state visit;
+fixed and until-terminal policies retry transient and ordinary failures,
+whereas `retry-transient-only` stops on ordinary failure, and terminal failure
+always stops retrying. Retry budgets reset for every state/visit pair. Exact
+attempt and terminal reports bind branch selection, bounded revisits,
+compensation, empty ledgers, missing events, and the initiating or stopping
+cause. Two separately structured constructions must agree before fixture
+admission. The checked-in hash-only report is
+[reports/executable-sixth-tranche/manifest.json](reports/executable-sixth-tranche/manifest.json),
+with family task-set SHA-256
+`112e9d079a1b21b2d371e61d48af2401649b23aeff11a45e4d2dcbe847e1541c`,
+added-registry SHA-256
+`14280b3cbc8a96c919a57a325b5795c381cba86b2a31934f7069821b7ff4e3c4`,
+cumulative-suite SHA-256
+`db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
+and additive-catalog SHA-256
+`9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`.
+The canonical report bytes have SHA-256
+`3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+
+Together the six tranches provide 300 of the 500 required
+method-development specifications and 1,500 concrete fixture bundles across
+15 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-220 specifications and the trusted sandbox/supervisor still block general
+200 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -501,16 +527,16 @@ independent checkers, or execution traces.
 
 The checked-in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
-freezes the complete 25-family/500-task allocation: 14 integrated families
-and 280 tasks plus 11 planned families and 220 tasks. It fixes each family's
+freezes the complete 25-family/500-task allocation: 15 integrated families
+and 300 tasks plus 10 planned families and 200 tasks. It fixes each family's
 two-axis 4-by-5 task grid, solution track, tool set, filesystem schema, output
 contract, and capability tags. Its semantic coverage SHA-256 is
-`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`,
+`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
 and the canonical config bytes have SHA-256
-`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
 This is an allocation lock, not implementation, sealing, review, scoring, or
 execution authority. The next planned family is
-`bounded-retry-state-machine`.
+`case-routed-batch-transform`.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two
@@ -561,6 +587,23 @@ history. It therefore requires trusted supervisor-established quiescence and
 does not claim global quiescence, directory-permission-error coverage, or live
 effective-access coverage. The family remains outside V1 invocation and grants
 no candidate-execution, model-selection, scoring, or claim authority.
+
+`src/cbds/executable_bounded_retry_state_machine.py` supplies the 20 sixth-
+tranche tasks and five deterministic profiles per task. Its immutable event
+ledger distinguishes success, transient failure, ordinary failure, and
+terminal failure; total-attempt limits and retry eligibility make all five
+policies behaviorally distinct. The trusted semantics bind exact attempt and
+terminal reports for linear, branching, bounded-cyclic, and compensating
+models, including per-state-visit budget resets, empty ledgers, missing events,
+cycle limits, and compensation causes. The final-state verifier checks both
+reports, exact input preservation, modes, links, and the complete tree. It
+cannot observe whether a candidate actually retried, waited, traversed the
+reported transitions, performed compensation, used the allowed tools, or
+published atomically; nor can it prove global quiescence, transient input
+preservation, or candidate exit status. A trusted supervisor must establish
+quiescence. Directory-permission and live effective-access failures remain
+uncovered. The family is public, unsealed, unscored, nonauthorizing, outside V1
+invocation, and has no independent human-review attestation.
 
 `src/cbds/development_invocation.py` admits the frozen first-tranche catalog
 through its registry, suite, and catalog digests, then binds each request to
