@@ -9,6 +9,7 @@ ability loss as a result unless target performance or deployed footprint
 improves.
 
 - [Research plan](PLAN.md)
+- [Why the experiment setup is built this way](EXPERIMENT_SETUP_RATIONALE.md)
 - [Experiment logic and claim dependencies](EXPERIMENT_LOGIC.md)
 - [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
 - [Experiment evidence chain and component rationale](EXPERIMENT_EVIDENCE_CHAIN.md)
@@ -29,6 +30,10 @@ improves.
 - [Non-claiming dense-SFT canary](reports/engineering-dense-sft-canary/manifest.json)
 - [Executable first-tranche hash manifest](reports/executable-first-tranche/manifest.json)
 - [Executable additive second-tranche hash manifest](reports/executable-second-tranche/manifest.json)
+- [Executable additive third-tranche hash manifest](reports/executable-third-tranche/manifest.json)
+- [Executable additive fourth-tranche hash manifest](reports/executable-fourth-tranche/manifest.json)
+- [Executable additive fifth-tranche hash manifest](reports/executable-fifth-tranche/manifest.json)
+- [Executable method-development coverage lock](configs/executable-method-development-coverage-v1.json)
 
 ## Quick start
 
@@ -347,11 +352,14 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and ten cataloged public-development
-static fixture/verifier families are implemented. Two separate 20-task
-families—`compound-path-query` and `regex-log-group-aggregation`—with 200
-fixtures total are staged locally but are not part of those closed catalogs or
-their invocation protocol. A catalog-admitted
+fail-closed claim-policy evaluation, and fourteen cataloged public-development
+static fixture/verifier families are implemented across five additive
+tranches. The third tranche adds `compound-path-query` and
+`regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
+preserving all predecessor identities through exact family-local task and
+bundle types; and the fifth adds `pipefail-atomic-report` under the same
+additive rule. These additions remain outside the first-tranche-only V1
+invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
 payload snapshot, fixed-protocol descriptor-handoff canary, and candidate-input-free
 fixed-BusyBox namespace-transfer canary are also implemented. A separate
@@ -416,32 +424,108 @@ and additive-catalog SHA-256
 `e2ad6a3124491bc25410d40278400aeac9cd8791a9f08a530c823d5f14c09e18`.
 Its execution, selection, and claim-authority flags are also hard false.
 
-Together the two tranches provide 200 of the 500 required
-method-development specifications and 1,000 concrete fixture bundles. They
-remain public, unsealed, and unscored. The remaining 300 specifications and
-the trusted sandbox/supervisor still block candidate execution. The V1
-`DevelopmentInvocation` below deliberately admits only the frozen first
-tranche; a cumulative invocation protocol has not been authorized. Separately,
+An additive third tranche contributes 40 semantic specifications and 200
+bundles across compound path queries and regex-filtered log aggregation. It
+preserves both earlier tranche identities by admitting the exact family-local
+task and bundle types in a new additive registry and catalog rather than
+widening either frozen type contract. The checked-in hash-only report is
+[`reports/executable-third-tranche/manifest.json`](reports/executable-third-tranche/manifest.json),
+with added-registry SHA-256
+`66a9ef43a6387f5f94f511aec3357f0e625427d161a0c6da0d9590a837761237`,
+cumulative-suite SHA-256
+`3a578668805bbdfdfaf3400483640bb29504591604ed1c9c28cf8f9bb0362fb3`,
+and additive-catalog SHA-256
+`01554367fd68c36b2f509b8b50b270b0aa7d5e6de3fa55db15a14cf4ec68c26b`.
+The canonical report bytes have SHA-256
+`58e7e299142bd2c9681f9940f8277489115fa76350ffa53fb984bed81ceac862`.
+The manifest explicitly records `independent_human_review_attested: false`;
+execution, model-selection, and claim authority also remain false.
+
+An additive fourth tranche contributes 20 semantic specifications and 100
+bundles for deterministic POSIX-ustar creation. `reproducible-ustar-pack`
+crosses four file selectors with five archive-mode policies and binds a
+canonical member order, header normalization, exact member bytes and modes,
+and a fixed output-tree policy. Its checked-in trusted constructions, strict
+archive parser, workspace verifier, and mutation tests do not execute a model
+candidate. A separate implementation-session audit also exercised randomized
+differential cases and GNU-tar interoperability; that session result is useful
+engineering evidence, but is not yet a checked-in reproducible audit artifact.
+The checked-in hash-only report is
+[reports/executable-fourth-tranche/manifest.json](reports/executable-fourth-tranche/manifest.json),
+with added-registry SHA-256
+`3dc5512139361a275afaf0b57b94528961615f9b4eee22ee6c333cc7d8bf4ea5`,
+cumulative-suite SHA-256
+`668ab9c942888d568c80aaa27bee340ad8a10faf3493a6983bf068d79b134651`,
+and additive-catalog SHA-256
+`54ff2e17645edfc7887fc39b437340ffe8d736b83001d0265612271c2a3b1d46`.
+The canonical report bytes have SHA-256
+`a79ba062de86574e95ff60ff4fa8bc48b223c934b70d65ed832da5631359eebb`.
+The family-local task-set SHA-256 is
+`be044d13053e62e0a9f609e1654048de4c7b422e9bc93c659f0d265ddfd4e283`.
+
+An additive fifth tranche contributes 20 semantic specifications and 100
+bundles for deterministic pipeline-status reporting under five publication
+policies. `pipefail-atomic-report` crosses four complete-stream logical
+pipeline shapes with success-only, status-always, exact rollback, and
+first/last-failure publication behavior. The trusted semantics bind the full
+ordered stage-status vector, shape-specific aggregate, selected failure, exact
+report bytes or absence, and complete final workspace. Its checked-in tests
+exercise two separately structured semantic constructions, all catalog
+fixtures, final-state mutations, and randomized valid record streams; no
+candidate program is executed. The checked-in hash-only report is
+[reports/executable-fifth-tranche/manifest.json](reports/executable-fifth-tranche/manifest.json),
+with family task-set SHA-256
+`fc974695fe967094bcba6c6f8ff8c267c86f64215de78c43a8e693bed1252562`,
+added-registry SHA-256
+`d562d462814b7fc6413e0e085d16f66def28157c1a6361adf28cd3d42eb5f88c`,
+cumulative-suite SHA-256
+`27ea8064a72453a4e7a4bc52b125a924139088cd1c20d417a867aa9ddda96e00`,
+and additive-catalog SHA-256
+`cb24e42fc27500fa5076224dfc195a6fe2a4b08752724f09ff944961aa7221db`.
+The canonical 56,246-byte report has SHA-256
+`80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
+
+Together the five tranches provide 280 of the 500 required
+method-development specifications and 1,400 concrete fixture bundles across
+14 integrated families. They remain public, unsealed, unscored, and
+nonauthorizing, and independent human review remains unattested. The remaining
+220 specifications and the trusted sandbox/supervisor still block general
+synthesized-candidate execution. The V1 `DevelopmentInvocation` below
+deliberately admits only the
+frozen first tranche; a cumulative invocation protocol has not been
+authorized. Separately,
 the generated 20,250-record
 benchmark scaffold continues to carry only semantic graphs and fixture
 descriptors; it does not materialize the complete sealed evaluation fixtures,
 independent checkers, or execution traces.
 
-`src/cbds/executable_compound_path_query.py` separately stages 20 additional
-public-development tasks and five deterministic profiles per task (100
-fixtures). Two structurally independent production oracles must agree, and a
-pinned-workspace property verifier checks authenticated inputs, complete output
-state, no-follow reads, final rescans, and 15 workspace mutations in normal and
-optimized modes. Sequential scans still require a trusted supervisor to hold
-the workspace quiescent, and the family has not completed independent human
-production review. The family is absent from the
-closed first/second registries and catalogs, the cumulative 200-task/1,000-
-fixture identities, and `DevelopmentInvocation`; those counts therefore do
-not change. Its fixture model represents file and symlink leaves but not
-explicit directory modes, so it does not cover directory permission errors.
+The checked-in
+[configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
+freezes the complete 25-family/500-task allocation: 14 integrated families
+and 280 tasks plus 11 planned families and 220 tasks. It fixes each family's
+two-axis 4-by-5 task grid, solution track, tool set, filesystem schema, output
+contract, and capability tags. Its semantic coverage SHA-256 is
+`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`,
+and the canonical config bytes have SHA-256
+`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+This is an allocation lock, not implementation, sealing, review, scoring, or
+execution authority. The next planned family is
+`bounded-retry-state-machine`.
 
-`src/cbds/executable_log_aggregation_pipeline.py` stages another 20 tasks and
-100 fixtures over recursive no-follow log discovery, strict byte-level TSV
+`src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
+tranche tasks and five deterministic profiles per task (100 fixtures). Two
+structurally independent production oracles must agree, and a pinned-workspace
+property verifier checks authenticated inputs, complete output state,
+no-follow reads, final rescans, and workspace mutations in normal and optimized
+modes. Sequential scans still require a trusted supervisor to hold the
+workspace quiescent, and the family has not completed independent human
+production review. It is admitted only through the third-tranche exact local
+types and remains outside `DevelopmentInvocation`. Its fixture model
+represents file and symlink leaves but not explicit directory modes, so it does
+not cover directory permission errors.
+
+`src/cbds/executable_log_aggregation_pipeline.py` supplies the other 20 tasks
+and 100 fixtures over recursive no-follow log discovery, strict byte-level TSV
 parsing, ERE filtering, malformed-row policies, grouped count/sum aggregation,
 and raw-byte ordering. Its two independently structured production oracles
 must agree. A local property verifier authenticates the task/profile/bundle
@@ -449,9 +533,34 @@ and pinned workspace, requires exact input preservation, enforces the complete
 output mode/link/size/tree policy, reads through bounded descriptor-relative
 egress, and repeats the scans after reading. Directory permission and
 effective-access failures remain explicitly outside its fixture coverage. It
-is public, unsealed, unscored, nonauthorizing, and absent from the frozen
-catalogs and invocation dispatcher. The staged total is therefore 40 tasks and
-200 fixtures; the frozen cumulative identity remains 200 tasks/1,000 fixtures.
+is public, unsealed, unscored, and nonauthorizing. The third-tranche catalog
+admits it through exact family-local types, but V1 invocation support remains
+absent.
+
+`src/cbds/executable_ustar_pack.py` supplies the 20 fourth-tranche tasks and
+five deterministic profiles per task. It creates only regular POSIX-ustar
+members, orders names by UTF-8 bytes, fixes ownership and time metadata, and
+checks exact archive and final-workspace semantics with separately structured
+constructions. The verifier requires a quiescent workspace supplied by a
+trusted supervisor; final-state inspection cannot prove transient `chmod`,
+symlink-follow, or tool-invocation history. The fixture model also does not
+exercise explicit directory permission failures or live effective-access
+decisions. It remains outside V1 invocation and grants no candidate-execution,
+model-selection, scoring, or claim authority.
+
+`src/cbds/executable_pipefail_atomic_report.py` supplies the 20 fifth-tranche
+tasks and five deterministic profiles per task. Logical stage statuses are
+fixture data, and the semantic constructions consume complete streams before
+applying those statuses, so the expected aggregate does not depend on SIGPIPE
+or short-circuit timing. The verifier checks the exact final report or required
+absence, source preservation, output modes and links, and the complete final
+tree. Although the task contract requires sibling-file atomic rename and full
+pipeline status capture, a final-state verifier cannot observe atomic-rename
+history, Bash `PIPESTATUS`, executed pipeline topology, or tool-invocation
+history. It therefore requires trusted supervisor-established quiescence and
+does not claim global quiescence, directory-permission-error coverage, or live
+effective-access coverage. The family remains outside V1 invocation and grants
+no candidate-execution, model-selection, scoring, or claim authority.
 
 `src/cbds/development_invocation.py` admits the frozen first-tranche catalog
 through its registry, suite, and catalog digests, then binds each request to

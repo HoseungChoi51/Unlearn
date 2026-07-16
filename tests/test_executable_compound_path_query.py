@@ -20,6 +20,7 @@ from cbds.executable_compound_path_query import (  # noqa: E402
     COMPOUND_PATH_DIRECTORY_PERMISSION_ERRORS_COVERED,
     COMPOUND_PATH_QUERY_GENERATOR_VERSION,
     COMPOUND_PATH_QUERY_OUTPUT,
+    COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES,
     COMPOUND_PATH_QUERY_VERIFIER_IDENTITY,
     COMPOUND_PATH_QUERY_WORKSPACE_SCANS_PROVE_GLOBAL_QUIESCENCE,
     COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE,
@@ -137,7 +138,7 @@ class CompoundPathQueryTests(unittest.TestCase):
         return self.by_pair[(task.task_id, profile_id)]
 
     def test_grid_has_exactly_twenty_hash_bound_nonauthorizing_tasks(self) -> None:
-        self.assertEqual(COMPOUND_PATH_QUERY_GENERATOR_VERSION, "1.0.0")
+        self.assertEqual(COMPOUND_PATH_QUERY_GENERATOR_VERSION, "1.1.0")
         self.assertEqual(len(self.tasks), 20)
         self.assertEqual(
             {
@@ -252,7 +253,7 @@ class CompoundPathQueryTests(unittest.TestCase):
                         (
                             ExpectedFile(
                                 COMPOUND_PATH_QUERY_OUTPUT,
-                                maximum_bytes=len(reference),
+                                maximum_bytes=COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES,
                                 mode=0o644,
                             ),
                         ),
@@ -356,7 +357,13 @@ class CompoundPathQueryTests(unittest.TestCase):
         self.assertTrue(
             all(
                 bundle.definition.expected_files
-                == (ExpectedFile(COMPOUND_PATH_QUERY_OUTPUT, 0, 0o644),)
+                == (
+                    ExpectedFile(
+                        COMPOUND_PATH_QUERY_OUTPUT,
+                        COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES,
+                        0o644,
+                    ),
+                )
                 for bundle in bundles
             )
         )
@@ -421,9 +428,206 @@ class CompoundPathQueryTests(unittest.TestCase):
             b"00-linked.txt\n"
             b"a/alpha.log\n"
             b"c/b/alpha-three.log\n"
+            b"follow-digit.7\n"
+            b"follow-directory\n"
+            b"follow-log.log\n"
+            b"follow-txt.txt\n"
             b"m/z/y/alpha-deep.log\n"
+            b"report-follow-link\n"
             b"report-zz-link\n",
         )
+
+    def test_matching_symlinks_make_no_follow_semantics_observable(self) -> None:
+        matching_link = {
+            "*.txt": "follow-txt.txt",
+            "report-*": "report-follow-link",
+            "[a-z]*.log": "follow-log.log",
+            "*.[0-9]": "follow-digit.7",
+        }
+        for profile in PUBLIC_DEVELOPMENT_FIXTURE_PROFILES:
+            if profile.profile_id == "empty-duplicates":
+                continue
+            for pattern, link_path in matching_link.items():
+                with self.subTest(profile=profile.profile_id, pattern=pattern):
+                    base = self.bundle(
+                        pattern,
+                        "readable-regular-and-name",
+                        profile.profile_id,
+                    )
+                    links = self.bundle(
+                        pattern,
+                        "readable-regular-and-name-or-symlink",
+                        profile.profile_id,
+                    )
+                    base_lines = set(_output_lines(base.oracle.outputs[0].content))
+                    link_lines = set(_output_lines(links.oracle.outputs[0].content))
+                    self.assertNotIn(link_path, base_lines)
+                    self.assertIn(link_path, link_lines)
+                    self.assertIn("follow-directory", link_lines)
+
+                    # A follow-links implementation would treat this matching
+                    # file symlink as a regular file and emit it in the base
+                    # expression.  The exact semantic verifier must kill that
+                    # family-specific mutant for every pattern and profile.
+                    followed = tuple(
+                        sorted(
+                            {*base_lines, link_path},
+                            key=lambda value: value.encode("utf-8"),
+                        )
+                    )
+                    followed_output = b"".join(
+                        item.encode("utf-8") + b"\n" for item in followed
+                    )
+                    self.assertFalse(
+                        verify_compound_path_query_output(
+                            base.definition,
+                            self.task(
+                                pattern,
+                                "readable-regular-and-name",
+                            ).parameters,
+                            followed_output,
+                        )
+                    )
+
+    def test_gnu_find_follow_links_mutant_has_exact_eighty_case_kill_set(
+        self,
+    ) -> None:
+        killed = 0
+        intentional_zero_survivors = 0
+        environment = dict(os.environ)
+        environment["LC_ALL"] = "C"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for task_index, task in enumerate(self.tasks):
+                for profile in PUBLIC_DEVELOPMENT_FIXTURE_PROFILES:
+                    bundle = self.by_pair[(task.task_id, profile.profile_id)]
+                    workspace = root / f"task-{task_index}-{profile.profile_id}"
+                    with materialize_compound_path_query_fixture(
+                        task,
+                        profile,
+                        bundle,
+                        workspace,
+                    ):
+                        parameters = task.parameters
+                        arguments = ["find", "-L", "input/query"]
+                        if parameters.expression == (
+                            "readable-regular-and-name-depth-at-most-three"
+                        ):
+                            arguments.extend(("-maxdepth", "3"))
+                        arguments.append("(")
+                        if parameters.expression == "readable-regular-and-name":
+                            arguments.extend(
+                                (
+                                    "-type",
+                                    "f",
+                                    "-perm",
+                                    "/444",
+                                    "-name",
+                                    parameters.name_pattern,
+                                )
+                            )
+                        elif parameters.expression == (
+                            "readable-regular-and-not-name"
+                        ):
+                            arguments.extend(
+                                (
+                                    "-type",
+                                    "f",
+                                    "-perm",
+                                    "/444",
+                                    "!",
+                                    "-name",
+                                    parameters.name_pattern,
+                                )
+                            )
+                        elif parameters.expression == (
+                            "readable-regular-and-name-or-symlink"
+                        ):
+                            arguments.extend(
+                                (
+                                    "(",
+                                    "-type",
+                                    "f",
+                                    "-perm",
+                                    "/444",
+                                    "-name",
+                                    parameters.name_pattern,
+                                    ")",
+                                    "-o",
+                                    "-type",
+                                    "l",
+                                )
+                            )
+                        elif parameters.expression == (
+                            "readable-regular-and-name-or-executable"
+                        ):
+                            arguments.extend(
+                                (
+                                    "-type",
+                                    "f",
+                                    "-perm",
+                                    "/444",
+                                    "(",
+                                    "-name",
+                                    parameters.name_pattern,
+                                    "-o",
+                                    "-perm",
+                                    "/111",
+                                    ")",
+                                )
+                            )
+                        else:
+                            self.assertEqual(
+                                parameters.expression,
+                                "readable-regular-and-name-depth-at-most-three",
+                            )
+                            arguments.extend(
+                                (
+                                    "-type",
+                                    "f",
+                                    "-perm",
+                                    "/444",
+                                    "-name",
+                                    parameters.name_pattern,
+                                )
+                            )
+                        arguments.extend((")", "-printf", "%P\n"))
+                        completed = subprocess.run(
+                            arguments,
+                            cwd=workspace,
+                            env=environment,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            check=False,
+                        )
+                    with self.subTest(
+                        task=task.task_id,
+                        profile=profile.profile_id,
+                    ):
+                        self.assertEqual(
+                            completed.returncode,
+                            0,
+                            completed.stderr.decode("utf-8", errors="replace"),
+                        )
+                        mutant = b"".join(
+                            sorted(completed.stdout.splitlines(keepends=True))
+                        )
+                        oracle = bundle.oracle.outputs[0].content
+                        if profile.profile_id == "empty-duplicates":
+                            self.assertEqual(mutant, oracle)
+                            intentional_zero_survivors += 1
+                        else:
+                            self.assertNotEqual(mutant, oracle)
+                            self.assertFalse(
+                                verify_compound_path_query_output(
+                                    bundle.definition,
+                                    parameters,
+                                    mutant,
+                                )
+                            )
+                            killed += 1
+        self.assertEqual(killed, 80)
+        self.assertEqual(intentional_zero_survivors, 20)
         self.assertEqual(
             self.bundle(
                 "*.[0-9]",

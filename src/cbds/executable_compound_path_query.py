@@ -1,10 +1,10 @@
 """Isolated public method-development family for compound path queries.
 
 This module is intentionally additive.  The first two executable-static
-registries and their closed shared type unions remain untouched while this
-family is reviewed.  It nevertheless uses the same task, profile, workspace,
-oracle, and opaque-fixture hash domains so a later registry integration can be
-mechanical.
+registries and their closed shared type unions remain untouched; a later
+additive catalog admits this family through its exact family-local types.  It
+uses the same task, profile, workspace, oracle, and opaque-fixture hash domains
+without widening the original V1 invocation surface.
 
 Both independently structured trusted implementations operate only on
 immutable ``FixtureDefinition`` records and must agree.  The authenticated
@@ -61,13 +61,14 @@ COMPOUND_PATH_QUERY_FILESYSTEM_IDENTITY: Final[str] = (
 COMPOUND_PATH_QUERY_OUTPUT_IDENTITY: Final[str] = (
     "utf8-byte-sorted-compound-paths-v1"
 )
-COMPOUND_PATH_QUERY_GENERATOR_VERSION: Final[str] = "1.0.0"
+COMPOUND_PATH_QUERY_GENERATOR_VERSION: Final[str] = "1.1.0"
 COMPOUND_PATH_QUERY_VERIFIER_IDENTITY: Final[str] = (
     "verify-compound-path-query-v1"
 )
 COMPOUND_PATH_QUERY_ROOT: Final[PurePosixPath] = PurePosixPath("input/query")
 COMPOUND_PATH_QUERY_OUTPUT: Final[str] = "output/matches.txt"
 COMPOUND_PATH_QUERY_OUTPUT_MODE: Final[int] = 0o644
+COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES: Final[int] = 64 * 1024
 COMPOUND_PATH_DIRECTORY_PERMISSION_ERRORS_COVERED: Final[bool] = False
 COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE: Final[
     bool
@@ -624,6 +625,13 @@ def _fixture_inputs(
     def full(role: str) -> str:
         return (COMPOUND_PATH_QUERY_ROOT / paths[role]).as_posix()
 
+    follow_link_paths = (
+        "input/query/follow-txt.txt",
+        "input/query/report-follow-link",
+        "input/query/follow-log.log",
+        "input/query/follow-digit.7",
+    )
+
     empty = profile.profile_id == "empty-duplicates"
     if empty:
         # Every entry below the queried root is deliberately mode-unreadable.
@@ -701,6 +709,17 @@ def _fixture_inputs(
         InputFile("input/outside/report-outside.txt", b"outside root\n", 0o644),
         InputSymlink(full("link_one"), PurePosixPath(paths["joint"]).name),
         InputSymlink(full("link_two"), PurePosixPath(paths["worker"]).name),
+        *(
+            InputSymlink(
+                link_path,
+                paths["joint"],
+            )
+            for link_path in follow_link_paths
+        ),
+        InputSymlink(
+            "input/query/follow-directory",
+            PurePosixPath(paths["deep_txt"]).parent.as_posix(),
+        ),
     ]
     if profile.profile_id == "symlinks-ordering":
         entries.reverse()
@@ -946,8 +965,9 @@ def _compute_oracle_sha256(outputs: tuple[OracleOutputRecord, ...]) -> str:
     if (
         output.path != COMPOUND_PATH_QUERY_OUTPUT
         or output.mode != COMPOUND_PATH_QUERY_OUTPUT_MODE
+        or len(output.content) > COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES
     ):
-        raise CompoundPathQueryError("oracle output path or mode is invalid")
+        raise CompoundPathQueryError("oracle output path, mode, or size is invalid")
     return domain_sha256(
         "cbds.executable-fixture.trusted-oracle.v1",
         {
@@ -1059,7 +1079,7 @@ def validate_compound_path_query_fixture_bundle(
     if bundle.definition.expected_files != (
         ExpectedFile(
             COMPOUND_PATH_QUERY_OUTPUT,
-            maximum_bytes=len(output.content),
+            maximum_bytes=COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES,
             mode=COMPOUND_PATH_QUERY_OUTPUT_MODE,
         ),
     ):
@@ -1147,7 +1167,7 @@ def build_compound_path_query_fixture_bundle(
         expected_files=(
             ExpectedFile(
                 COMPOUND_PATH_QUERY_OUTPUT,
-                maximum_bytes=0,
+                maximum_bytes=COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES,
                 mode=COMPOUND_PATH_QUERY_OUTPUT_MODE,
             ),
         ),
@@ -1171,7 +1191,7 @@ def build_compound_path_query_fixture_bundle(
         expected_files=(
             ExpectedFile(
                 COMPOUND_PATH_QUERY_OUTPUT,
-                maximum_bytes=len(expected),
+                maximum_bytes=COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES,
                 mode=COMPOUND_PATH_QUERY_OUTPUT_MODE,
             ),
         ),
@@ -1368,6 +1388,7 @@ __all__ = [
     "COMPOUND_PATH_QUERY_FAMILY_ID",
     "COMPOUND_PATH_QUERY_GENERATOR_VERSION",
     "COMPOUND_PATH_QUERY_OUTPUT",
+    "COMPOUND_PATH_QUERY_OUTPUT_MAXIMUM_BYTES",
     "COMPOUND_PATH_QUERY_VERIFIER_IDENTITY",
     "COMPOUND_PATH_QUERY_WORKSPACE_SCANS_PROVE_GLOBAL_QUIESCENCE",
     "COMPOUND_PATH_QUERY_WORKSPACE_VERIFIER_REQUIRES_TRUSTED_QUIESCENCE",

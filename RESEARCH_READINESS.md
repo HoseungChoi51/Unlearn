@@ -85,17 +85,38 @@ parameters do not establish a smaller or faster deployment.
 | Capability-support and signed-transfer audit | Finds abilities that help, hurt, or do not affect terminal work instead of guessing from labels | Contracts and interpretation rules exist | Planned | Measure above-floor capabilities, cross-fit interventions, and add-back effects |
 | Training-source admission | Prevents invalid, ambiguous, unlicensed, duplicated, or evaluation-contaminated examples from driving a false gain | Raw import, authentication, lexical filtering, and tokenizer scheduling are implemented | Gated: zero rows are claim-admitted | Add Bash parsing, fixture execution, row lineage, ambiguity repair, balancing, and decontamination |
 | Token and compute ledger | Makes equal-target-token and equal-total-FLOP comparisons meaningful | Exact engineering token schedules and update ledgers exist | Partial: production executed-FLOP binding is absent | Derive FLOPs from the actual production operator trace |
-| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 200 integrated public-development tasks/1,000 fixtures; 40 tasks/200 fixtures staged | Gated: incomplete coverage, staged review unfinished, and no sealed suite | Review/integrate staged families, add 260 development tasks, then build closed ID/OOD suites |
+| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 280 integrated public-development tasks/1,400 fixtures across five additive tranches; the full 25-family/500-task allocation is locked | Gated: 11 families/220 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
 | Lifecycle splits and leakage control | Stops training, selection, and repeated inspection from consuming the final test set | Split contracts and fail-closed lifecycle routing exist | Partial | Freeze real suite identities and generate prompt/AST/graph/trace leakage reports |
 | Parser and deterministic decoding | Fixes how one model response becomes one candidate and prevents rerun policy from changing scores | Frozen response parser and diagnostic syntax classification exist | Partial: production decoder/action loop is absent | Freeze generation settings and implement the bounded static and interactive decoders |
 | Runtime closure, sandbox, and supervisor | Lets untrusted code run against identical tools without reaching the host or surviving a timeout | Namespace, descriptor, runtime-bundle, PID1, and one reviewed fixed-Bash canary exist | Gated: arbitrary candidates, exact Bash tool policy, external trust, and runtime-data closure are absent | Promote an independently reviewed general-candidate boundary with tmpfs/quiescence/resource guarantees |
-| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Independent constructions and full-catalog mutation checks exist for ten integrated families | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
+| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Independent constructions and full-catalog mutation checks exist for fourteen integrated families | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
 | Production trainer and operator funnel | Determines empirically whether dense tuning, pruning, factorization, quantization, or reset/regrow offers the best performance/size tradeoff | A real-text dense-SFT engineering canary and prospective operator schemas exist | Planned for research runs | Implement production training/export, then screen matched operators instead of assuming SwiGLU channels win |
 | Model-aware operator binding | Prevents out-of-range indices, partial GQA groups, fictitious pruning savings, or misleading average-bit claims | Prospective exact binding covers tensor roles/factorization tuples, representable pruning, and quantization payload lower bounds; completed floating-dense reconciliation rejects wrong architecture dimensions for supported pruning | Gated: exact selected-unit/value realization, embedding-map replay, residual/hidden physical pruning, and factorized/quantized/hybrid exporters remain absent | Add exporter-specific topology and mapping replay before accepting operator realization |
 | Baselines and causal interventions | Separates useful specialization from extra compute, random plasticity, sparse tuning, or generic compression | Prospective arms and interpretation rules exist | Planned | Run matched dense, random, target-only, no-reset, uniform-quantization, restoration, and add-back controls |
 | Statistics and claim acceptance | Fixes direction, uncertainty, multiplicity, non-inferiority, and success thresholds before results are known | Paired confirmatory statistics and fail-closed claim interfaces are implemented | Gated: they have no eligible source outcome chain | Derive all inputs from registry-bound task collections and reopen every upstream artifact |
 | Export and portable hardware measurement | Tests whether nominal compression produces real byte, memory, latency, or throughput gains | Schemas and a reproducible measurement protocol exist | Planned for experimental artifacts | Reopen the exact export, pass correctness, and collect raw repeated hardware samples |
 | Immutable provenance | Makes models, data, tasks, masks, seeds, outputs, and reports auditable as one chain | Content-addressed manifests and registries exist across many stages; supported completed source/export artifacts can be freshly reopened into a companion record | Partial: saved runtime reports are unauthenticated and downstream claim binders do not yet require/reopen every companion source | Publish prospective commitments externally and complete end-to-end source reopening |
+
+The development allocation lock has semantic SHA-256
+`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`
+and canonical config-byte SHA-256
+`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+It is a scope commitment, not benchmark completion: it grants no fixture,
+review, sealing, execution, scoring, selection, or claim status to the 11
+planned families. The next locked family is `bounded-retry-state-machine`.
+
+The fifth `pipefail-atomic-report` addition contributes 20 tasks and 100
+fixtures with exact complete-stream aggregation, ordered status vectors, and
+five final publication policies. Its checked-in tests cover two semantic
+constructions, catalog materialization, randomized valid streams, and
+final-state mutations. This is final-state evidence only: the verifier requires
+trusted quiescence and does not observe atomic-rename history, Bash
+`PIPESTATUS`, executed topology, tool history, global quiescence, explicit
+directory-permission failures, or live effective-access failures. The fifth
+manifest, like the other public-development records, is unsealed, unscored,
+nonauthorizing, and records no independent human-review attestation; V1
+invocation remains first-tranche-only and executes no candidate from this
+family.
 
 ## What the architecture-specific gate now establishes
 

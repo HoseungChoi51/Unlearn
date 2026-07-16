@@ -1,9 +1,10 @@
-"""Staged public method-development family for static log pipelines.
+"""Additive public method-development family for static log pipelines.
 
 The family exercises recursive file selection, strict byte-level TSV parsing,
 extended-regular-expression filtering, malformed-row policies, grouped integer
 aggregation, and deterministic byte ordering.  It is intentionally absent
-from every frozen shared registry and catalog while it is reviewed.
+from the first two frozen shared registries; a later additive catalog admits
+it through its exact family-local task and bundle types.
 
 All fixture inputs and oracle values are immutable typed records.  The module
 never runs candidate code.  Its materialization facade delegates exclusively
@@ -58,13 +59,14 @@ from .executable_workspace import (
 LOG_AGGREGATION_FAMILY_ID: Final[str] = "regex-log-group-aggregation"
 LOG_AGGREGATION_FILESYSTEM_IDENTITY: Final[str] = "recursive-tsv-log-tree-v1"
 LOG_AGGREGATION_OUTPUT_IDENTITY: Final[str] = "byte-sorted-group-count-sum-v1"
-LOG_AGGREGATION_GENERATOR_VERSION: Final[str] = "1.0.0"
+LOG_AGGREGATION_GENERATOR_VERSION: Final[str] = "1.1.0"
 LOG_AGGREGATION_VERIFIER_IDENTITY: Final[str] = (
     "verify-regex-log-group-aggregation-v1"
 )
 LOG_AGGREGATION_ROOT: Final[PurePosixPath] = PurePosixPath("input/logs")
 LOG_AGGREGATION_OUTPUT: Final[str] = "output/summary.tsv"
 LOG_AGGREGATION_OUTPUT_MODE: Final[int] = 0o644
+LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES: Final[int] = 64 * 1024
 LOG_AGGREGATION_ALLOWED_TOOLS: Final[tuple[str, ...]] = (
     "awk",
     "chmod",
@@ -553,19 +555,22 @@ def _fixture_inputs(
             InputFile(
                 "input/logs/-[prod]*?.log",
                 _row("ERROR", "-[group]*?", 8, "literal glob")
-                + b"INFO\t-[group]*?\t01\tnoncanonical\n"
-                + _row("INFO", "after?", 4, "after malformed"),
+                + _row("INFO", "after?", 4, "clean info"),
                 0o644,
             ),
             InputFile(
                 "input/logs/-nested[?]/-audit*.log",
                 _row("WARN", "-[group]*?", 2, "dash")
                 + _row("ABCD", "after?", -3, "four letters")
-                + _row("XERROR", "near-match", 6, "not ERROR")
-                + b"ERROR\textra-tab\t1\ttoo\tmany\n",
+                + _row("XERROR", "near-match", 6, "not ERROR"),
                 0o440,
             ),
-            InputFile("input/logs/-ignore[?].LOG", _row("ERROR", "x", 9, "case")),
+            InputFile(
+                "input/logs/-ignore[?].LOG",
+                _row("ERROR", "x", 9, "case")
+                + b"INFO\t-[group]*?\t01\tnoncanonical\n"
+                + b"ERROR\textra-tab\t1\ttoo\tmany\n",
+            ),
             InputSymlink("input/logs/-link*.log", "-[prod]*?.log"),
         )
     if profile.profile_id == "empty-duplicates":
@@ -624,8 +629,7 @@ def _fixture_inputs(
             InputFile(
                 "input/logs/group-readable.log",
                 _row("ERROR", "visible", 4, "group read")
-                + b"WARN\tbroken\t+2\tnoncanonical\n"
-                + _row("WARN", "visible", 3, "after malformed"),
+                + _row("WARN", "visible", 3, "group warning"),
                 0o040,
             ),
             InputFile(
@@ -641,7 +645,9 @@ def _fixture_inputs(
             ),
             InputFile(
                 "input/logs/permission-denied.log",
-                b"not\tvalid\n" + _row("ERROR", "hidden", 99, "unreadable"),
+                b"not\tvalid\n"
+                + b"WARN\tbroken\t+2\tnoncanonical\n"
+                + _row("ERROR", "hidden", 99, "unreadable"),
                 0o000,
             ),
             InputFile(
@@ -938,7 +944,11 @@ def _compute_oracle_sha256(outputs: tuple[OracleOutputRecord, ...]) -> str:
         raise LogAggregationPipelineError("oracle output tuple is invalid")
     output = outputs[0]
     output.__post_init__()
-    if output.path != LOG_AGGREGATION_OUTPUT or output.mode != 0o644:
+    if (
+        output.path != LOG_AGGREGATION_OUTPUT
+        or output.mode != LOG_AGGREGATION_OUTPUT_MODE
+        or len(output.content) > LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES
+    ):
         raise LogAggregationPipelineError("oracle output contract is invalid")
     return domain_sha256(
         "cbds.executable-fixture.trusted-oracle.v1",
@@ -1045,7 +1055,7 @@ def validate_log_aggregation_fixture_bundle(
     if definition.expected_files != (
         ExpectedFile(
             LOG_AGGREGATION_OUTPUT,
-            maximum_bytes=len(output.content),
+            maximum_bytes=LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
             mode=LOG_AGGREGATION_OUTPUT_MODE,
         ),
     ):
@@ -1129,7 +1139,7 @@ def _construct_log_aggregation_fixture_bundle(
         expected_files=(
             ExpectedFile(
                 LOG_AGGREGATION_OUTPUT,
-                maximum_bytes=0,
+                maximum_bytes=LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
                 mode=LOG_AGGREGATION_OUTPUT_MODE,
             ),
         ),
@@ -1148,7 +1158,7 @@ def _construct_log_aggregation_fixture_bundle(
         expected_files=(
             ExpectedFile(
                 LOG_AGGREGATION_OUTPUT,
-                maximum_bytes=len(primary),
+                maximum_bytes=LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
                 mode=LOG_AGGREGATION_OUTPUT_MODE,
             ),
         ),
@@ -1341,6 +1351,7 @@ __all__ = [
     "LOG_AGGREGATION_MALFORMED_POLICIES",
     "LOG_AGGREGATION_MODE_UNREADABLE_LEAVES_COVERED",
     "LOG_AGGREGATION_OUTPUT",
+    "LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES",
     "LOG_AGGREGATION_SEVERITY_ERES",
     "LOG_AGGREGATION_SYMLINKS_COVERED",
     "LOG_AGGREGATION_UNTERMINATED_ROWS_COVERED",

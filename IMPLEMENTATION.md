@@ -124,8 +124,8 @@ evidence that a model or research hypothesis has succeeded.
   optimized-mode tests. The hash-only additive manifest preserves the frozen
   first-tranche identities and keeps execution, model-selection, and claim
   authority false.
-- [x] Staged, family-local `compound-path-query` public-development slice with
-  20 typed task contracts and five deterministic profiles per task (100
+- [x] Additive third-tranche `compound-path-query` public-development family
+  with 20 typed task contracts and five deterministic profiles per task (100
   fixtures). Its fixed basename-pattern and parenthesized kind/mode/depth
   predicates have two structurally independent production oracles that must
   agree, plus mutation, exact-type, materialization, pinned-workspace,
@@ -134,14 +134,14 @@ evidence that a model or research hypothesis has succeeded.
   task/profile/bundle to an already-open directory, requires the exact input
   baseline and complete output policy, and repeats bounded scans after reads.
   Those scans cannot establish global quiescence without a trusted supervisor.
-  This slice is not integrated into either closed catalog, the cumulative
-  suite, or `DevelopmentInvocation`, and has not completed independent human
+  The additive third registry and catalog admit its exact family-local task and
+  bundle types without changing either earlier tranche identity. It remains
+  outside `DevelopmentInvocation` and has not completed independent human
   production review. Because the fixture type cannot represent explicit
   directory modes, its `partial-permissions` profile covers mode-denied leaves,
-  not directory permission errors. The frozen cumulative inventory therefore
-  remains 200 tasks and 1,000 fixtures.
-- [x] Staged, family-local `regex-log-group-aggregation` slice with another 20
-  task contracts and 100 fixtures. It covers recursive no-follow `.log`
+  not directory permission errors.
+- [x] Additive third-tranche `regex-log-group-aggregation` family with another
+  20 task contracts and 100 fixtures. It covers recursive no-follow `.log`
   selection, byte-oriented ERE filters, strict UTF-8/TSV/integer parsing, five
   malformed-row policies, count/sum grouping, raw-byte ordering, symlinks,
   unterminated and malformed bytes, and mode-bit-readable leaves. Two
@@ -152,9 +152,50 @@ evidence that a model or research hypothesis has succeeded.
   changes observed during verification with final scans. A trusted supervisor
   must first establish descendant quiescence; sequential scans alone cannot
   close a concurrent-writer race. Directory-mode and effective-access failures
-  remain explicitly uncovered. It is also absent from every frozen catalog and
-  invocation path, so the two staged families total 40 tasks/200 fixtures while
-  the closed cumulative identity remains 200 tasks/1,000 fixtures.
+  remain explicitly uncovered. The third additive registry/catalog admits its
+  exact family-local types but does not add V1 invocation support. Together the
+  third-tranche families add 40 tasks/200 fixtures, bringing the cumulative
+  public-development identity to 240 tasks/1,200 fixtures while all execution,
+  model-selection, and claim-authority flags remain false.
+- [x] Content-addressed method-development coverage lock for exactly 25
+  families, 20 tasks per family, and 500 tasks total. The canonical 4-by-5
+  parameter grids bind each family's lifecycle state, Bash-native or
+  Python-permitted solution track, allowed tools, filesystem schema, output
+  contract, and capability tags. It reconciles 14 integrated families/280
+  tasks to all five live cumulative registry identities and reserves 11
+  concrete families/220 tasks without pretending that planned entries have
+  fixtures or verifiers. The config is public, unsealed, unscored,
+  nonauthorizing, and records no independent human-review attestation.
+- [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
+  contracts and five deterministic profiles per task (100 fixtures). It
+  crosses four mode-readable selectors with five archive-mode policies,
+  writes only normalized POSIX-ustar regular members in UTF-8 byte order, and
+  requires exact source preservation and output-tree state. Two independently
+  structured semantic constructions agree; a strict parser, property
+  verifier, and targeted checked-in mutation tests cover its archive contract.
+  A separate implementation-session audit exercised randomized differential
+  cases and GNU-tar interoperability, but that result is not yet a checked-in
+  reproducible audit artifact. It uses exact
+  family-local task/bundle types, preserves every earlier tranche identity,
+  and remains outside V1 invocation. Final-state verification cannot attest
+  transient `chmod`, symlink-follow, or tool history, and explicit directory
+  permission and live effective-access failures remain uncovered.
+- [x] Additive fifth-tranche `pipefail-atomic-report` family with 20 task
+  contracts and five deterministic profiles per task (100 fixtures). It
+  crosses four complete-stream logical pipeline shapes with five
+  failure-publication policies, including required output absence, status
+  publication, byte-exact rollback, and first/last failure selection. Two
+  separately structured semantic constructions agree on the full ordered
+  status vector, shape-specific aggregation, selected failure, and exact
+  final report state. Checked-in catalog materialization, mutation,
+  randomized-stream, exact-type, no-follow, and normal/optimized-mode tests
+  cover that final-state contract without executing a candidate. Exact local
+  task/bundle types preserve every predecessor identity and remain outside V1
+  invocation. The contract prescribes sibling-file atomic rename and complete
+  status capture, but final-state inspection cannot observe atomic-rename
+  history, Bash `PIPESTATUS`, pipeline topology, or tool history. Trusted
+  quiescence is required; global quiescence, explicit directory-permission
+  errors, and live effective-access failures remain unobserved.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -386,30 +427,77 @@ cumulative-suite SHA-256
 `0020c1e5c7907d979d7fa97dead79f199fff59d97184c33fae81bc98df3ef8fb`,
 and additive-catalog SHA-256
 `e2ad6a3124491bc25410d40278400aeac9cd8791a9f08a530c823d5f14c09e18`.
-The cumulative 200 specifications and 1,000 fixtures remain public,
-development-only, and nonauthorizing; the remaining 300 specifications and a
-separately reviewed general-candidate sandbox/supervisor are still required
-before synthesized-candidate execution.
-The current V1 invocation protocol remains intentionally bound to the first
-tranche only.
+The additive third tranche is bound by
+[`reports/executable-third-tranche/manifest.json`](reports/executable-third-tranche/manifest.json).
+It admits 40 tasks and 200 bundles from `compound-path-query` and
+`regex-log-group-aggregation` through their exact family-local types, leaving
+both earlier identities unchanged. Its added-registry SHA-256 is
+`66a9ef43a6387f5f94f511aec3357f0e625427d161a0c6da0d9590a837761237`,
+its cumulative-suite SHA-256 is
+`3a578668805bbdfdfaf3400483640bb29504591604ed1c9c28cf8f9bb0362fb3`,
+and its additive-catalog SHA-256 is
+`01554367fd68c36b2f509b8b50b270b0aa7d5e6de3fa55db15a14cf4ec68c26b`.
+The canonical report byte SHA-256 is
+`58e7e299142bd2c9681f9940f8277489115fa76350ffa53fb984bed81ceac862`.
+The additive fourth tranche is bound by
+[reports/executable-fourth-tranche/manifest.json](reports/executable-fourth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `reproducible-ustar-pack`, again through
+exact local types. Its added-registry SHA-256 is
+`3dc5512139361a275afaf0b57b94528961615f9b4eee22ee6c333cc7d8bf4ea5`,
+its cumulative-suite SHA-256 is
+`668ab9c942888d568c80aaa27bee340ad8a10faf3493a6983bf068d79b134651`,
+its additive-catalog SHA-256 is
+`54ff2e17645edfc7887fc39b437340ffe8d736b83001d0265612271c2a3b1d46`,
+and its canonical 56,273-byte report SHA-256 is
+`a79ba062de86574e95ff60ff4fa8bc48b223c934b70d65ed832da5631359eebb`.
+The family's task-set SHA-256 is
+`be044d13053e62e0a9f609e1654048de4c7b422e9bc93c659f0d265ddfd4e283`.
 
-Separately, `src/cbds/executable_compound_path_query.py` and
-`src/cbds/executable_log_aggregation_pipeline.py` stage two additional 20-task
-families with 200 public-development fixtures in total. Both are deliberately
-absent from the closed first/second registries, their checked hash-only
-catalogs, the cumulative 200/1,000 identities, and the V1 invocation
-dispatcher. Both families require two production-oracle implementations to
-agree and have complete pinned-workspace property verifiers with mutation
-coverage. Neither sequential verifier can prove global quiescence, and the
-compound family cannot exercise directory permission errors. Both still await
-independent human production review and remain public, unsealed, unscored, and
-nonauthorizing.
+The additive fifth tranche is bound by
+[reports/executable-fifth-tranche/manifest.json](reports/executable-fifth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `pipefail-atomic-report` through exact
+local types. Its family task-set SHA-256 is
+`fc974695fe967094bcba6c6f8ff8c267c86f64215de78c43a8e693bed1252562`,
+its added-registry SHA-256 is
+`d562d462814b7fc6413e0e085d16f66def28157c1a6361adf28cd3d42eb5f88c`,
+its cumulative-suite SHA-256 is
+`27ea8064a72453a4e7a4bc52b125a924139088cd1c20d417a867aa9ddda96e00`,
+its additive-catalog SHA-256 is
+`cb24e42fc27500fa5076224dfc195a6fe2a4b08752724f09ff944961aa7221db`,
+and its canonical 56,246-byte report SHA-256 is
+`80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
+
+The cumulative 280 specifications and 1,400 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the fifth manifest
+explicitly records `independent_human_review_attested: false`. The remaining
+220 specifications, independent human review, and a separately reviewed
+general-candidate sandbox/supervisor are still required before synthesized-
+candidate execution. The current V1 invocation protocol remains intentionally
+bound to the first tranche only.
+
+The complete allocation is frozen separately in
+[configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
+It binds 14 integrated families/280 tasks and 11 planned families/220 tasks to
+the 25-family/500-task target. The semantic coverage SHA-256 is
+`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`,
+and the canonical config byte SHA-256 is
+`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+This lock fixes allocation metadata only; a planned family is not implemented,
+reviewed, sealed, scored, or executable because it appears in the record. The
+next planned implementation is `bounded-retry-state-machine`.
+
+Both third-tranche families require two production-oracle implementations to
+agree and have pinned-workspace property verifiers with mutation coverage.
+Neither sequential verifier can prove global quiescence, and the compound
+family cannot exercise directory permission errors. Both remain public,
+unsealed, unscored, and nonauthorizing; catalog admission is not production
+approval or human-review attestation.
 
 The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
-public development scaffolding, not sealed evaluation assets. Unlike the five
-concrete first-tranche families above, these generated records do not yet
+public development scaffolding, not sealed evaluation assets. Unlike the
+fourteen concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -481,12 +569,12 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Independently review and promote the 40 staged method-development
-  specifications, add the 260 specifications not yet implemented, and extend
-  concrete fixture/oracle/reference/verifier coverage across every required
-  semantic operator family. The frozen cumulative 200-specification suite and
-  the separate staged slices are development-only and cannot stand in for
-  sealed or scored suites.
+- [ ] Add the 220 method-development specifications not yet implemented and
+  extend concrete fixture/oracle/reference/verifier coverage across every
+  required semantic operator family. Independently review the complete
+  development inventory before sealing. The frozen cumulative 280-
+  specification suite is public development data and cannot stand in for a
+  sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
   resource enforcement on the actual hardware.
 - [ ] Complete and pin the Bash runtime-data and `dlopen` closure, externally
@@ -502,7 +590,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the ten implemented families
+- [ ] Extend verifier mutation tests beyond the fourteen implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

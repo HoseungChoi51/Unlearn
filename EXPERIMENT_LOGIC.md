@@ -181,6 +181,8 @@ publication or trusted timestamping is still required for preregistration.
 ## Document ownership
 
 - [PLAN.md](PLAN.md) owns the scientific protocol, thresholds, and scope.
+- [EXPERIMENT_SETUP_RATIONALE.md](EXPERIMENT_SETUP_RATIONALE.md) is the short
+  research-level explanation of why the setup components are necessary.
 - This document owns the high-level dependency and decision logic.
 - [EXPERIMENT_COMPONENTS.md](EXPERIMENT_COMPONENTS.md) is the component-level
   conceptual guide.

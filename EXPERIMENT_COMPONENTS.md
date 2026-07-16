@@ -3,6 +3,8 @@
 This is the short conceptual guide to the experiment. It explains the role of
 each major component, the failure it is meant to prevent, and how the pieces
 fit together. For the full research design, see [PLAN.md](PLAN.md). For the
+short research-level rationale, see
+[EXPERIMENT_SETUP_RATIONALE.md](EXPERIMENT_SETUP_RATIONALE.md). For the
 implementation-level security and evidence boundaries, see
 [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md). Current completion
 status is tracked in [IMPLEMENTATION.md](IMPLEMENTATION.md). The longer
@@ -156,6 +158,30 @@ Unicode, leading dashes, glob characters, empty inputs, duplicates, symlinks,
 permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
+The current public method-development allocation is locked at 25 families and
+500 tasks. Fourteen families/280 tasks have concrete oracles and 1,400 fixture
+bundles across five additive tranches; eleven families/220 tasks remain
+planned, beginning with `bounded-retry-state-machine`. The
+[coverage record](configs/executable-method-development-coverage-v1.json) fixes
+the remaining semantic grids so implementation cannot silently chase easy
+families, but it is an allocation—not completion, human review, sealing,
+candidate-execution authority, scoring, or model-selection evidence. All
+current development assets remain public, unsealed, unscored, and
+nonauthorizing; independent human review remains unattested, and V1 invocation
+still admits only the frozen first tranche.
+
+The fifth `pipefail-atomic-report` family makes an important evaluator
+distinction concrete. Its exact semantics model complete logical streams, the
+ordered configured status vector, and five success/failure publication
+policies; its final-state verifier checks the required report or absence and
+the complete workspace. Checked-in tests exercise two semantic constructions,
+all fixtures, randomized valid streams, and mutations without executing a
+candidate program. A final-state check still cannot prove that an atomic rename
+occurred, Bash `PIPESTATUS` supplied the vector, a claimed pipeline topology
+ran, or only allowed tools were used.
+It therefore requires trusted quiescence and makes no claim about global
+quiescence, directory-permission errors, or live effective-access failures.
+
 Lifecycle roles prevent feedback leakage:
 
 - training tasks may update model weights;
@@ -263,7 +289,8 @@ claim.
 
 The near-term dependency order is:
 
-1. finish and independently review the executable development benchmark;
+1. implement the locked 11-family/220-task remainder and independently review
+   the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;
 3. finish the leakage controls, human audit, and sealed suites, then freeze

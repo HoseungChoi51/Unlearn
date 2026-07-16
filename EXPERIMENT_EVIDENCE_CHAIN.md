@@ -61,8 +61,8 @@ architecture label.
 |---|---|---|---|
 | Claim and estimand contract | What numerical change would count as success? | Protocol, run, evaluation, and acceptance contracts exist | No eligible campaign outcome |
 | Model and scope gate | Is the compared object a supported dense sub-1B model with room to improve? | Exact static Qwen2/Qwen3/Llama qualification and engineering load/forward probes | Executable floor/ceiling and capability gates |
-| Data admission and leakage | Did training use correct, licensed, nonambiguous, nonleaking examples? | Raw-source authentication, lexical filtering, and exact token scheduling | Bash parsing, execution verification, lineage, balancing, and full decontamination |
-| Benchmark lifecycle | Are development, selection, and final testing genuinely separated? | Public development registries and prospective split contracts | Complete reviewed development suites and unopened sealed ID/OOD suites |
+| Benchmark lifecycle | Are development, selection, and final testing genuinely separated? | Public development registries, a locked 25-family allocation, and prospective split contracts | Complete reviewed development suites and unopened sealed ID/OOD identities |
+| Data admission and leakage | Did training use correct, licensed, nonambiguous, nonleaking examples? | Raw-source authentication, lexical filtering, and exact token scheduling | Bash parsing, execution verification, lineage, balancing, and decontamination against those frozen suite identities |
 | Sandbox, supervisor, and verifier | Does a pass mean the candidate safely caused the required final state? | Fixture/oracle mutation tests and one fixed reviewed-program integration path | Independently trusted arbitrary-candidate boundary and production verifier audit |
 | Identity and provenance | Can every number be traced to exact bytes and code? | Domain-separated hashes, manifests, registries, and bounded reopeners | End-to-end source reopening, external timestamping, and trust anchors |
 | Intervention and export accounting | Did the planned operator refer to real model structure, and did the export realize it? | Prospective architecture-aware bounds; narrow fresh static source/export reconciliation with supported pruning-dimension checks | Exact selected-unit/value proof and broader exporter support |
@@ -125,6 +125,12 @@ correct, licensed, safe for the target policy, or free of evaluation overlap.
 The admitted training view must therefore record a reasoned decision for every
 row and remain joinable to the immutable raw source.
 
+Raw-source auditing and candidate curation may proceed early, but
+**claim-eligible decontamination cannot finish until the evaluation suite
+identities are frozen**. Suite identity therefore precedes final admission in
+the evidence chain; admitting first and later checking against a moving target
+would make the training denominator ambiguous.
+
 Admission covers at least:
 
 - row-level source and license lineage;
@@ -164,14 +170,56 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, 200
-integrated public method-development tasks with 1,000 concrete fixtures, and
-40 additional staged tasks with 200 fixtures. These are public, unsealed, and
-nonauthorizing. Large generated records are semantic scaffolding, not complete
-executable or sealed suites.
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 280
+integrated public method-development tasks with 1,400 concrete fixtures across
+five additive tranches. The third addition contributes 40 tasks/200 fixtures
+from compound path queries and regex log aggregation. Its exact family-local
+types preserve the first- and second-tranche identities, and its checked
+hash-only report is
+[`reports/executable-third-tranche/manifest.json`](reports/executable-third-tranche/manifest.json).
+The added registry, cumulative suite, additive catalog, and canonical report
+byte SHA-256 values are
+`66a9ef43a6387f5f94f511aec3357f0e625427d161a0c6da0d9590a837761237`,
+`3a578668805bbdfdfaf3400483640bb29504591604ed1c9c28cf8f9bb0362fb3`,
+`01554367fd68c36b2f509b8b50b270b0aa7d5e6de3fa55db15a14cf4ec68c26b`,
+and `58e7e299142bd2c9681f9940f8277489115fa76350ffa53fb984bed81ceac862`.
+The fourth addition contributes 20 `reproducible-ustar-pack` tasks/100 fixtures.
+Its checked hash-only report is
+[reports/executable-fourth-tranche/manifest.json](reports/executable-fourth-tranche/manifest.json);
+the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
+report-byte SHA-256 values are
+`be044d13053e62e0a9f609e1654048de4c7b422e9bc93c659f0d265ddfd4e283`,
+`3dc5512139361a275afaf0b57b94528961615f9b4eee22ee6c333cc7d8bf4ea5`,
+`668ab9c942888d568c80aaa27bee340ad8a10faf3493a6983bf068d79b134651`,
+`54ff2e17645edfc7887fc39b437340ffe8d736b83001d0265612271c2a3b1d46`,
+and `a79ba062de86574e95ff60ff4fa8bc48b223c934b70d65ed832da5631359eebb`.
 
-**Planned:** independent review and integration of the staged families, the
-remaining method-development coverage, real operator-selection and shadow
+The fifth addition contributes 20 `pipefail-atomic-report` tasks/100 fixtures.
+Its checked hash-only report is
+[reports/executable-fifth-tranche/manifest.json](reports/executable-fifth-tranche/manifest.json);
+the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
+56,246-byte report SHA-256 values are
+`fc974695fe967094bcba6c6f8ff8c267c86f64215de78c43a8e693bed1252562`,
+`d562d462814b7fc6413e0e085d16f66def28157c1a6361adf28cd3d42eb5f88c`,
+`27ea8064a72453a4e7a4bc52b125a924139088cd1c20d417a867aa9ddda96e00`,
+`cb24e42fc27500fa5076224dfc195a6fe2a4b08752724f09ff944961aa7221db`,
+and `80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
+
+The full allocation lock contains 14 integrated families/280 tasks and 11
+planned families/220 tasks. Its semantic coverage SHA-256 is
+`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`,
+and its canonical config-byte SHA-256 is
+`a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+The lock fixes scope only; it does not implement or seal its planned entries.
+All current assets are public, unsealed, unscored, and nonauthorizing. The
+third through fifth manifests and the allocation lock explicitly record
+`independent_human_review_attested: false`; the additive families remain
+outside the first-tranche-only V1 invocation protocol. Large generated records
+are semantic scaffolding, not complete executable or sealed suites.
+
+**Planned:** the remaining 220 method-development tasks, beginning with
+`bounded-retry-state-machine`, independent review of the complete development
+inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
 
@@ -202,9 +250,25 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-ten integrated fixture/oracle families with independent constructions and
+fourteen integrated fixture/oracle families with independent constructions and
 mutation coverage; namespace, runtime-snapshot, and native PID1 canaries; and
 one exact reviewed Bash case connected through the local boundary.
+
+The fourth-family verifier observes final state only. It still requires a
+trusted supervisor to establish quiescence and cannot attest transient
+`chmod`, symlink-follow, or tool-invocation history; explicit directory-mode
+and live effective-access failures are also outside its current fixtures.
+
+The fifth-family trusted semantics consume complete logical streams, preserve
+the ordered configured status vector, and select the exact success, failure,
+rollback, or absent-output final state for each publication policy. Its
+checked-in tests exercise both semantic constructions, catalog materialization,
+randomized valid streams, and final-state mutations without executing a
+candidate program. The verifier requires trusted quiescence and cannot attest
+atomic-rename history, Bash `PIPESTATUS`, executed pipeline topology, tool
+history, or global quiescence. Explicit
+directory-permission and live effective-access failures are also outside its
+fixtures.
 
 **Planned:** a production, independently reviewed arbitrary-candidate service
 with a trusted Bash runtime closure, exact-tool enforcement, tmpfs/workspace
@@ -439,16 +503,18 @@ The campaign should advance only when each preceding gate has evidence:
    complete enough for the backbone feasibility gate.
 4. The arbitrary-candidate sandbox and verifier are independently trusted on
    the target hardware.
-5. Evaluation identities exist, and all training partitions are admitted and
-   decontaminated against them.
-6. The production trainer and executed-FLOP ledger pass bounded pilots.
-7. Backbones pass floor/ceiling and capability-support requirements.
-8. Matched operator screening promotes only preregistered arms.
-9. Fresh seeds, causal tests, protected-capability intervals, and runner-up
+5. Evaluation task and fixture identities are frozen while their sealed assets
+   remain closed.
+6. All training partitions are admitted and decontaminated against those
+   already-frozen identities.
+7. The production trainer and executed-FLOP ledger pass bounded pilots.
+8. Backbones pass floor/ceiling and capability-support requirements.
+9. Matched operator screening promotes only preregistered arms.
+10. Fresh seeds, causal tests, protected-capability intervals, and runner-up
    replication succeed.
-10. Methods and analysis are locked before the single sealed opening.
-11. Exact exported artifacts pass correctness and portable hardware checks.
-12. The final claim binder reopens every required source rather than trusting
+11. Methods and analysis are locked before the single sealed opening.
+12. Exact exported artifacts pass correctness and portable hardware checks.
+13. The final claim binder reopens every required source rather than trusting
     copied projections.
 
 Failure at a gate is scientifically informative. It may produce a principled

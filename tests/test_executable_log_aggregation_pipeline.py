@@ -27,6 +27,7 @@ from cbds.executable_log_aggregation_pipeline import (  # noqa: E402
     LOG_AGGREGATION_MALFORMED_POLICIES,
     LOG_AGGREGATION_MODE_UNREADABLE_LEAVES_COVERED,
     LOG_AGGREGATION_OUTPUT,
+    LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
     LOG_AGGREGATION_SEVERITY_ERES,
     LOG_AGGREGATION_SYMLINKS_COVERED,
     LOG_AGGREGATION_UNTERMINATED_ROWS_COVERED,
@@ -97,7 +98,7 @@ class LogAggregationPipelineTests(unittest.TestCase):
         return self.by_pair[(task.task_id, profile_id)]
 
     def test_grid_is_twenty_unique_staged_nonauthorizing_tasks(self) -> None:
-        self.assertEqual(LOG_AGGREGATION_GENERATOR_VERSION, "1.0.0")
+        self.assertEqual(LOG_AGGREGATION_GENERATOR_VERSION, "1.1.0")
         self.assertEqual(len(self.tasks), 20)
         self.assertEqual(
             {
@@ -177,7 +178,13 @@ class LogAggregationPipelineTests(unittest.TestCase):
                     )
                     self.assertEqual(
                         bundle.definition.expected_files,
-                        (ExpectedFile(LOG_AGGREGATION_OUTPUT, len(primary), 0o644),),
+                        (
+                            ExpectedFile(
+                                LOG_AGGREGATION_OUTPUT,
+                                LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
+                                0o644,
+                            ),
+                        ),
                     )
                     self.assertIs(bundle.candidate_execution_authorized, False)
                     self.assertIs(bundle.model_selection_eligible, False)
@@ -232,6 +239,127 @@ class LogAggregationPipelineTests(unittest.TestCase):
             self.assertEqual(
                 reference_log_aggregation_output(definition, parameters), output
             )
+
+    def test_parser_boundaries_and_malformed_policies_are_observable(self) -> None:
+        valid_rows = (
+            b"ERROR\tminimum\t-1000000\tvalid lower bound\n",
+            b"ERROR\tmaximum\t1000000\tvalid upper bound\n",
+            b"INFO\tzero\t0\tcanonical zero\n",
+            b"ABCD\tfour\t1\tfour-letter severity\n",
+            b"ABCDEFGH\teight\t2\teight-letter severity\n",
+        )
+        malformed_rows = (
+            b"ERR\tgroup\t1\tthree-letter severity\n",
+            b"ABCDEFGHI\tgroup\t1\tnine-letter severity\n",
+            b"ERROR\tgroup\t-0\tnegative zero\n",
+            b"ERROR\tgroup\t+1\tleading plus\n",
+            b"ERROR\tgroup\t01\tleading zero\n",
+            b"ERROR\tgroup\t1000001\tabove range\n",
+            b"ERROR\tgroup\t-1000001\tbelow range\n",
+            b"ERROR\t\t1\tempty group\n",
+            b"ERROR\t!reserved\t1\treserved group\n",
+            b"ERROR\tbad\xff\t1\tinvalid group utf8\n",
+            b"ERROR\tgroup\t1\tbad\xff\n",
+            b"ERROR\tgroup\t1\t\n",
+            b"ERROR\tgroup\t1\textra\tfield\n",
+            b"ERROR\tgroup\t1\tunterminated",
+        )
+
+        for index, row in enumerate(valid_rows):
+            definition = FixtureDefinition(
+                fixture_id=f"fixture.parser.valid.{index}",
+                inputs=(InputFile("input/logs/selected.log", row, 0o444),),
+                expected_files=(
+                    ExpectedFile(
+                        LOG_AGGREGATION_OUTPUT,
+                        LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
+                        0o644,
+                    ),
+                ),
+            )
+            parameters = LogAggregationParameters("^ERROR$", "count-malformed")
+            primary = derive_log_aggregation_output(definition, parameters)
+            self.assertEqual(
+                primary,
+                reference_log_aggregation_output(definition, parameters),
+            )
+            self.assertNotIn(b"!malformed", primary)
+
+        for index, row in enumerate(malformed_rows):
+            definition = FixtureDefinition(
+                fixture_id=f"fixture.parser.malformed.{index}",
+                inputs=(InputFile("input/logs/selected.log", row, 0o444),),
+                expected_files=(
+                    ExpectedFile(
+                        LOG_AGGREGATION_OUTPUT,
+                        LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
+                        0o644,
+                    ),
+                ),
+            )
+            parameters = LogAggregationParameters("^ERROR$", "count-malformed")
+            self.assertEqual(
+                derive_log_aggregation_output(definition, parameters),
+                b"!malformed\t1\t0\n",
+            )
+            self.assertEqual(
+                reference_log_aggregation_output(definition, parameters),
+                b"!malformed\t1\t0\n",
+            )
+
+        policy_definition = FixtureDefinition(
+            fixture_id="fixture.policy.boundaries",
+            inputs=(
+                InputFile(
+                    "input/logs/a-malformed.log",
+                    b"ERROR\tgroup\t1\tbefore\n"
+                    b"ERROR\tgroup\t-0\tmalformed\n"
+                    b"ERROR\tgroup\t2\tafter\n",
+                    0o444,
+                ),
+                InputFile(
+                    "input/logs/b-clean.log",
+                    b"ERROR\tgroup\t4\tclean\n",
+                    0o444,
+                ),
+            ),
+            expected_files=(
+                ExpectedFile(
+                    LOG_AGGREGATION_OUTPUT,
+                    LOG_AGGREGATION_OUTPUT_MAXIMUM_BYTES,
+                    0o644,
+                ),
+            ),
+        )
+        policy_outputs = {
+            "skip-row": b"group\t3\t7\n",
+            "stop-file": b"group\t2\t5\n",
+            "reject-file": b"group\t1\t4\n",
+            "reject-all": b"",
+            "count-malformed": b"!malformed\t1\t0\ngroup\t3\t7\n",
+        }
+        for policy, expected in policy_outputs.items():
+            parameters = LogAggregationParameters("^ERROR$", policy)
+            self.assertEqual(
+                derive_log_aggregation_output(policy_definition, parameters),
+                expected,
+            )
+            self.assertEqual(
+                reference_log_aggregation_output(policy_definition, parameters),
+                expected,
+            )
+
+    def test_reject_all_keeps_ere_observable_on_clean_selected_profiles(self) -> None:
+        for profile_id in ("leading-dashes-globs", "partial-permissions"):
+            observed = tuple(
+                self.bundle(
+                    expression, "reject-all", profile_id
+                ).oracle.outputs[0].content
+                for expression in LOG_AGGREGATION_SEVERITY_ERES
+            )
+            with self.subTest(profile=profile_id):
+                self.assertTrue(all(observed))
+                self.assertEqual(len(set(observed)), len(observed))
 
     def test_profiles_realize_declared_edge_cases_and_honest_limits(self) -> None:
         representative = self.task("^ERROR$", "skip-row")

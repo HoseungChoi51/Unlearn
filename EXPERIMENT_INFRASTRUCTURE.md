@@ -140,18 +140,60 @@ Benchmark artifacts have four importantly different states:
 | State | What it is for | What it does **not** establish |
 |---|---|---|
 | Public semantic scaffold | Exercises split generation, normalized graphs, hashes, and lifecycle routing | Concrete executable fixtures, independent verifiers, genuine OOD, or a score |
-| Family-local staged data | Develops one executable operator family and its edge cases before shared integration | Membership in the frozen suite or independent production approval |
+| Family-local development data | Develops one executable operator family and its edge cases before additive integration | Membership in a frozen suite or independent production approval |
 | Frozen public development catalog | Gives collaborators an immutable, reproducible method-development identity | Confidentiality, sealed status, model-selection authority, or claim eligibility |
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
-“Frozen” means content-addressed and closed to silent edits; it does not mean
-secret. The first two executable tranches are pinned by
-[their first manifest](reports/executable-first-tranche/manifest.json) and
-[additive second manifest](reports/executable-second-tranche/manifest.json).
-They currently contain 200 public method-development specifications with five
-fixtures each. Two more 20-task families are staged locally, but remain outside
-those identities and invocation paths. Public development records must never
-be relabeled as sealed evidence.
+"Frozen" means content-addressed and closed to silent edits; it does not mean
+secret. The five executable tranches are pinned by
+[the first manifest](reports/executable-first-tranche/manifest.json),
+[the additive second manifest](reports/executable-second-tranche/manifest.json),
+[the additive third manifest](reports/executable-third-tranche/manifest.json),
+the [additive fourth manifest](reports/executable-fourth-tranche/manifest.json),
+and [the additive fifth manifest](reports/executable-fifth-tranche/manifest.json).
+They currently contain 280 public method-development specifications with five
+fixtures each. The third addition contributes 40 tasks and 200 fixtures from
+`compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
+task and bundle types preserve the first- and second-tranche identities. The
+third registry, cumulative suite, additive catalog, and report-byte SHA-256
+values are respectively
+`66a9ef43a6387f5f94f511aec3357f0e625427d161a0c6da0d9590a837761237`,
+`3a578668805bbdfdfaf3400483640bb29504591604ed1c9c28cf8f9bb0362fb3`,
+`01554367fd68c36b2f509b8b50b270b0aa7d5e6de3fa55db15a14cf4ec68c26b`,
+and `58e7e299142bd2c9681f9940f8277489115fa76350ffa53fb984bed81ceac862`.
+The fourth addition contributes 20 `reproducible-ustar-pack` tasks and 100
+fixtures. Its task-set, added-registry, cumulative-suite, additive-catalog, and
+canonical-report-byte SHA-256 values are respectively
+`be044d13053e62e0a9f609e1654048de4c7b422e9bc93c659f0d265ddfd4e283`,
+`3dc5512139361a275afaf0b57b94528961615f9b4eee22ee6c333cc7d8bf4ea5`,
+`668ab9c942888d568c80aaa27bee340ad8a10faf3493a6983bf068d79b134651`,
+`54ff2e17645edfc7887fc39b437340ffe8d736b83001d0265612271c2a3b1d46`,
+and `a79ba062de86574e95ff60ff4fa8bc48b223c934b70d65ed832da5631359eebb`.
+The fifth addition contributes 20 `pipefail-atomic-report` tasks and 100
+fixtures. Its task-set, added-registry, cumulative-suite, additive-catalog, and
+canonical 56,246-byte report SHA-256 values are respectively
+`fc974695fe967094bcba6c6f8ff8c267c86f64215de78c43a8e693bed1252562`,
+`d562d462814b7fc6413e0e085d16f66def28157c1a6361adf28cd3d42eb5f88c`,
+`27ea8064a72453a4e7a4bc52b125a924139088cd1c20d417a867aa9ddda96e00`,
+`cb24e42fc27500fa5076224dfc195a6fe2a4b08752724f09ff944961aa7221db`,
+and `80959058c764da72437bfa1bd01a2eb1c747a221ec1c06f59278c02b80e0ef48`.
+The fifth manifest records `independent_human_review_attested: false`, and all
+five tranches remain public, unsealed, unscored, and nonauthorizing. V1
+invocation remains first-tranche-only. Public development records must never be
+relabeled as sealed evidence.
+
+The separate
+[executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
+locks the 25-family/500-task allocation before the remaining implementations
+are written. It binds 14 integrated families/280 tasks to the five source
+registries and reserves 11 named families/220 tasks with exact parameter axes,
+solution tracks, allowed tools, filesystem schemas, output contracts, and
+capability tags. Its semantic coverage and config-byte SHA-256 values are
+`b7829f8e2b45ce94c0a9debae8fd005bc5e1d60d2533b02136e1c642661da8c4`
+and `a645372249292b323d9eed093a29026d8918a378d8441e096d9273d08d54f4e6`.
+This is an allocation lock only: planned entries have no implied fixture,
+oracle, verifier, review, sealing, score, or execution status. The next family
+in canonical order is `bounded-retry-state-machine`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -182,6 +224,20 @@ file. Unexpected files, altered inputs, forbidden metadata changes, dangling
 links, or surviving background processes can be functional failures even if
 one output line looks right. This is why a reference-program string match or a
 unit test with one example is insufficient.
+
+The fifth `pipefail-atomic-report` family illustrates the boundary between a
+semantic requirement and an observable outcome. Its trusted constructions
+model complete logical streams and an ordered vector of configured stage
+statuses, then require the exact success report, failure report, rollback
+bytes, or absent output selected by the policy. Checked-in tests exercise both
+constructions, all 100 fixtures, randomized valid streams, and final-state
+mutations without executing a candidate program. The workspace verifier can
+establish exact final files, modes, links, inputs, and report bytes only after
+trusted quiescence. It cannot infer whether publication actually used an
+atomic rename, statuses came from Bash `PIPESTATUS`, the claimed pipeline
+topology was executed, or only allowed tools were invoked. Its fixtures
+likewise do not cover explicit directory permission errors or live effective-
+access failures, and sequential scans do not prove global quiescence.
 
 ## 6. Parser, decoding, and deterministic outcomes
 
@@ -470,9 +526,10 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 200 frozen public-development executable tasks and 1,000 concrete fixture
-  bundles across ten integrated families;
-- 40 more staged tasks and 200 fixtures across two family-local slices;
+- 280 frozen public-development executable tasks and 1,400 concrete fixture
+  bundles across fourteen integrated families and five additive tranches;
+- a locked 25-family/500-task allocation with 11 families/220 tasks still
+  explicitly planned rather than represented as implemented;
 - trusted-oracle, independent-reference, materialization, no-follow, and
   mutation tests for the integrated families;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
@@ -498,32 +555,45 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, the two staged families are not in its frozen
-identity, the large generated suite remains semantic scaffolding, sealed assets
-are unfinished, raw training rows are not admitted, the production supervisor
-has not been promoted from fixed reviewed cases to an externally trusted
-general-candidate boundary, and no backbone has passed the preregistered
-feasibility and capability gates. All relevant authority flags remain false.
+is method-development data, its third through fifth additions have no
+independent human-review attestation or V1 invocation support, the large
+generated suite remains semantic scaffolding, sealed assets are unfinished,
+raw training rows
+are not admitted, the production supervisor has not been promoted from fixed
+reviewed cases to an externally trusted general-candidate boundary, and no
+backbone has passed the preregistered feasibility and capability gates. All
+relevant authority flags remain false.
+
+The USTAR family depends on supervisor-established quiescence. Its final-state
+verifier cannot reconstruct transient `chmod`, symlink-follow, or
+tool-invocation history, and its fixtures do not establish directory-mode or
+live effective-access behavior. The newer pipefail family has the same trusted
+quiescence requirement; its exact final-state check does not observe atomic
+rename, `PIPESTATUS`, pipeline topology, or tool history, and similarly does
+not cover directory-mode or live effective-access failures.
 
 The critical path is now:
 
-1. independently review and integrate the two staged families, then implement
-   the remaining 260 method-development specifications with concrete fixtures,
-   independent verifiers, and mutation coverage;
+1. implement the remaining 220 method-development specifications, beginning
+   with `bounded-retry-state-machine`, with concrete fixtures, independent
+   verifiers, and mutation coverage, then independently review the complete
+   development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed
    integration, and promote it to a general-candidate supervisor with a
    Bash-specific allow policy and exact-tool enforcement while preserving
    cumulative CPU, workspace quiescence, and result-binding guarantees; then
    validate the complete boundary independently on the target hardware;
-3. finish row-level training admission, license resolution, AST/execution
-   verification, decontamination, and utility balancing;
-4. extend the narrow completed floating-dense companion into exporter-specific
+3. complete and human-audit the sealed ID/OOD and bounded-interactive suites,
+   freeze their task and fixture identities together with parser, rerun,
+   exclusion, and analysis policies, and keep the assets closed;
+4. only after those suite identities exist, finish row-level training
+   admission, license resolution, AST/execution verification, decontamination
+   against every frozen evaluation identity, and utility balancing;
+5. extend the narrow completed floating-dense companion into exporter-specific
    selected-unit/value and vocabulary-map realization, fresh or attested
    runtime-graph evidence, and structural/hybrid/quantizer-metadata accounting;
    then finish production training, exact executed-FLOP binding, quantization
    calibration, and hardware reopening;
-5. complete and human-audit the sealed ID/OOD and bounded-interactive suites,
-   freeze parser, rerun, exclusion, and analysis policies, and keep them closed;
 6. only then run the behavioral backbone floor/ceiling gates,
    capability-support audit, and matched-compute operator funnels before fresh
    confirmation and the single sealed opening.
