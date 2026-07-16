@@ -304,7 +304,7 @@ class DenseCheckpointBindingTests(unittest.TestCase):
             with self.subTest(field=field):
                 self.assert_binding_rejected(changed)
 
-    def test_tokenizer_must_be_locally_inspectable_and_match_model_vocabulary(self) -> None:
+    def test_reserved_embedding_rows_may_exceed_contiguous_tokenizer_ids(self) -> None:
         artifact = self.root / "mismatched-tokenizer"
         artifact.mkdir()
         _make_artifact(artifact, "qwen3")
@@ -325,9 +325,37 @@ class DenseCheckpointBindingTests(unittest.TestCase):
             expected_inspection_report_sha256=generic["report_sha256"],
         )
         spec = _align_spec(valid_train_spec(), generic, dense)
+        validate_run_spec_against_dense_checkpoint(
+            spec,
+            inspection_report=generic,
+            dense_checkpoint_report=dense,
+        )
+        self.assertFalse(generic["tokenizer"]["matches_config_vocab_size"])
+
+    def test_tokenizer_id_range_cannot_exceed_model_vocabulary(self) -> None:
+        artifact = self.root / "oversized-tokenizer"
+        artifact.mkdir()
+        _make_artifact(artifact, "qwen3")
+        _write_json(
+            artifact / "tokenizer.json",
+            {
+                "version": "1.0",
+                "model": {
+                    "type": "BPE",
+                    "vocab": {f"token-{index}": index for index in range(17)},
+                },
+                "added_tokens": [],
+            },
+        )
+        generic = inspect_model_artifact(artifact)
+        dense = inspect_dense_checkpoint(
+            artifact,
+            expected_inspection_report_sha256=generic["report_sha256"],
+        )
+        spec = _align_spec(valid_train_spec(), generic, dense)
         with self.assertRaisesRegex(
             DenseCheckpointRunBindingError,
-            "inspectable contiguous vocabulary",
+            "contiguous token-ID range",
         ):
             validate_run_spec_against_dense_checkpoint(
                 spec,

@@ -165,15 +165,19 @@ evidence that a model or research hypothesis has succeeded.
   payload bytes, derives tensor roles and operator bounds, and remains
   permanently nonauthorizing. A prospective run-spec binder rebinds the exact
   generic report and tokenizer, enforces GQA groups and exact factorization
-  tuples, reconciles architecture-representable layer/FFN/Qwen3-head/vocabulary
+  tuples, reconciles architecture-representable layer/uniform-FFN-width/
+  all-layer-Qwen3-GQA-head/vocabulary
   pruning, and derives a selected-plus-unselected quantization payload lower
   bound. Unsupported physical shapes and hybrid exports fail closed.
 - [x] Optional, local-only causal-LM runtime qualification for statically
   accepted flat Safetensors bundles. It rejects custom code, performs one
   bounded non-generative finite-logit forward pass, rechecks artifact
   stability, and reports exact physical and trainable storage spans while
-  counting tied/shared storage once. This is runtime compatibility evidence,
-  not architecture completeness or model-quality evidence.
+  counting tied/shared storage once. Saved reports now have a bounded passive
+  validator that rederives loader, shape, storage, dtype, device, and
+  qualification invariants rather than checking only the outer digest. This
+  is runtime compatibility evidence, not independent runtime attestation,
+  architecture completeness, or model-quality evidence.
 - [x] Non-claiming GPU engineering pilot for all three preregistered dense
   backbones on the local RTX 5090: static inspection, CUDA runtime
   qualification, and seeded-input synthetic BF16 optimizer microfits with
@@ -551,13 +555,22 @@ flag remains false.
 - [ ] Add a quantization-calibration profile with its own visible-token ledger
   and corpus provenance. The frozen campaign profiles deliberately require
   optimizer adaptation, so pure PTQ/pruning run specs are diagnostic only.
-- [ ] Make the completed-record binder reopen and validate the generic model
-  inspection, exact dense qualification, and runtime reports rather than only
-  requiring source/export report digests. Static completeness does not prove
-  runtime parameter-graph equivalence, that training used the pinned bytes, or
-  that an exported sub-1B artifact realizes its prospective accounting. Do the
-  same for hardware and evaluation bindings before using their accounting as
-  research evidence.
+- [x] Add a narrow, nonauthorizing completed-model evidence companion for exact
+  floating-point dense Qwen2/Qwen3/Llama Safetensors. It freshly reinspects the
+  source and export, reconstructs both exact dense inventories, validates and
+  reconciles saved runtime reports, checks completed identity/accounting and
+  the fixed-size or compression rule, and rejects a pruning export that changes
+  the wrong architecture dimension. Layer, uniform FFN-width, and uniform
+  all-layer Qwen3 complete-GQA-group head-width changes are covered;
+  embedding-token completion rejects until derived-map replay exists. The
+  companion does not rerun or
+  authenticate runtime observations, prove exact selected-unit/value lineage,
+  prove training used the pinned bytes, or grant claim authority.
+- [ ] Extend completed-model evidence to exporter-specific selected-unit and
+  vocabulary-map realization, fresh or externally attested runtime
+  name/shape/alias/value graphs, and factorized, quantized, and hybrid formats.
+- [ ] Make hardware and evaluation binders reopen and independently derive
+  their source evidence before their accounting can enter a research claim.
 - [ ] Run the backbone feasibility, capability-support, and signed-transfer
   gates before selecting a specialization or compression operator.
 

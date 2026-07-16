@@ -184,6 +184,8 @@ publication or trusted timestamping is still required for preregistration.
 - This document owns the high-level dependency and decision logic.
 - [EXPERIMENT_COMPONENTS.md](EXPERIMENT_COMPONENTS.md) is the component-level
   conceptual guide.
+- [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md) is the
+  research-reader guide to the evidence contributed by each component.
 - [RESEARCH_READINESS.md](RESEARCH_READINESS.md) is the compact two-axis
   build-state and evidence-state synthesis.
 - [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md) owns detailed

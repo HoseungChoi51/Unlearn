@@ -11,6 +11,7 @@ improves.
 - [Research plan](PLAN.md)
 - [Experiment logic and claim dependencies](EXPERIMENT_LOGIC.md)
 - [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
+- [Experiment evidence chain and component rationale](EXPERIMENT_EVIDENCE_CHAIN.md)
 - [Experiment setup and research readiness](RESEARCH_READINESS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
@@ -223,9 +224,38 @@ The second report reconstructs the exact supported tensor inventory, physical
 parameter count, dtype/payload consistency, and prospective operator bounds.
 It is static, nonauthorizing evidence: it does not prove runtime graph
 equivalence, a completed export, model quality, or campaign eligibility. The
-library-level dense run-spec binder additionally requires a locally inspected
-tokenizer match and reconciles supported structural, factorization, and
+library-level dense run-spec binder additionally binds the locally inspected
+tokenizer ID range while permitting reserved embedding rows, and reconciles
+supported structural, factorization, and
 quantization payloads without opening a training or compression path.
+
+After a campaign-valid run has a completed record, the narrow completed-model
+companion can reopen both floating-point dense artifacts and reconcile them to
+the completion:
+
+```bash
+cbds bind-completed-model-evidence \
+  --run-spec /path/to/run-spec.json \
+  --campaign-policy configs/campaign-policy.json \
+  --completed-record /path/to/completed-record.json \
+  --source-artifact-dir /path/to/source-model \
+  --export-artifact-dir /path/to/exported-model \
+  --source-runtime-report /path/to/source-runtime.json \
+  --export-runtime-report /path/to/export-runtime.json \
+  --output /tmp/completed-model-evidence.json
+```
+
+This command freshly inspects exact BF16/F16/F32 Qwen2/Qwen3/Llama
+Safetensors source and export bundles. It checks the completed export's
+identities, physical accounting, fixed-size or compression rule, planned
+vocabulary, and supported layer/uniform-FFN-width/all-layer-Qwen3-GQA-head
+architecture deltas. It also
+semantically validates and reconciles the supplied saved runtime reports, but
+does not rerun or authenticate those observations. Exact selected-unit/value
+provenance, runtime parameter-graph equivalence, proof that training consumed
+the source bytes, factorized/quantized/hybrid exports, and claim authority
+remain explicitly false. The library verifier for an already-built companion
+checks only passive structure and its self-hash; it does not reopen artifacts.
 
 For contracts bound to this inspector, `weight_set_sha256` is the weight
 artifact identity and `bundle_manifest_sha256` is the complete flat-bundle
@@ -313,6 +343,8 @@ Safetensors inspection, exact static Qwen2/Qwen3/Llama tensor qualification
 and prospective model-aware run-spec binding, sandbox command construction and read-only runtime
 preflight, prospective run and scored-evaluation specifications,
 completed-record accounting, completed-export evaluation/hardware binding,
+fresh floating-dense source/export completion reconciliation with passive
+saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
 fail-closed claim-policy evaluation, and ten cataloged public-development
@@ -597,8 +629,10 @@ qualification. The exact dense qualifier now proves static checkpoint
 completeness for the supported Qwen2, Qwen3, and Llama contracts, and the
 prospective binder applies model-derived index, factorization, pruning-count,
 tokenizer, and quantization lower-bound checks. Neither establishes runtime
-parameter-graph equivalence or model quality. Completed-record manifest
-binding does not yet reopen those inspection, qualification, and runtime
-reports. Supplying `--experiment-manifest` to evaluation-spec validation
+parameter-graph equivalence or model quality. A separate completed-model
+companion now freshly reopens supported floating-dense source/export artifacts
+and passively validates saved runtime reports, but it remains nonauthorizing
+and does not prove exact selected-unit/value provenance or training-source
+consumption. Supplying `--experiment-manifest` to evaluation-spec validation
 exactly binds the completed export and report digest, but still does not open
 the report or independently verify its claims.

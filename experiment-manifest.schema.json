@@ -714,12 +714,21 @@
         "weight_bytes": { "type": "integer", "minimum": 1 },
         "bundle_bytes": { "type": "integer", "minimum": 1 },
         "tokenizer_included": { "const": true },
-        "artifact_sha256": { "$ref": "#/$defs/sha256" },
-        "bundle_sha256": { "$ref": "#/$defs/sha256" },
-        "tokenizer_sha256": { "$ref": "#/$defs/sha256" },
+        "artifact_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Domain-separated generic Safetensors/index weight-set identity; not a raw file digest."
+        },
+        "bundle_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Domain-separated identity of every top-level exported artifact file."
+        },
+        "tokenizer_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Domain-separated identity of recognized tokenizer, prompt-template, and tokenization sources."
+        },
         "inspection_report_sha256": {
           "$ref": "#/$defs/sha256",
-          "description": "Canonical digest of a fresh inspection report produced from the completed exported artifact."
+          "description": "Canonical digest of the exact supported dense-checkpoint qualification freshly derived from the completed exported artifact."
         }
       }
     }

@@ -127,8 +127,14 @@
       "properties": {
         "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
         "revision": { "$ref": "#/$defs/immutableRevision" },
-        "checkpoint_sha256": { "$ref": "#/$defs/sha256" },
-        "inspection_report_sha256": { "$ref": "#/$defs/sha256" },
+        "checkpoint_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Domain-separated generic Safetensors/index weight-set identity."
+        },
+        "inspection_report_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Canonical digest of the exact supported dense-checkpoint qualification report."
+        },
         "architecture": { "const": "dense" },
         "physical_parameters": {
           "type": "integer",
@@ -157,9 +163,16 @@
       "properties": {
         "repository": { "type": "string", "minLength": 1, "maxLength": 256 },
         "revision": { "$ref": "#/$defs/immutableRevision" },
-        "source_sha256": { "$ref": "#/$defs/sha256" },
+        "source_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Domain-separated identity of recognized tokenizer, prompt-template, and tokenization sources."
+        },
         "derived_vocabulary_mapping_sha256": { "$ref": "#/$defs/nullableSha256" },
-        "vocabulary_size": { "type": "integer", "minimum": 1 }
+        "vocabulary_size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Model embedding/output vocabulary rows; may exceed the observed contiguous tokenizer ID count when rows are reserved."
+        }
       }
     },
     "split": {

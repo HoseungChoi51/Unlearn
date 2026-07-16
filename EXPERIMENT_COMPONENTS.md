@@ -5,7 +5,9 @@ each major component, the failure it is meant to prevent, and how the pieces
 fit together. For the full research design, see [PLAN.md](PLAN.md). For the
 implementation-level security and evidence boundaries, see
 [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md). Current completion
-status is tracked in [IMPLEMENTATION.md](IMPLEMENTATION.md).
+status is tracked in [IMPLEMENTATION.md](IMPLEMENTATION.md). The longer
+research-reader explanation of how these components compose is
+[EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md).
 
 The experiment is not primarily about making a model forget. It asks whether a
 dense model below one billion physical parameters can perform Unix-terminal
@@ -268,9 +270,10 @@ The near-term dependency order is:
    their identities without exposing them to training or method development;
 4. admit a claim-eligible corpus decontaminated against those frozen suite
    identities;
-5. promote the implemented static Qwen2/Qwen3/Llama qualification into
-   completed-artifact/runtime reopening, extend exporter-specific accounting,
-   and complete production-training infrastructure;
+5. extend the implemented narrow completed floating-dense source/export
+   reopening into exporter-specific selected-unit/value proof, fresh or
+   attested runtime evidence, and factorized/quantized/hybrid accounting, then
+   complete production-training infrastructure;
 6. run the feasibility gates and freeze the backbone;
 7. run matched baselines, operator screening, and fresh-seed confirmation;
 8. open the sealed evaluation only after the method and analysis are locked.

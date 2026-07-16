@@ -409,18 +409,164 @@ class CliIntegrationTests(unittest.TestCase):
             self.assertIn("outside --artifact-dir", json.loads(error)["message"])
             self.assertFalse(inside.exists())
 
+    def test_completed_model_evidence_cli_reopens_artifacts_and_rejects_inside_output(self) -> None:
+        from cbds.dense_checkpoint import inspect_dense_checkpoint
+        from tests.test_completed_model_evidence import (
+            _flip_last_payload_byte,
+            _runtime_report,
+            _write_tokenizer,
+        )
+        from tests.test_dense_checkpoint import _make_artifact
+        from tests.test_dense_checkpoint_binding import _align_spec
+        from tests.test_manifests import completed_record_for_spec
+        from tests.test_run_specs import valid_train_spec
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source"
+            exported = root / "export"
+            source.mkdir()
+            exported.mkdir()
+            for artifact in (source, exported):
+                _make_artifact(artifact, "qwen3")
+                _write_tokenizer(artifact, 15)
+            _flip_last_payload_byte(exported / "model.safetensors")
+            source_generic = inspect_model_artifact(source)
+            source_dense = inspect_dense_checkpoint(
+                source,
+                expected_inspection_report_sha256=source_generic["report_sha256"],
+            )
+            export_generic = inspect_model_artifact(exported)
+            export_dense = inspect_dense_checkpoint(
+                exported,
+                expected_inspection_report_sha256=export_generic["report_sha256"],
+            )
+            spec = _align_spec(valid_train_spec(), source_generic, source_dense)
+            completed = completed_record_for_spec(spec)
+            physical = export_dense["tensor_inventory"]["physical_parameter_count"]
+            completed["export"].update(
+                {
+                    "artifact_sha256": export_generic["weight_set_sha256"],
+                    "bundle_sha256": export_generic["bundle_manifest_sha256"],
+                    "tokenizer_sha256": export_generic["tokenizer"][
+                        "tokenizer_set_sha256"
+                    ],
+                    "inspection_report_sha256": export_dense["report_sha256"],
+                    "physical_parameters": physical,
+                    "active_parameters": physical,
+                    "nonzero_parameters": physical,
+                    "average_weight_bits": export_generic["weights"][
+                        "average_stored_bits_per_element"
+                    ],
+                    "weight_bytes": export_generic["weights"][
+                        "safetensors_payload_bytes"
+                    ],
+                    "bundle_bytes": sum(
+                        item["bytes"] for item in export_generic["files"]
+                    ),
+                }
+            )
+            spec_path = root / "run-spec.json"
+            completed_path = root / "completed.json"
+            source_runtime_path = root / "source-runtime.json"
+            export_runtime_path = root / "export-runtime.json"
+            output = root / "binding.json"
+            atomic_write_json(spec_path, spec)
+            atomic_write_json(completed_path, completed)
+            atomic_write_json(
+                source_runtime_path, _runtime_report(source_generic, source_dense)
+            )
+            atomic_write_json(
+                export_runtime_path, _runtime_report(export_generic, export_dense)
+            )
+            arguments = [
+                "bind-completed-model-evidence",
+                "--run-spec",
+                str(spec_path),
+                "--campaign-policy",
+                str(CAMPAIGN_POLICY),
+                "--completed-record",
+                str(completed_path),
+                "--source-artifact-dir",
+                str(source),
+                "--export-artifact-dir",
+                str(exported),
+                "--source-runtime-report",
+                str(source_runtime_path),
+                "--export-runtime-report",
+                str(export_runtime_path),
+                "--output",
+                str(output),
+            ]
+            status, stdout, stderr = run_cli(arguments)
+            self.assertEqual(status, 0, stderr)
+            self.assertEqual(stdout, "")
+            binding = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(
+                binding["record_type"], "cbds.completed-model-evidence-binding"
+            )
+            self.assertTrue(
+                all(value is False for value in binding["authorizations"].values())
+            )
+
+            inside = exported / "binding.json"
+            arguments[-1] = str(inside)
+            rejected, _, error = run_cli(arguments)
+            self.assertEqual(rejected, 2)
+            self.assertIn("outside both source and export", json.loads(error)["message"])
+            self.assertFalse(inside.exists())
+
+            embedded_runtime = exported / "runtime-report.json"
+            atomic_write_json(
+                embedded_runtime, _runtime_report(export_generic, export_dense)
+            )
+            arguments[-1] = str(root / "unused-binding.json")
+            arguments[12] = str(embedded_runtime)
+            rejected, _, error = run_cli(arguments)
+            self.assertEqual(rejected, 2)
+            self.assertIn(
+                "must be outside both source and export",
+                json.loads(error)["message"],
+            )
+
     def test_runtime_probe_cli_uses_stable_prompt_file_and_local_probe(self) -> None:
-        report = {
-            "schema_version": "1.0.0",
-            "runtime_probe_version": "1.1.0",
-        }
-        report["report_sha256"] = compute_runtime_report_sha256(report)
+        from cbds.dense_checkpoint import inspect_dense_checkpoint
+        from tests.test_completed_model_evidence import (
+            _runtime_report,
+            _write_tokenizer,
+        )
+        from tests.test_dense_checkpoint import _make_artifact
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             artifact = root / "artifact"
             artifact.mkdir()
+            _make_artifact(artifact, "qwen3")
+            _write_tokenizer(artifact, 15)
+            generic = inspect_model_artifact(artifact)
+            dense = inspect_dense_checkpoint(
+                artifact,
+                expected_inspection_report_sha256=generic["report_sha256"],
+            )
+            report = _runtime_report(generic, dense)
             prompt = root / "prompt.txt"
             prompt.write_text("echo hello\n", encoding="utf-8")
+            report["prompt"].update(
+                {
+                    "prompt_sha256": sha256(b"echo hello\n").hexdigest(),
+                    "prompt_utf8_bytes": len(b"echo hello\n"),
+                    "token_cap": 32,
+                }
+            )
+            report["device_placement"].update(
+                {
+                    "requested": "cuda:0",
+                    "parameter_devices": ["cuda:0"],
+                    "input_device": "cuda:0",
+                    "logits_device": "cuda:0",
+                }
+            )
+            report["report_sha256"] = compute_runtime_report_sha256(report)
             output = root / "runtime.json"
             with patch(
                 "cbds.model_runtime.probe_local_causal_lm", return_value=report
@@ -446,6 +592,36 @@ class CliIntegrationTests(unittest.TestCase):
             probe.assert_called_once_with(
                 artifact, "echo hello\n", token_cap=32, device="cuda:0"
             )
+
+            mismatched = copy.deepcopy(report)
+            mismatched["prompt"]["token_cap"] = 31
+            mismatched["report_sha256"] = compute_runtime_report_sha256(mismatched)
+            mismatch_output = root / "runtime-mismatch.json"
+            with patch(
+                "cbds.model_runtime.probe_local_causal_lm",
+                return_value=mismatched,
+            ):
+                rejected, _, error = run_cli(
+                    [
+                        "probe-model-runtime",
+                        "--artifact-dir",
+                        str(artifact),
+                        "--prompt-file",
+                        str(prompt),
+                        "--token-cap",
+                        "32",
+                        "--device",
+                        "cuda:0",
+                        "--output",
+                        str(mismatch_output),
+                    ]
+                )
+            self.assertEqual(rejected, 2)
+            self.assertIn(
+                "does not match the requested prompt",
+                json.loads(error)["message"],
+            )
+            self.assertFalse(mismatch_output.exists())
 
     def test_runtime_probe_cli_rejects_invalid_returned_report_hash(self) -> None:
         report = {
@@ -478,7 +654,7 @@ class CliIntegrationTests(unittest.TestCase):
                 )
         self.assertEqual(status, 2)
         self.assertEqual(stdout, "")
-        self.assertIn("invalid report hash", json.loads(stderr)["message"])
+        self.assertIn("invalid report", json.loads(stderr)["message"])
         self.assertFalse(output.exists())
 
     def test_runtime_probe_cli_keeps_prompt_and_output_outside_artifact(self) -> None:

@@ -507,6 +507,48 @@ def _cmd_validate_experiment_record(args: argparse.Namespace) -> None:
     )
 
 
+def _cmd_bind_completed_model_evidence(args: argparse.Namespace) -> None:
+    from .completed_model_evidence import load_completed_model_evidence_binding
+
+    document_inputs = (
+        ("--run-spec", args.run_spec),
+        ("--campaign-policy", args.campaign_policy),
+        ("--completed-record", args.completed_record),
+        ("--source-runtime-report", args.source_runtime_report),
+        ("--export-runtime-report", args.export_runtime_report),
+    )
+    for label, path in document_inputs:
+        if _path_within(path, args.source_artifact_dir) or _path_within(
+            path, args.export_artifact_dir
+        ):
+            raise CliError(
+                f"{label} must be outside both source and export artifact directories"
+            )
+    _reject_output_aliases(
+        args.output,
+        document_inputs,
+    )
+    if args.output is not None and (
+        _path_within(args.output, args.source_artifact_dir)
+        or _path_within(args.output, args.export_artifact_dir)
+    ):
+        raise CliError(
+            "--output must be outside both source and export artifact directories"
+        )
+    _emit(
+        load_completed_model_evidence_binding(
+            args.run_spec,
+            args.campaign_policy,
+            args.completed_record,
+            source_artifact_dir=args.source_artifact_dir,
+            export_artifact_dir=args.export_artifact_dir,
+            source_runtime_report_path=args.source_runtime_report,
+            export_runtime_report_path=args.export_runtime_report,
+        ),
+        args.output,
+    )
+
+
 def _cmd_verify_benchmark(args: argparse.Namespace) -> None:
     from .benchmark_artifacts import validate_benchmark_artifacts
 
@@ -737,7 +779,7 @@ def _cmd_probe_model_runtime(args: argparse.Namespace) -> None:
         MAX_PROMPT_UTF8_BYTES,
         ModelRuntimeProbeError,
         probe_local_causal_lm,
-        verify_runtime_report_sha256,
+        validate_runtime_report,
     )
 
     if _path_within(args.prompt_file, args.artifact_dir):
@@ -747,7 +789,7 @@ def _cmd_probe_model_runtime(args: argparse.Namespace) -> None:
             raise CliError("--output must be outside --artifact-dir")
         if _paths_alias(args.output, args.prompt_file):
             raise CliError("--output must not resolve to --prompt-file or its inode")
-    retained, total_bytes, _ = _read_hashed_response(
+    retained, total_bytes, prompt_sha256 = _read_hashed_response(
         args.prompt_file, MAX_PROMPT_UTF8_BYTES + 1
     )
     if total_bytes > MAX_PROMPT_UTF8_BYTES:
@@ -768,12 +810,22 @@ def _cmd_probe_model_runtime(args: argparse.Namespace) -> None:
     except ModelRuntimeProbeError as error:
         raise CliError(str(error)) from error
     try:
-        report_hash_valid = verify_runtime_report_sha256(report)
-    except (TypeError, ValueError, OverflowError) as error:
+        validated_report = validate_runtime_report(report)
+    except (ModelRuntimeProbeError, TypeError, ValueError, OverflowError) as error:
         raise CliError("runtime probe returned an invalid report") from error
-    if not report_hash_valid:
-        raise CliError("runtime probe returned an invalid report hash")
-    _emit(report, args.output)
+    prompt_record = validated_report["prompt"]
+    placement = validated_report["device_placement"]
+    if (
+        prompt_record["prompt_sha256"] != prompt_sha256
+        or prompt_record["prompt_utf8_bytes"] != total_bytes
+        or prompt_record["token_cap"] != args.token_cap
+        or placement["requested"] != args.device
+    ):
+        raise CliError(
+            "runtime probe report does not match the requested prompt, token cap, "
+            "or device"
+        )
+    _emit(validated_report, args.output)
 
 
 def _cmd_bench_validate(args: argparse.Namespace) -> None:
@@ -1045,6 +1097,68 @@ def build_parser() -> argparse.ArgumentParser:
     validate_experiment.add_argument("--schema", type=Path)
     validate_experiment.add_argument("--output", type=Path)
     validate_experiment.set_defaults(handler=_cmd_validate_experiment_record)
+
+    bind_completed_model = subparsers.add_parser(
+        "bind-completed-model-evidence",
+        help=(
+            "freshly inspect source/export dense Safetensors artifacts and "
+            "passively validate saved runtime reports against a campaign completion"
+        ),
+    )
+    bind_completed_model.add_argument(
+        "--run-spec",
+        type=Path,
+        required=True,
+        help="prospective run specification bound by the completion",
+    )
+    bind_completed_model.add_argument(
+        "--campaign-policy",
+        type=Path,
+        required=True,
+        help="campaign policy used to validate the run and completion",
+    )
+    bind_completed_model.add_argument(
+        "--completed-record",
+        type=Path,
+        required=True,
+        help="completed experiment record whose export fields are reconciled",
+    )
+    bind_completed_model.add_argument(
+        "--source-artifact-dir",
+        type=Path,
+        required=True,
+        help="flat source-model Safetensors directory to inspect afresh",
+    )
+    bind_completed_model.add_argument(
+        "--export-artifact-dir",
+        type=Path,
+        required=True,
+        help="flat completed-export Safetensors directory to inspect afresh",
+    )
+    bind_completed_model.add_argument(
+        "--source-runtime-report",
+        type=Path,
+        required=True,
+        help=(
+            "saved self-hashed source runtime report to validate and reconcile; "
+            "the runtime is not rerun or independently authenticated"
+        ),
+    )
+    bind_completed_model.add_argument(
+        "--export-runtime-report",
+        type=Path,
+        required=True,
+        help=(
+            "saved self-hashed export runtime report to validate and reconcile; "
+            "the runtime is not rerun or independently authenticated"
+        ),
+    )
+    bind_completed_model.add_argument(
+        "--output",
+        type=Path,
+        help="optional output JSON path outside both artifact directories",
+    )
+    bind_completed_model.set_defaults(handler=_cmd_bind_completed_model_evidence)
 
     evaluate = subparsers.add_parser(
         "evaluate",

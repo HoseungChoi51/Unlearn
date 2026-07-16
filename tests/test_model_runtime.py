@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from contextlib import nullcontext
 from dataclasses import dataclass
 from hashlib import sha256
@@ -24,6 +25,7 @@ from cbds.model_runtime import (  # noqa: E402
     account_loaded_model_tensors,
     compute_runtime_report_sha256,
     probe_local_causal_lm,
+    validate_runtime_report,
     verify_runtime_report_sha256,
 )
 import cbds.model_runtime as model_runtime  # noqa: E402
@@ -548,6 +550,61 @@ class RuntimeProbeHappyPathTests(unittest.TestCase):
         self.assertNotIn("safe local prompt", serialized)
         self.assertNotIn(expected_path, serialized)
 
+    def test_probe_generated_report_with_only_empty_buffers_validates(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            make_dense_artifact(root)
+            model = FakeModel()
+            model.buffers = (
+                (
+                    "model.empty_buffer",
+                    FakeTensor((0,), pointer=909, dtype="torch.float32"),
+                ),
+            )
+            dependencies, _ = fake_dependencies(model=model)
+            with mock.patch.object(
+                model_runtime,
+                "_load_runtime_dependencies",
+                return_value=dependencies,
+            ):
+                report = probe_local_causal_lm(root, "x", token_cap=4)
+
+        self.assertEqual(report["buffers"]["named_tensor_entries"], 1)
+        self.assertEqual(report["buffers"]["physical_elements"], 0)
+        self.assertEqual(report["buffers"]["physical_bytes"], 0)
+        self.assertEqual(report["device_placement"]["buffer_devices"], ["cpu"])
+        self.assertEqual(validate_runtime_report(report), report)
+        self.assertTrue(verify_runtime_report_sha256(report))
+
+    def test_probe_rejects_dtypes_without_a_portable_size_contract(self) -> None:
+        variants = (
+            FakeTensor(
+                (2,),
+                pointer=910,
+                dtype="torch.uint16",
+                element_size=2,
+            ),
+            FakeTensor(
+                (2,),
+                pointer=911,
+                dtype="torch.float32",
+                element_size=2,
+            ),
+        )
+        for index, buffer in enumerate(variants):
+            with self.subTest(index=index), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                make_dense_artifact(root)
+                model = FakeModel()
+                model.buffers = (("model.unportable_buffer", buffer),)
+                dependencies, _ = fake_dependencies(model=model)
+                with mock.patch.object(
+                    model_runtime,
+                    "_load_runtime_dependencies",
+                    return_value=dependencies,
+                ), self.assertRaises(ModelRuntimeProbeError):
+                    probe_local_causal_lm(root, "x", token_cap=4)
+
     def test_report_hash_detects_tampering(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -560,6 +617,60 @@ class RuntimeProbeHappyPathTests(unittest.TestCase):
         tampered = dict(report)
         tampered["runtime_probe_version"] = "tampered"
         self.assertFalse(verify_runtime_report_sha256(tampered))
+
+    def test_portable_runtime_validation_rederives_internal_invariants(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            make_dense_artifact(root)
+            dependencies, _ = fake_dependencies()
+            with mock.patch.object(
+                model_runtime, "_load_runtime_dependencies", return_value=dependencies
+            ):
+                report = probe_local_causal_lm(root, "x", token_cap=4)
+        validated = validate_runtime_report(report)
+        self.assertEqual(validated, report)
+        validated["parameters"]["physical_elements"] = 1
+        self.assertNotEqual(validated, report)
+
+        variants = []
+        changed = copy.deepcopy(report)
+        changed["parameters"]["physical_elements"] += 1
+        variants.append(changed)
+        changed = copy.deepcopy(report)
+        changed["parameters"]["by_dtype"][0]["physical_bytes"] += 1
+        variants.append(changed)
+        changed = copy.deepcopy(report)
+        changed["forward"]["logits_shape"][1] += 1
+        variants.append(changed)
+        changed = copy.deepcopy(report)
+        changed["load_policy"]["trust_remote_code"] = True
+        variants.append(changed)
+        changed = copy.deepcopy(report)
+        changed["claim_qualification"][
+            "sub_billion_dense_runtime_qualified"
+        ] = False
+        variants.append(changed)
+        changed = copy.deepcopy(report)
+        changed["device_placement"].update(
+            {
+                "requested": "bogus-device",
+                "parameter_devices": ["bogus-device"],
+                "buffer_devices": ["bogus-device"],
+                "input_device": "bogus-device",
+                "logits_device": "bogus-device",
+            }
+        )
+        variants.append(changed)
+        for index, changed in enumerate(variants):
+            changed["report_sha256"] = compute_runtime_report_sha256(changed)
+            with self.subTest(index=index):
+                self.assertFalse(verify_runtime_report_sha256(changed))
+
+        class ActiveDict(dict[str, object]):
+            def items(self):  # type: ignore[no-untyped-def]
+                raise AssertionError("active mapping hook ran")
+
+        self.assertFalse(verify_runtime_report_sha256(ActiveDict(report)))
 
 
 class StaticTrustBoundaryTests(unittest.TestCase):

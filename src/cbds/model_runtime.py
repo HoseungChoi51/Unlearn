@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 import importlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -38,7 +39,29 @@ RUNTIME_PROBE_VERSION: Final[str] = "1.1.0"
 MAX_RUNTIME_TOKEN_CAP: Final[int] = 4_096
 MAX_PROMPT_UTF8_BYTES: Final[int] = 64 * 1024
 _SHA256_RE: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{64}\Z")
-_CUDA_DEVICE_RE: Final[re.Pattern[str]] = re.compile(r"cuda:([0-9]+)\Z")
+_CUDA_DEVICE_RE: Final[re.Pattern[str]] = re.compile(
+    r"cuda:(0|[1-9][0-9]{0,5})\Z"
+)
+_MAXIMUM_REPORT_JSON_NODES: Final[int] = 100_000
+_MAXIMUM_REPORT_JSON_DEPTH: Final[int] = 24
+_MAXIMUM_REPORT_STRING_BYTES: Final[int] = 1_048_576
+_MAXIMUM_REPORT_CANONICAL_BYTES: Final[int] = 16 * 1024 * 1024
+_TORCH_DTYPE_BYTES: Final[dict[str, int]] = {
+    "torch.bool": 1,
+    "torch.uint8": 1,
+    "torch.int8": 1,
+    "torch.float8_e4m3fn": 1,
+    "torch.float8_e5m2": 1,
+    "torch.int16": 2,
+    "torch.float16": 2,
+    "torch.bfloat16": 2,
+    "torch.int32": 4,
+    "torch.float32": 4,
+    "torch.complex64": 8,
+    "torch.int64": 8,
+    "torch.float64": 8,
+    "torch.complex128": 16,
+}
 
 
 class ModelRuntimeProbeError(RuntimeError):
@@ -81,13 +104,105 @@ def _load_runtime_dependencies() -> _RuntimeDependencies:
 
 
 def _canonical_json_bytes(value: object) -> bytes:
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        allow_nan=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
+    try:
+        encoded = json.dumps(
+            value,
+            ensure_ascii=False,
+            allow_nan=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    except (TypeError, ValueError, UnicodeError) as exc:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid",
+            "runtime report is not canonical finite JSON",
+        ) from exc
+    if len(encoded) > _MAXIMUM_REPORT_CANONICAL_BYTES:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid",
+            "runtime report exceeds its canonical byte limit",
+        )
+    return encoded
+
+
+def _passive_report_copy(value: object, *, path: str = "$") -> object:
+    """Copy exact passive JSON values under explicit report resource bounds."""
+
+    nodes = 0
+
+    def visit(item: object, item_path: str, depth: int) -> object:
+        nonlocal nodes
+        nodes += 1
+        if nodes > _MAXIMUM_REPORT_JSON_NODES:
+            raise ModelRuntimeProbeError(
+                "runtime_report_invalid", "runtime report exceeds its JSON node limit"
+            )
+        if depth > _MAXIMUM_REPORT_JSON_DEPTH:
+            raise ModelRuntimeProbeError(
+                "runtime_report_invalid", "runtime report exceeds its JSON depth limit"
+            )
+        if item is None or type(item) in {int, bool}:
+            return item
+        if type(item) is str:
+            if len(item.encode("utf-8", errors="strict")) > _MAXIMUM_REPORT_STRING_BYTES:
+                raise ModelRuntimeProbeError(
+                    "runtime_report_invalid",
+                    f"{item_path} exceeds the string byte limit",
+                )
+            return item
+        if type(item) is float:
+            if not math.isfinite(item):
+                raise ModelRuntimeProbeError(
+                    "runtime_report_invalid", f"{item_path} is not finite JSON"
+                )
+            return item
+        if type(item) is list:
+            return [
+                visit(child, f"{item_path}[{index}]", depth + 1)
+                for index, child in enumerate(item)
+            ]
+        if type(item) is dict:
+            copied: dict[str, object] = {}
+            for key, child in item.items():
+                if type(key) is not str:
+                    raise ModelRuntimeProbeError(
+                        "runtime_report_invalid",
+                        f"{item_path} contains a non-exact string key",
+                    )
+                copied[key] = visit(child, f"{item_path}.{key}", depth + 1)
+            return copied
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid",
+            f"{item_path} contains an active or non-JSON value",
+        )
+
+    return visit(value, path, 0)
+
+
+def _exact_report_dict(
+    value: object, fields: set[str], *, path: str
+) -> dict[str, object]:
+    if type(value) is not dict or set(value) != fields:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} fields are invalid"
+        )
+    return value
+
+
+def _runtime_report_sha256(value: object, *, path: str) -> str:
+    if type(value) is not str or _SHA256_RE.fullmatch(value) is None:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} must be a lowercase SHA-256"
+        )
+    return value
+
+
+def _runtime_report_nonempty_string(value: object, *, path: str) -> str:
+    if type(value) is not str or not value:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} must be a nonempty exact string"
+        )
+    return value
 
 
 def _runtime_source_sha256() -> str:
@@ -106,22 +221,445 @@ def _runtime_source_sha256() -> str:
 def compute_runtime_report_sha256(report: Mapping[str, object]) -> str:
     """Hash canonical JSON after removing only ``report_sha256``."""
 
-    if not isinstance(report, Mapping):
-        raise TypeError("report must be a mapping")
-    unsigned = dict(report)
+    if type(report) is not dict:
+        raise TypeError("report must be an exact dictionary")
+    copied = _passive_report_copy(report)
+    if type(copied) is not dict:  # pragma: no cover - exact type established above
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "runtime report copy is invalid"
+        )
+    unsigned = copied
     unsigned.pop("report_sha256", None)
     return sha256(_canonical_json_bytes(unsigned)).hexdigest()
 
 
-def verify_runtime_report_sha256(report: Mapping[str, object]) -> bool:
-    if not isinstance(report, Mapping):
-        raise TypeError("report must be a mapping")
-    claimed = report.get("report_sha256")
-    return (
-        isinstance(claimed, str)
-        and _SHA256_RE.fullmatch(claimed) is not None
-        and claimed == compute_runtime_report_sha256(report)
+def _validate_tensor_accounting(
+    value: object, *, parameters: bool, path: str
+) -> dict[str, object]:
+    fields = {
+        "accounting_basis",
+        "named_tensor_entries",
+        "unique_physical_spans",
+        "deduplicated_alias_entries",
+        "storage_allocations_referenced",
+        "physical_elements",
+        "physical_bytes",
+        "by_dtype",
+    }
+    dtype_fields = {"dtype", "physical_elements", "physical_bytes"}
+    if parameters:
+        fields.update({"trainable_elements", "trainable_bytes"})
+        dtype_fields.update({"trainable_elements", "trainable_bytes"})
+    record = _exact_report_dict(value, fields, path=path)
+    if record["accounting_basis"] != "union_of_contiguous_untyped_storage_byte_spans":
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path}.accounting_basis is invalid"
+        )
+    integer_fields = (
+        "named_tensor_entries",
+        "unique_physical_spans",
+        "deduplicated_alias_entries",
+        "storage_allocations_referenced",
+        "physical_elements",
+        "physical_bytes",
+    ) + (("trainable_elements", "trainable_bytes") if parameters else ())
+    for name in integer_fields:
+        if type(record[name]) is not int or record[name] < 0:
+            raise ModelRuntimeProbeError(
+                "runtime_report_invalid", f"{path}.{name} is invalid"
+            )
+    named = record["named_tensor_entries"]
+    spans = record["unique_physical_spans"]
+    allocations = record["storage_allocations_referenced"]
+    if (
+        record["deduplicated_alias_entries"] != named - spans
+        or allocations > spans
+        or spans > named
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} alias/span accounting is inconsistent"
+        )
+    if parameters and (
+        named <= 0
+        or spans <= 0
+        or allocations <= 0
+        or record["physical_elements"] <= 0
+        or record["physical_bytes"] <= 0
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} must contain physical parameters"
+        )
+    by_dtype = record["by_dtype"]
+    if type(by_dtype) is not list or len(by_dtype) > 64:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path}.by_dtype is invalid"
+        )
+    dtype_names: list[str] = []
+    physical_elements = 0
+    physical_bytes = 0
+    trainable_elements = 0
+    trainable_bytes = 0
+    for index, raw in enumerate(by_dtype):
+        dtype_record = _exact_report_dict(
+            raw, dtype_fields, path=f"{path}.by_dtype[{index}]"
+        )
+        dtype = _runtime_report_nonempty_string(
+            dtype_record["dtype"], path=f"{path}.by_dtype[{index}].dtype"
+        )
+        element_bytes = _TORCH_DTYPE_BYTES.get(dtype)
+        if element_bytes is None:
+            raise ModelRuntimeProbeError(
+                "runtime_report_invalid",
+                f"{path}.by_dtype[{index}].dtype is unsupported",
+            )
+        for name in dtype_fields - {"dtype"}:
+            if type(dtype_record[name]) is not int or dtype_record[name] < 0:
+                raise ModelRuntimeProbeError(
+                    "runtime_report_invalid",
+                    f"{path}.by_dtype[{index}].{name} is invalid",
+                )
+        if dtype_record["physical_bytes"] != (
+            dtype_record["physical_elements"] * element_bytes
+        ):
+            raise ModelRuntimeProbeError(
+                "runtime_report_invalid",
+                f"{path}.by_dtype[{index}] byte accounting is inconsistent",
+            )
+        if parameters:
+            if (
+                dtype_record["trainable_bytes"]
+                != dtype_record["trainable_elements"] * element_bytes
+                or dtype_record["trainable_elements"]
+                > dtype_record["physical_elements"]
+            ):
+                raise ModelRuntimeProbeError(
+                    "runtime_report_invalid",
+                    f"{path}.by_dtype[{index}] trainable accounting is inconsistent",
+                )
+            trainable_elements += dtype_record["trainable_elements"]
+            trainable_bytes += dtype_record["trainable_bytes"]
+        dtype_names.append(dtype)
+        physical_elements += dtype_record["physical_elements"]
+        physical_bytes += dtype_record["physical_bytes"]
+    if dtype_names != sorted(set(dtype_names), key=str.encode):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path}.by_dtype must be unique and byte-sorted"
+        )
+    # The producer deliberately retains zero-element tensors in its named,
+    # span, allocation, device, and dtype inventories.  Their physical totals
+    # are zero, so dtype presence follows span presence rather than whether the
+    # byte total happens to be positive.
+    if (spans > 0) != bool(by_dtype) or (spans > 0) != (allocations > 0):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid",
+            f"{path} span, allocation, or dtype presence is inconsistent",
+        )
+    if (
+        physical_elements != record["physical_elements"]
+        or physical_bytes != record["physical_bytes"]
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} dtype totals are inconsistent"
+        )
+    if parameters and (
+        trainable_elements != record["trainable_elements"]
+        or trainable_bytes != record["trainable_bytes"]
+        or record["trainable_elements"] > record["physical_elements"]
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", f"{path} trainable totals are inconsistent"
+        )
+    return record
+
+
+def validate_runtime_report(report: Mapping[str, object]) -> dict[str, object]:
+    """Validate one exact passive runtime report and return a defensive copy.
+
+    This validates the report's internal accounting, loader policy, forward
+    shape, qualification projection, and self-digest.  It does not reopen the
+    model artifact or prove that the reported runtime observations are honest.
+    """
+
+    copied = _passive_report_copy(report)
+    top = _exact_report_dict(
+        copied,
+        {
+            "schema_version",
+            "runtime_probe_version",
+            "report_hash_scope",
+            "implementation",
+            "static_inspection",
+            "dependency_versions",
+            "runtime_classes",
+            "load_policy",
+            "prompt",
+            "device_placement",
+            "parameters",
+            "buffers",
+            "forward",
+            "claim_qualification",
+            "report_sha256",
+        },
+        path="$",
     )
+    constants = {
+        "schema_version": RUNTIME_PROBE_SCHEMA_VERSION,
+        "runtime_probe_version": RUNTIME_PROBE_VERSION,
+        "report_hash_scope": "canonical_json_excluding_report_sha256",
+    }
+    for name, expected in constants.items():
+        if top[name] != expected or type(top[name]) is not str:
+            raise ModelRuntimeProbeError(
+                "runtime_report_invalid", f"$.{name} is invalid"
+            )
+
+    implementation = _exact_report_dict(
+        top["implementation"],
+        {"package_name", "package_version", "module", "source_sha256"},
+        path="$.implementation",
+    )
+    if implementation["package_name"] != "cbds-research" or implementation[
+        "module"
+    ] != "cbds.model_runtime":
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.implementation identity is invalid"
+        )
+    _runtime_report_nonempty_string(
+        implementation["package_version"], path="$.implementation.package_version"
+    )
+    _runtime_report_sha256(
+        implementation["source_sha256"], path="$.implementation.source_sha256"
+    )
+
+    static = _exact_report_dict(
+        top["static_inspection"],
+        {
+            "inspector_version",
+            "report_sha256",
+            "bundle_manifest_sha256",
+            "weight_set_sha256",
+            "architecture_classification",
+            "reinspection_match_after_runtime",
+        },
+        path="$.static_inspection",
+    )
+    _runtime_report_nonempty_string(
+        static["inspector_version"], path="$.static_inspection.inspector_version"
+    )
+    for name in ("report_sha256", "bundle_manifest_sha256", "weight_set_sha256"):
+        _runtime_report_sha256(static[name], path=f"$.static_inspection.{name}")
+    if static["architecture_classification"] not in {
+        "dense_consistent",
+        "moe",
+        "ambiguous",
+    } or static["reinspection_match_after_runtime"] is not True:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.static_inspection qualification is invalid"
+        )
+
+    versions = _exact_report_dict(
+        top["dependency_versions"], {"torch", "transformers"}, path="$.dependency_versions"
+    )
+    for name in ("torch", "transformers"):
+        _runtime_report_nonempty_string(
+            versions[name], path=f"$.dependency_versions.{name}"
+        )
+    classes = _exact_report_dict(
+        top["runtime_classes"],
+        {
+            "transformers_auto_model_class",
+            "transformers_auto_tokenizer_class",
+            "loaded_model_class",
+            "loaded_tokenizer_class",
+        },
+        path="$.runtime_classes",
+    )
+    for name, value in classes.items():
+        _runtime_report_nonempty_string(value, path=f"$.runtime_classes.{name}")
+
+    load_policy = _exact_report_dict(
+        top["load_policy"],
+        {
+            "local_files_only",
+            "trust_remote_code",
+            "use_safetensors",
+            "flat_local_artifact_required",
+            "artifact_writes_permitted",
+            "os_socket_isolation_provided",
+        },
+        path="$.load_policy",
+    )
+    expected_load_policy = {
+        "local_files_only": True,
+        "trust_remote_code": False,
+        "use_safetensors": True,
+        "flat_local_artifact_required": True,
+        "artifact_writes_permitted": False,
+        "os_socket_isolation_provided": False,
+    }
+    if load_policy != expected_load_policy:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.load_policy differs from the probe contract"
+        )
+
+    prompt = _exact_report_dict(
+        top["prompt"],
+        {
+            "prompt_sha256",
+            "prompt_utf8_bytes",
+            "token_cap",
+            "observed_tokens",
+            "truncation",
+        },
+        path="$.prompt",
+    )
+    _runtime_report_sha256(prompt["prompt_sha256"], path="$.prompt.prompt_sha256")
+    if (
+        type(prompt["prompt_utf8_bytes"]) is not int
+        or not 0 <= prompt["prompt_utf8_bytes"] <= MAX_PROMPT_UTF8_BYTES
+        or type(prompt["token_cap"]) is not int
+        or not 1 <= prompt["token_cap"] <= MAX_RUNTIME_TOKEN_CAP
+        or type(prompt["observed_tokens"]) is not int
+        or not 1 <= prompt["observed_tokens"] <= prompt["token_cap"]
+        or prompt["truncation"] is not False
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.prompt bounds or truncation are invalid"
+        )
+
+    placement = _exact_report_dict(
+        top["device_placement"],
+        {
+            "requested",
+            "parameter_devices",
+            "buffer_devices",
+            "input_device",
+            "logits_device",
+        },
+        path="$.device_placement",
+    )
+    requested = _runtime_report_nonempty_string(
+        placement["requested"], path="$.device_placement.requested"
+    )
+    if requested != "cpu" and _CUDA_DEVICE_RE.fullmatch(requested) is None:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid",
+            "$.device_placement.requested must be exactly 'cpu' or canonical 'cuda:N'",
+        )
+    parameter_devices = placement["parameter_devices"]
+    buffer_devices = placement["buffer_devices"]
+    if (
+        type(parameter_devices) is not list
+        or parameter_devices != [requested]
+        or type(buffer_devices) is not list
+        or buffer_devices not in ([], [requested])
+        or placement["input_device"] != requested
+        or placement["logits_device"] != requested
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.device_placement is inconsistent"
+        )
+
+    parameters = _validate_tensor_accounting(
+        top["parameters"], parameters=True, path="$.parameters"
+    )
+    buffers = _validate_tensor_accounting(
+        top["buffers"], parameters=False, path="$.buffers"
+    )
+    # Empty buffers still have a named tensor and device even though they
+    # contribute no physical elements or bytes.
+    if (buffers["named_tensor_entries"] > 0) != bool(buffer_devices):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid",
+            "$.device_placement.buffer_devices disagrees with buffer accounting",
+        )
+
+    forward = _exact_report_dict(
+        top["forward"],
+        {
+            "mode",
+            "use_cache",
+            "input_ids_shape",
+            "logits_shape",
+            "logits_dtype",
+            "logits_finite",
+        },
+        path="$.forward",
+    )
+    input_shape = forward["input_ids_shape"]
+    logits_shape = forward["logits_shape"]
+    observed_tokens = prompt["observed_tokens"]
+    if (
+        forward["mode"] != "eval_inference_single_forward_no_generation"
+        or forward["use_cache"] is not False
+        or type(input_shape) is not list
+        or input_shape != [1, observed_tokens]
+        or type(logits_shape) is not list
+        or len(logits_shape) != 3
+        or logits_shape[:2] != input_shape
+        or type(logits_shape[2]) is not int
+        or logits_shape[2] <= 0
+        or forward["logits_finite"] is not True
+    ):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.forward shape or execution contract is invalid"
+        )
+    _runtime_report_nonempty_string(
+        forward["logits_dtype"], path="$.forward.logits_dtype"
+    )
+
+    qualification = _exact_report_dict(
+        top["claim_qualification"],
+        {
+            "static_density_classification",
+            "physical_parameter_elements",
+            "physical_parameter_elements_below_one_billion",
+            "model_load_succeeded",
+            "forward_succeeded",
+            "sub_billion_dense_runtime_qualified",
+            "ambiguous_static_density_upgraded",
+            "scope",
+        },
+        path="$.claim_qualification",
+    )
+    physical_parameters = parameters["physical_elements"]
+    below_billion = physical_parameters < SUB_BILLION_LIMIT
+    expected_qualification = {
+        "static_density_classification": static["architecture_classification"],
+        "physical_parameter_elements": physical_parameters,
+        "physical_parameter_elements_below_one_billion": below_billion,
+        "model_load_succeeded": True,
+        "forward_succeeded": True,
+        "sub_billion_dense_runtime_qualified": (
+            static["architecture_classification"] == "dense_consistent"
+            and below_billion
+        ),
+        "ambiguous_static_density_upgraded": False,
+        "scope": (
+            "physical runtime parameter storage plus one bounded local "
+            "causal-LM forward; no capability or benchmark quality claim"
+        ),
+    }
+    if qualification != expected_qualification:
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.claim_qualification is not derivable"
+        )
+    claimed = _runtime_report_sha256(top["report_sha256"], path="$.report_sha256")
+    if claimed != compute_runtime_report_sha256(top):
+        raise ModelRuntimeProbeError(
+            "runtime_report_invalid", "$.report_sha256 does not bind the report"
+        )
+    return top
+
+
+def verify_runtime_report_sha256(report: object) -> bool:
+    """Return whether an exact passive runtime report is internally valid."""
+
+    try:
+        validate_runtime_report(report)  # type: ignore[arg-type]
+    except (AttributeError, ModelRuntimeProbeError, RecursionError, TypeError, ValueError):
+        return False
+    return True
 
 
 def _mapping(value: object, *, label: str) -> Mapping[str, object]:
@@ -382,6 +920,17 @@ def _tensor_span(tensor: object, *, trainable: bool) -> _TensorSpan:
     if not dtype or not device:
         raise ModelRuntimeProbeError(
             "tensor_accounting_invalid", "tensor dtype or device is missing"
+        )
+    expected_element_size = _TORCH_DTYPE_BYTES.get(dtype)
+    if expected_element_size is None:
+        raise ModelRuntimeProbeError(
+            "tensor_accounting_ambiguous",
+            "tensor dtype is outside the portable runtime-report contract",
+        )
+    if element_size != expected_element_size:
+        raise ModelRuntimeProbeError(
+            "tensor_accounting_invalid",
+            "tensor element size disagrees with its portable dtype contract",
         )
     contiguous = getattr(tensor, "is_contiguous", None)
     if not callable(contiguous):
@@ -930,7 +1479,10 @@ def probe_local_causal_lm(
         },
     }
     report["report_sha256"] = compute_runtime_report_sha256(report)
-    return report
+    # Keep the producer and passive consumer contracts in lockstep.  A future
+    # report-field or accounting change must be accepted by the portable
+    # validator before the probe can emit it.
+    return validate_runtime_report(report)
 
 
 __all__ = [
@@ -942,5 +1494,6 @@ __all__ = [
     "account_loaded_model_tensors",
     "compute_runtime_report_sha256",
     "probe_local_causal_lm",
+    "validate_runtime_report",
     "verify_runtime_report_sha256",
 ]

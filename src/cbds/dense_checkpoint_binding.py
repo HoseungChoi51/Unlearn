@@ -235,6 +235,7 @@ def _inspection_projection(
     config = passive.get("config")
     weights = passive.get("weights")
     tokenizer = passive.get("tokenizer")
+    architecture = passive.get("architecture")
     files = passive.get("files")
     if type(config) is not dict or type(weights) is not dict:
         raise DenseCheckpointRunBindingError(
@@ -243,6 +244,13 @@ def _inspection_projection(
     if type(tokenizer) is not dict:
         raise DenseCheckpointRunBindingError(
             "inspection_report.tokenizer: record is missing"
+        )
+    if (
+        type(architecture) is not dict
+        or architecture.get("classification") != "dense_consistent"
+    ):
+        raise DenseCheckpointRunBindingError(
+            "inspection_report.architecture: must be dense_consistent"
         )
     if type(files) is not list or not files:
         raise DenseCheckpointRunBindingError(
@@ -261,19 +269,24 @@ def _inspection_projection(
     )
     tokenizer_status = tokenizer.get("status")
     tokenizer_vocab_size = tokenizer.get("locally_inspected_vocab_size")
-    tokenizer_matches_config = tokenizer.get("matches_config_vocab_size")
+    tokenizer_config_vocab_size = tokenizer.get("config_vocab_size")
+    tokenizer_ids_contiguous = tokenizer.get("token_ids_contiguous_from_zero")
     if (
         tokenizer_status != "json_inspected"
         or type(tokenizer_vocab_size) is not int
         or tokenizer_vocab_size <= 0
-        or tokenizer_matches_config is not True
+        or type(tokenizer_config_vocab_size) is not int
+        or tokenizer_config_vocab_size <= 0
+        or tokenizer_vocab_size > tokenizer_config_vocab_size
+        or tokenizer_ids_contiguous is not True
     ):
         raise DenseCheckpointRunBindingError(
             "inspection_report.tokenizer: must contain an inspectable contiguous "
-            "vocabulary that exactly matches config.vocab_size"
+            "token-ID range no larger than config.vocab_size"
         )
     payload_bytes = weights.get("safetensors_payload_bytes")
     average_bits = weights.get("average_stored_bits_per_element")
+    stored_elements = weights.get("stored_tensor_element_count")
     if type(payload_bytes) is not int or payload_bytes <= 0:
         raise DenseCheckpointRunBindingError(
             "inspection_report.weights.safetensors_payload_bytes: is invalid"
@@ -286,6 +299,10 @@ def _inspection_projection(
     ):
         raise DenseCheckpointRunBindingError(
             "inspection_report.weights.average_stored_bits_per_element: is invalid"
+        )
+    if type(stored_elements) is not int or stored_elements <= 0:
+        raise DenseCheckpointRunBindingError(
+            "inspection_report.weights.stored_tensor_element_count: is invalid"
         )
     bundle_bytes = 0
     paths: list[str] = []
@@ -321,9 +338,12 @@ def _inspection_projection(
         "tensor_layout_sha256": tensor_layout_sha256,
         "tokenizer_set_sha256": tokenizer_set_sha256,
         "tokenizer_vocab_size": tokenizer_vocab_size,
+        "tokenizer_config_vocab_size": tokenizer_config_vocab_size,
         "safetensors_payload_bytes": payload_bytes,
         "bundle_bytes": bundle_bytes,
         "average_stored_bits_per_element": average_bits,
+        "stored_tensor_element_count": stored_elements,
+        "architecture_classification": "dense_consistent",
     }
 
 
@@ -352,6 +372,59 @@ def _source_rebinding_errors(
                 "match the supplied generic inspection report"
             )
     return errors
+
+
+def validate_dense_checkpoint_report_pair(
+    *,
+    inspection_report: Mapping[str, object],
+    dense_checkpoint_report: Mapping[str, object],
+) -> dict[str, object]:
+    """Validate and cross-bind one generic inspection and dense qualifier.
+
+    The returned projection is passive and defensive.  This function validates
+    report bytes supplied by the caller; it does not reopen the underlying
+    model artifact and grants no execution, selection, or claim authority.
+    """
+
+    try:
+        dense = validate_dense_checkpoint_report(dense_checkpoint_report)
+    except DenseCheckpointQualificationError as exc:
+        raise DenseCheckpointRunBindingError(
+            "dense_checkpoint_report: " + str(exc)
+        ) from exc
+    passive_inspection = _passive_json_copy(
+        inspection_report, path="inspection_report"
+    )
+    if type(passive_inspection) is not dict:
+        raise DenseCheckpointRunBindingError(
+            "inspection_report: must be an exact dictionary"
+        )
+    inspection = _inspection_projection(passive_inspection)
+    errors = _source_rebinding_errors(dense, inspection)
+    inventory = dense["tensor_inventory"]
+    architecture = dense["architecture"]
+    if type(inventory) is not dict or type(architecture) is not dict:
+        errors.append("dense checkpoint inventory or architecture disappeared")
+    else:
+        if (
+            inventory["physical_parameter_count"]
+            != inspection["stored_tensor_element_count"]
+        ):
+            errors.append(
+                "dense_checkpoint_report.tensor_inventory.physical_parameter_count: "
+                "must match generic stored tensor elements"
+            )
+        if architecture["vocab_size"] != inspection["tokenizer_config_vocab_size"]:
+            errors.append(
+                "dense_checkpoint_report.architecture.vocab_size: must match the "
+                "generic inspection tokenizer/config vocabulary"
+            )
+    if errors:
+        raise DenseCheckpointRunBindingError(errors)
+    return {
+        "inspection_projection": copy.deepcopy(inspection),
+        "dense_checkpoint_report": copy.deepcopy(dense),
+    }
 
 
 def _model_binding_errors(
@@ -390,10 +463,10 @@ def _model_binding_errors(
         errors.append(
             "$.tokenizer.vocabulary_size: must match the qualified architecture"
         )
-    if tokenizer["vocabulary_size"] != inspection["tokenizer_vocab_size"]:
+    if tokenizer["vocabulary_size"] != inspection["tokenizer_config_vocab_size"]:
         errors.append(
-            "$.tokenizer.vocabulary_size: must match the locally inspected "
-            "tokenizer vocabulary"
+            "$.tokenizer.vocabulary_size: must match the model embedding-row "
+            "vocabulary recorded by the generic inspection"
         )
     mechanism = spec["operator"]["mechanism"]
     if (
@@ -765,22 +838,17 @@ def _validate_and_context(
         raise DenseCheckpointRunBindingError(
             tuple(f"run_spec: {error}" for error in exc.errors)
         ) from exc
-    try:
-        validated_dense = validate_dense_checkpoint_report(dense_checkpoint_report)
-    except DenseCheckpointQualificationError as exc:
-        raise DenseCheckpointRunBindingError(
-            "dense_checkpoint_report: " + str(exc)
-        ) from exc
-    passive_inspection = _passive_json_copy(
-        inspection_report, path="inspection_report"
+    pair = validate_dense_checkpoint_report_pair(
+        inspection_report=inspection_report,
+        dense_checkpoint_report=dense_checkpoint_report,
     )
-    if type(passive_inspection) is not dict:
+    validated_dense = pair["dense_checkpoint_report"]
+    inspection = pair["inspection_projection"]
+    if type(validated_dense) is not dict or type(inspection) is not dict:
         raise DenseCheckpointRunBindingError(
-            "inspection_report: must be an exact dictionary"
+            "validated dense checkpoint report pair disappeared"
         )
-    inspection = _inspection_projection(passive_inspection)
-    errors = _source_rebinding_errors(validated_dense, inspection)
-    errors.extend(_model_binding_errors(validated_spec, validated_dense, inspection))
+    errors = _model_binding_errors(validated_spec, validated_dense, inspection)
     if validated_spec["operator"]["mechanism"] == "hybrid":
         errors.append(
             "$.operator.mechanism: hybrid export accounting is not yet "
@@ -1184,6 +1252,7 @@ __all__ = [
     "DenseCheckpointRunBindingError",
     "build_dense_checkpoint_run_binding",
     "compute_dense_checkpoint_run_binding_sha256",
+    "validate_dense_checkpoint_report_pair",
     "validate_run_spec_against_dense_checkpoint",
     "verify_dense_checkpoint_run_binding",
 ]

@@ -383,6 +383,21 @@ model export, and inspection identity back to the prospective digest. The
 campaign registry then joins every required replicate and evaluation rather
 than accepting a convenient subset.
 
+For supported floating-dense Qwen2/Qwen3/Llama outputs, a separate
+completed-model evidence companion now freshly reinspects the source and
+export, reconstructs both exact dense inventories, and reconciles the
+completion's model identity and accounting. It semantically validates saved
+runtime reports and binds their aggregate storage, class, and vocabulary
+projections to the fresh static identities, but it does not rerun or
+authenticate those observations. Supported pruning also has to change the
+planned layer, uniform FFN-width, or uniform all-layer Qwen3
+complete-GQA-group head-width architecture dimension. The companion still
+cannot prove which selected source indices or
+values populated the export, that training consumed the pinned source bytes,
+or that factorized/quantized/hybrid formats are correct. It is permanently
+nonauthorizing and must be reopened by a later claim binder rather than merely
+copied into one.
+
 The evaluation spec binds one inspected export to one benchmark inventory,
 ordered fixture set, decode/parser policy, sandbox limits, and prospective
 analysis commitment. Per-task results bind every observed outcome back to that
@@ -467,6 +482,10 @@ The repository currently has a substantial validation foundation:
   nonauthorizing prospective binder for tokenizer identity, model-derived
   operator bounds, representable pruning counts, and quantization payload
   lower bounds;
+- a narrow completed-model companion that freshly reopens supported
+  floating-dense source/exports, validates their exact static accounting, and
+  passively reconciles saved runtime reports while preserving explicit
+  non-claims;
 - reproducible corpus/schedule and dense-SFT engineering canaries;
 - runtime source-closure, materialization, sealed descriptor, handoff, and
   candidate-input-free namespace-canary components;
@@ -498,9 +517,10 @@ The critical path is now:
    validate the complete boundary independently on the target hardware;
 3. finish row-level training admission, license resolution, AST/execution
    verification, decontamination, and utility balancing;
-4. extend the exact static model gate into completed artifact/runtime reopening
-   and exporter-specific structural/hybrid/quantizer-metadata accounting; then
-   finish production training, exact executed-FLOP binding, quantization
+4. extend the narrow completed floating-dense companion into exporter-specific
+   selected-unit/value and vocabulary-map realization, fresh or attested
+   runtime-graph evidence, and structural/hybrid/quantizer-metadata accounting;
+   then finish production training, exact executed-FLOP binding, quantization
    calibration, and hardware reopening;
 5. complete and human-audit the sealed ID/OOD and bounded-interactive suites,
    freeze parser, rerun, exclusion, and analysis policies, and keep them closed;

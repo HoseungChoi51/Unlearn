@@ -80,7 +80,7 @@ parameters do not establish a smaller or faster deployment.
 | Component | Why it matters | Build state | Evidence state | Next gate |
 |---|---|---|---|---|
 | Claim contract and measurement lanes | Keeps fixed-size specialization separate from compression and prevents ability loss from being called success | Implemented | Gated: no campaign outcome exists | Preserve the frozen thresholds through the first behavioral runs |
-| Dense sub-1B checkpoint qualification | Establishes the exact network, tensor shapes, physical parameters, precision, tokenizer, and operator bounds being compared | Implemented for exact static Qwen2, Qwen3, and Llama Safetensors | Gated: passive plan binding is nonauthorizing and runtime graph/export reopening is incomplete | Bind reopened inspection/runtime evidence into completed records and exports |
+| Dense sub-1B checkpoint qualification | Establishes the exact network, tensor shapes, physical parameters, precision, tokenizer, and operator bounds being compared | Implemented for exact static Qwen2, Qwen3, and Llama Safetensors, including a narrow completed source/export companion | Partial: fresh static completion reconciliation exists, but saved runtime evidence is passive and the binding remains nonauthorizing | Add attested runtime graph/value evidence and broader export formats |
 | Backbone feasibility | Ensures the starting model is neither at target floor nor ceiling and can actually improve | Engineering GPU fit pilots exist | Planned for behavior; no backbone is selected | Run executable floor/ceiling gates on admitted development tasks |
 | Capability-support and signed-transfer audit | Finds abilities that help, hurt, or do not affect terminal work instead of guessing from labels | Contracts and interpretation rules exist | Planned | Measure above-floor capabilities, cross-fit interventions, and add-back effects |
 | Training-source admission | Prevents invalid, ambiguous, unlicensed, duplicated, or evaluation-contaminated examples from driving a false gain | Raw import, authentication, lexical filtering, and tokenizer scheduling are implemented | Gated: zero rows are claim-admitted | Add Bash parsing, fixture execution, row lineage, ambiguity repair, balancing, and decontamination |
@@ -91,11 +91,11 @@ parameters do not establish a smaller or faster deployment.
 | Runtime closure, sandbox, and supervisor | Lets untrusted code run against identical tools without reaching the host or surviving a timeout | Namespace, descriptor, runtime-bundle, PID1, and one reviewed fixed-Bash canary exist | Gated: arbitrary candidates, exact Bash tool policy, external trust, and runtime-data closure are absent | Promote an independently reviewed general-candidate boundary with tmpfs/quiescence/resource guarantees |
 | Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Independent constructions and full-catalog mutation checks exist for ten integrated families | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
 | Production trainer and operator funnel | Determines empirically whether dense tuning, pruning, factorization, quantization, or reset/regrow offers the best performance/size tradeoff | A real-text dense-SFT engineering canary and prospective operator schemas exist | Planned for research runs | Implement production training/export, then screen matched operators instead of assuming SwiGLU channels win |
-| Model-aware operator binding | Prevents out-of-range indices, partial GQA groups, fictitious pruning savings, or misleading average-bit claims | Prospective exact binding covers tensor roles/factorization tuples, representable pruning, and quantization payload lower bounds | Gated: hybrid exports, residual/hidden physical pruning, quantizer metadata, and completed artifact replay remain absent | Add exporter-specific contracts and reopen the produced artifact before accepting its accounting |
+| Model-aware operator binding | Prevents out-of-range indices, partial GQA groups, fictitious pruning savings, or misleading average-bit claims | Prospective exact binding covers tensor roles/factorization tuples, representable pruning, and quantization payload lower bounds; completed floating-dense reconciliation rejects wrong architecture dimensions for supported pruning | Gated: exact selected-unit/value realization, embedding-map replay, residual/hidden physical pruning, and factorized/quantized/hybrid exporters remain absent | Add exporter-specific topology and mapping replay before accepting operator realization |
 | Baselines and causal interventions | Separates useful specialization from extra compute, random plasticity, sparse tuning, or generic compression | Prospective arms and interpretation rules exist | Planned | Run matched dense, random, target-only, no-reset, uniform-quantization, restoration, and add-back controls |
 | Statistics and claim acceptance | Fixes direction, uncertainty, multiplicity, non-inferiority, and success thresholds before results are known | Paired confirmatory statistics and fail-closed claim interfaces are implemented | Gated: they have no eligible source outcome chain | Derive all inputs from registry-bound task collections and reopen every upstream artifact |
 | Export and portable hardware measurement | Tests whether nominal compression produces real byte, memory, latency, or throughput gains | Schemas and a reproducible measurement protocol exist | Planned for experimental artifacts | Reopen the exact export, pass correctness, and collect raw repeated hardware samples |
-| Immutable provenance | Makes models, data, tasks, masks, seeds, outputs, and reports auditable as one chain | Content-addressed manifests and registries exist across many stages | Partial: content hashes do not prove preregistration time or external trust | Publish prospective commitments externally and complete end-to-end source reopening |
+| Immutable provenance | Makes models, data, tasks, masks, seeds, outputs, and reports auditable as one chain | Content-addressed manifests and registries exist across many stages; supported completed source/export artifacts can be freshly reopened into a companion record | Partial: saved runtime reports are unauthenticated and downstream claim binders do not yet require/reopen every companion source | Publish prospective commitments externally and complete end-to-end source reopening |
 
 ## What the architecture-specific gate now establishes
 
@@ -109,8 +109,9 @@ channels, hidden dimensions, vocabulary entries, factorization matrices, and
 tensor roles.
 
 The prospective binder then joins that report to a run specification and the
-separately self-hashed generic inspection. It requires a locally inspectable,
-contiguous tokenizer vocabulary matching the model; enforces complete Qwen GQA
+separately self-hashed generic inspection. It binds a locally inspectable,
+contiguous tokenizer ID range no larger than the model's embedding vocabulary;
+reserved embedding rows are allowed. It also enforces complete Qwen GQA
 groups; binds exact factorization tuples; and computes an element-weighted
 lower bound for selected plus unselected quantized tensors.
 
@@ -125,13 +126,30 @@ only transformations representable by the supported dense architectures:
 Residual-branch pruning, hidden-dimension pruning, physical Qwen2/Llama head
 pruning, and hybrid architectural-plus-quantization exports currently fail
 closed. Their index ranges can be described prospectively, but their deployed
-parameter savings cannot yet be claimed without a concrete exporter and a
-reopened output artifact.
+parameter savings cannot yet be claimed without a concrete exporter-specific
+contract.
 
-This gate remains passive and permanently nonauthorizing. A self-consistent
-pair of reports is not a signature and does not prove that a completed run used
-those bytes. Runtime parameter-graph equivalence, training, compression,
-selection, scoring, and claim authorization all remain false.
+The completed-model companion now freshly reopens supported floating-dense
+source and export bundles, rebuilds both exact reports, reconciles completion
+identity/count/precision/byte fields, and passively validates saved runtime
+report structure and aggregate storage/class/vocabulary projections. For
+layer, uniform FFN-width, and uniform all-layer Qwen3 complete-GQA-group
+head-width pruning it also requires the fresh export to change the planned
+architecture dimension; completed
+embedding-token pruning fails closed until the derived mapping can be replayed.
+
+That companion is additional evidence, not a replacement for the completed
+record. Downstream research use must bind the exact completed-record digest to
+the companion digest and reopen its sources; a structurally self-hashed
+companion alone is not authoritative. Static architecture deltas do not reveal
+which source indices or values populated the export, and saved runtime reports
+are neither rerun nor authenticated by this path.
+
+These gates remain passive and permanently nonauthorizing. A self-consistent
+report or companion is not a signature and does not prove that a completed run
+used those source bytes. Runtime parameter-graph equivalence, exact operator
+payload realization, training, selection, scoring, and claim authorization all
+remain false.
 
 ## Why the remaining gates are ordered
 
@@ -156,9 +174,10 @@ selection, scoring, and claim authorization all remain false.
 
 The repository supports engineering claims about narrow mechanisms: static
 artifact inspection, exact architecture qualification for three model
-families, reproducible raw-data transformations, token scheduling, fixed-case
-runtime integration, verifier mutation behavior, and statistical contract
-validation.
+families, bounded passive runtime-report validation, fresh floating-dense
+completion reconciliation, reproducible raw-data transformations, token
+scheduling, fixed-case runtime integration, verifier mutation behavior, and
+statistical contract validation.
 
 It does not yet support claims that:
 
@@ -176,6 +195,9 @@ It does not yet support claims that:
 - [PLAN.md](PLAN.md) owns the scientific protocol, thresholds, and scope.
 - [EXPERIMENT_COMPONENTS.md](EXPERIMENT_COMPONENTS.md) explains the conceptual
   role of each component in more depth.
+- [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md) explains how
+  component evidence composes and why adjacent checks cannot substitute for
+  one another.
 - [EXPERIMENT_LOGIC.md](EXPERIMENT_LOGIC.md) owns dependency and interpretation
   logic.
 - [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md) owns detailed
