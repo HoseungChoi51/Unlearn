@@ -268,8 +268,9 @@ The near-term dependency order is:
    their identities without exposing them to training or method development;
 4. admit a claim-eligible corpus decontaminated against those frozen suite
    identities;
-5. complete architecture-specific model accounting and production-training
-   infrastructure;
+5. promote the implemented static Qwen2/Qwen3/Llama qualification into
+   completed-artifact/runtime reopening, extend exporter-specific accounting,
+   and complete production-training infrastructure;
 6. run the feasibility gates and freeze the backbone;
 7. run matched baselines, operator screening, and fresh-seed confirmation;
 8. open the sealed evaluation only after the method and analysis are locked.

@@ -14,6 +14,7 @@ from unittest.mock import patch
 from cbds.cli import main
 from cbds.evaluation_specs import section_policy_sha256
 from cbds.manifests import atomic_write_json, value_sha256
+from cbds.model_artifacts import inspect_model_artifact
 from cbds.model_runtime import compute_runtime_report_sha256
 from tests.test_manifests import (
     hardware_result_for_completed_record,
@@ -341,6 +342,65 @@ class CliIntegrationTests(unittest.TestCase):
                     "inspect-model",
                     "--artifact-dir",
                     str(artifact),
+                    "--output",
+                    str(inside),
+                ]
+            )
+            self.assertEqual(rejected, 2)
+            self.assertIn("outside --artifact-dir", json.loads(error)["message"])
+            self.assertFalse(inside.exists())
+
+    def test_dense_checkpoint_qualification_requires_generic_pin_and_external_output(self) -> None:
+        from tests.test_dense_checkpoint import _make_artifact
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            artifact = root / "artifact"
+            artifact.mkdir()
+            _make_artifact(artifact, "qwen3")
+            generic = inspect_model_artifact(artifact)
+            output = root / "dense-checkpoint.json"
+            status, stdout, stderr = run_cli(
+                [
+                    "qualify-dense-checkpoint",
+                    "--artifact-dir",
+                    str(artifact),
+                    "--expected-inspection-report-sha256",
+                    generic["report_sha256"],
+                    "--output",
+                    str(output),
+                ]
+            )
+            self.assertEqual(status, 0, stderr)
+            self.assertEqual(stdout, "")
+            report = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(report["architecture"]["family"], "qwen3")
+            self.assertTrue(
+                report["qualification"][
+                    "architecture_specific_tensor_inventory_verified"
+                ]
+            )
+
+            wrong_pin, _, error = run_cli(
+                [
+                    "qualify-dense-checkpoint",
+                    "--artifact-dir",
+                    str(artifact),
+                    "--expected-inspection-report-sha256",
+                    "0" * 64,
+                ]
+            )
+            self.assertEqual(wrong_pin, 2)
+            self.assertIn("trusted expected digest", json.loads(error)["message"])
+
+            inside = artifact / "qualification.json"
+            rejected, _, error = run_cli(
+                [
+                    "qualify-dense-checkpoint",
+                    "--artifact-dir",
+                    str(artifact),
+                    "--expected-inspection-report-sha256",
+                    generic["report_sha256"],
                     "--output",
                     str(inside),
                 ]

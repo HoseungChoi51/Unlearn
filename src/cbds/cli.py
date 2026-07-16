@@ -716,6 +716,22 @@ def _cmd_inspect_model(args: argparse.Namespace) -> None:
     _emit(inspect_model_artifact(args.artifact_dir), args.output)
 
 
+def _cmd_qualify_dense_checkpoint(args: argparse.Namespace) -> None:
+    from .dense_checkpoint import inspect_dense_checkpoint
+
+    if args.output is not None and _path_within(args.output, args.artifact_dir):
+        raise CliError("--output must be outside --artifact-dir")
+    _emit(
+        inspect_dense_checkpoint(
+            args.artifact_dir,
+            expected_inspection_report_sha256=(
+                args.expected_inspection_report_sha256
+            ),
+        ),
+        args.output,
+    )
+
+
 def _cmd_probe_model_runtime(args: argparse.Namespace) -> None:
     from .model_runtime import (
         MAX_PROMPT_UTF8_BYTES,
@@ -1063,6 +1079,21 @@ def build_parser() -> argparse.ArgumentParser:
     inspect_model.add_argument("--artifact-dir", type=Path, required=True)
     inspect_model.add_argument("--output", type=Path)
     inspect_model.set_defaults(handler=_cmd_inspect_model)
+
+    qualify_dense = subparsers.add_parser(
+        "qualify-dense-checkpoint",
+        help=(
+            "prove the exact Qwen2/Qwen3/Llama tensor inventory from a "
+            "separately pinned generic model inspection"
+        ),
+    )
+    qualify_dense.add_argument("--artifact-dir", type=Path, required=True)
+    qualify_dense.add_argument(
+        "--expected-inspection-report-sha256",
+        required=True,
+    )
+    qualify_dense.add_argument("--output", type=Path)
+    qualify_dense.set_defaults(handler=_cmd_qualify_dense_checkpoint)
 
     probe_model = subparsers.add_parser(
         "probe-model-runtime",

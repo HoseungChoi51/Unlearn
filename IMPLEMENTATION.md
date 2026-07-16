@@ -159,6 +159,15 @@ evidence that a model or research hypothesis has succeeded.
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
   element/byte/component accounting, and conservative dense/MoE evidence.
+- [x] Exact static dense-checkpoint qualification for the supported Qwen2,
+  Qwen3, and Llama contracts. It reconstructs every tensor name and shape,
+  counts unique physical parameters, checks single floating dtype against
+  payload bytes, derives tensor roles and operator bounds, and remains
+  permanently nonauthorizing. A prospective run-spec binder rebinds the exact
+  generic report and tokenizer, enforces GQA groups and exact factorization
+  tuples, reconciles architecture-representable layer/FFN/Qwen3-head/vocabulary
+  pruning, and derives a selected-plus-unselected quantization payload lower
+  bound. Unsupported physical shapes and hybrid exports fail closed.
 - [x] Optional, local-only causal-LM runtime qualification for statically
   accepted flat Safetensors bundles. It rejects custom code, performs one
   bounded non-generative finite-logit forward pass, rechecks artifact
@@ -530,22 +539,25 @@ flag remains false.
 - [ ] Add a production dense-model training backend and derive exact FLOP
   accounting from the executed operator trace. A bounded engineering canary is
   not a campaign run.
-- [ ] Add architecture-specific tensor inventory and shape reconstruction and
-  completed-record binding for opened inspection/runtime reports. Generic
-  runtime loading and exact physical/trainable storage accounting are now
-  implemented; neither proves architecture-specific checkpoint completeness,
-  logical parameter count, or a valid sub-1B export without the remaining
-  source binding.
-- [ ] Add architecture-specific model-aware bounds and GQA compatibility
-  checks for the existing typed structural-index, factorization, and
-  quantization-allocation operator payloads.
+- [x] Add exact architecture-specific tensor inventory, shape reconstruction,
+  model-aware index bounds, GQA compatibility, factorization-tuple binding,
+  representable structural-savings checks, and quantization payload lower
+  bounds for prospective Qwen2/Qwen3/Llama run specs. This is passive plan
+  validation, not completed-artifact evidence.
+- [ ] Extend the exact export contracts to residual-branch and hidden-width
+  structural compression, physical Qwen2/Llama head compression, hybrid
+  architectural-plus-quantization payloads, and quantizer metadata/padding.
+  These cases currently reject rather than accepting unproved savings.
 - [ ] Add a quantization-calibration profile with its own visible-token ledger
   and corpus provenance. The frozen campaign profiles deliberately require
   optimizer adaptation, so pure PTQ/pruning run specs are diagnostic only.
-- [ ] Make the completed-record binder open and validate the model inspection
-  reports rather than only requiring exact source/export report digests. Do the
-  same for hardware and evaluation artifact bindings before using their
-  accounting as research evidence.
+- [ ] Make the completed-record binder reopen and validate the generic model
+  inspection, exact dense qualification, and runtime reports rather than only
+  requiring source/export report digests. Static completeness does not prove
+  runtime parameter-graph equivalence, that training used the pinned bytes, or
+  that an exported sub-1B artifact realizes its prospective accounting. Do the
+  same for hardware and evaluation bindings before using their accounting as
+  research evidence.
 - [ ] Run the backbone feasibility, capability-support, and signed-transfer
   gates before selecting a specialization or compression operator.
 

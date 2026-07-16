@@ -463,6 +463,10 @@ The repository currently has a substantial validation foundation:
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
+- exact static Qwen2/Qwen3/Llama tensor qualification and a passive,
+  nonauthorizing prospective binder for tokenizer identity, model-derived
+  operator bounds, representable pruning counts, and quantization payload
+  lower bounds;
 - reproducible corpus/schedule and dense-SFT engineering canaries;
 - runtime source-closure, materialization, sealed descriptor, handoff, and
   candidate-input-free namespace-canary components;
@@ -494,9 +498,10 @@ The critical path is now:
    validate the complete boundary independently on the target hardware;
 3. finish row-level training admission, license resolution, AST/execution
    verification, decontamination, and utility balancing;
-4. finish architecture-specific model accounting, production training, exact
-   executed-FLOP binding, quantization calibration, and artifact/hardware
-   reopening;
+4. extend the exact static model gate into completed artifact/runtime reopening
+   and exporter-specific structural/hybrid/quantizer-metadata accounting; then
+   finish production training, exact executed-FLOP binding, quantization
+   calibration, and hardware reopening;
 5. complete and human-audit the sealed ID/OOD and bounded-interactive suites,
    freeze parser, rerun, exclusion, and analysis policies, and keep them closed;
 6. only then run the behavioral backbone floor/ceiling gates,

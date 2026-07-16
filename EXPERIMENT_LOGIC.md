@@ -184,6 +184,8 @@ publication or trusted timestamping is still required for preregistration.
 - This document owns the high-level dependency and decision logic.
 - [EXPERIMENT_COMPONENTS.md](EXPERIMENT_COMPONENTS.md) is the component-level
   conceptual guide.
+- [RESEARCH_READINESS.md](RESEARCH_READINESS.md) is the compact two-axis
+  build-state and evidence-state synthesis.
 - [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md) owns detailed
   trust boundaries and evidence plumbing.
 - [IMPLEMENTATION.md](IMPLEMENTATION.md) is the mutable completion ledger.

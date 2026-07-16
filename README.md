@@ -11,6 +11,7 @@ improves.
 - [Research plan](PLAN.md)
 - [Experiment logic and claim dependencies](EXPERIMENT_LOGIC.md)
 - [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
+- [Experiment setup and research readiness](RESEARCH_READINESS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
 - [Portable hardware benchmarking guide](HARDWARE.md)
@@ -203,6 +204,29 @@ never executes candidate code. `cbds inspect-model --artifact-dir MODEL_DIR`
 performs dependency-free, read-only inspection of a flat local Safetensors
 bundle. Any optional report path must be outside `MODEL_DIR` so the report
 cannot become part of its own artifact identity.
+
+For the exact static Qwen2/Qwen3/Llama gate, first retain the generic report
+and its `report_sha256`, then qualify the unchanged artifact against that
+external pin:
+
+```bash
+cbds inspect-model \
+  --artifact-dir MODEL_DIR \
+  --output /tmp/model-inspection.json
+cbds qualify-dense-checkpoint \
+  --artifact-dir MODEL_DIR \
+  --expected-inspection-report-sha256 GENERIC_REPORT_SHA256 \
+  --output /tmp/dense-checkpoint.json
+```
+
+The second report reconstructs the exact supported tensor inventory, physical
+parameter count, dtype/payload consistency, and prospective operator bounds.
+It is static, nonauthorizing evidence: it does not prove runtime graph
+equivalence, a completed export, model quality, or campaign eligibility. The
+library-level dense run-spec binder additionally requires a locally inspected
+tokenizer match and reconciles supported structural, factorization, and
+quantization payloads without opening a training or compression path.
+
 For contracts bound to this inspector, `weight_set_sha256` is the weight
 artifact identity and `bundle_manifest_sha256` is the complete flat-bundle
 identity. `tokenizer.tokenizer_set_sha256` covers the byte-exact recognized
@@ -285,7 +309,8 @@ until a separate calibration profile and token/provenance ledger are frozen.
 Executable-foundation plus authenticated-data/schedule pilot stage.
 Deterministic benchmark
 scaffolding and artifact verification, frozen response extraction, local
-Safetensors inspection, sandbox command construction and read-only runtime
+Safetensors inspection, exact static Qwen2/Qwen3/Llama tensor qualification
+and prospective model-aware run-spec binding, sandbox command construction and read-only runtime
 preflight, prospective run and scored-evaluation specifications,
 completed-record accounting, completed-export evaluation/hardware binding,
 cross-document task-result binding, campaign-wide replicate/evaluation
@@ -568,8 +593,12 @@ The dependency-free local inspector validates Safetensors storage and reports
 conservative dense/MoE evidence, stored tensor elements, component bytes, and
 domain-separated artifact identities. The optional runtime probe adds exact
 physical/trainable storage accounting and one local causal-LM forward
-qualification, but it does not prove checkpoint completeness or model quality.
-Manifest binding does not yet open or validate those inspection and runtime
+qualification. The exact dense qualifier now proves static checkpoint
+completeness for the supported Qwen2, Qwen3, and Llama contracts, and the
+prospective binder applies model-derived index, factorization, pruning-count,
+tokenizer, and quantization lower-bound checks. Neither establishes runtime
+parameter-graph equivalence or model quality. Completed-record manifest
+binding does not yet reopen those inspection, qualification, and runtime
 reports. Supplying `--experiment-manifest` to evaluation-spec validation
 exactly binds the completed export and report digest, but still does not open
 the report or independently verify its claims.
