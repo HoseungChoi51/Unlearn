@@ -2,10 +2,13 @@
 
 This module defines transport only.  It does not open descriptors, construct a
 namespace, execute Bash, verify a workspace, score a task, or authorize a
-synthesized candidate.  A future native supervisor may consume the request
-from standard input, read the reviewed program and fixture pack from the fixed
-descriptor slots below, and write a workspace snapshot to its fixed output
-descriptor.  The request binds those payloads and the complete runtime/policy
+synthesized candidate.  A native supervisor may consume the request from
+standard input, read the reviewed program and fixture identity from the fixed
+descriptor slots below, and write the fixed case's post-run workspace-output
+projection snapshot to its fixed output descriptor.  Mode-unreadable inputs
+are deliberately absent from that archive; the trusted controller separately
+revalidates the complete descriptor-pinned input baseline after cgroup
+quiescence.  The request binds those payloads and the complete runtime/policy
 identity; the result repeats every identity and binds the complete request.
 
 The SHA-256 fields provide content binding, not provenance or external trust.
@@ -23,9 +26,9 @@ import struct
 from typing import Final
 
 
-DEVELOPMENT_CANDIDATE_PROTOCOL_VERSION: Final[int] = 1
-DEVELOPMENT_CANDIDATE_REQUEST_MAGIC: Final[bytes] = b"CBDSBRQ1"
-DEVELOPMENT_CANDIDATE_RESULT_MAGIC: Final[bytes] = b"CBDSBRS1"
+DEVELOPMENT_CANDIDATE_PROTOCOL_VERSION: Final[int] = 2
+DEVELOPMENT_CANDIDATE_REQUEST_MAGIC: Final[bytes] = b"CBDSBRQ2"
+DEVELOPMENT_CANDIDATE_RESULT_MAGIC: Final[bytes] = b"CBDSBRS2"
 DEVELOPMENT_CANDIDATE_REQUEST_BYTES: Final[int] = 384
 DEVELOPMENT_CANDIDATE_RESULT_BYTES: Final[int] = 512
 DEVELOPMENT_CANDIDATE_RESULT_HASHED_PREFIX_BYTES: Final[int] = 480
@@ -36,7 +39,12 @@ DEVELOPMENT_CANDIDATE_RESULT_HASHED_PREFIX_BYTES: Final[int] = 480
 # protocol version fixes these roles; the descriptor integers are not repeated
 # in the request frame.
 DEVELOPMENT_CANDIDATE_PROGRAM_FD: Final[int] = 3
-DEVELOPMENT_CANDIDATE_FIXTURE_BUNDLE_FD: Final[int] = 4
+DEVELOPMENT_CANDIDATE_FIXTURE_IDENTITY_FD: Final[int] = 4
+# Deprecated compatibility alias.  FD 4 carries a fixed fixture-identity
+# record, never a fixture bundle or candidate-controlled payload.
+DEVELOPMENT_CANDIDATE_FIXTURE_BUNDLE_FD: Final[int] = (
+    DEVELOPMENT_CANDIDATE_FIXTURE_IDENTITY_FD
+)
 DEVELOPMENT_CANDIDATE_WORKSPACE_SNAPSHOT_FD: Final[int] = 5
 
 DEVELOPMENT_CANDIDATE_MINIMUM_WALL_TIMEOUT_USEC: Final[int] = 10_000
@@ -85,8 +93,7 @@ DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WALL_USEC: Final[int] = 64
 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_DESCENDANTS_REAPED: Final[int] = 72
 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESERVED_U32: Final[int] = 76
 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_BYTES: Final[int] = 80
-DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESERVED: Final[int] = 88
-DEVELOPMENT_CANDIDATE_RESULT_RESERVED_BYTES: Final[int] = 8
+DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC: Final[int] = 88
 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_REQUEST_SHA256: Final[int] = 96
 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_NONCE: Final[int] = 128
 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_INVOCATION_SHA256: Final[int] = 160
@@ -103,7 +110,6 @@ DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESULT_SHA256: Final[int] = 480
 
 _ZERO_U32: Final[bytes] = b"\0" * 4
 _ZERO_REQUEST_RESERVED: Final[bytes] = b"\0" * DEVELOPMENT_CANDIDATE_REQUEST_RESERVED_BYTES
-_ZERO_RESULT_RESERVED: Final[bytes] = b"\0" * DEVELOPMENT_CANDIDATE_RESULT_RESERVED_BYTES
 _ZERO_SHA256: Final[bytes] = b"\0" * 32
 _EMPTY_SHA256: Final[bytes] = sha256(b"").digest()
 _U32_MAX: Final[int] = (1 << 32) - 1
@@ -147,7 +153,7 @@ class DevelopmentCandidateFlag(IntFlag):
     ALLOWED_TOOLS_VALIDATED = 1 << 5
     POLICY_VALIDATED = 1 << 6
     CHILD_NO_NEW_PRIVS = 1 << 7
-    CHILD_DUMPABLE_DISABLED = 1 << 8
+    CHILD_PREEXEC_DUMPABLE_DISABLED = 1 << 8
     CHILD_SECCOMP_INSTALLED = 1 << 9
     PRIMARY_REAPED = 1 << 10
     ALL_DESCENDANTS_REAPED = 1 << 11
@@ -169,7 +175,7 @@ DEVELOPMENT_CANDIDATE_KNOWN_FLAGS: Final[DevelopmentCandidateFlag] = (
     | DevelopmentCandidateFlag.ALLOWED_TOOLS_VALIDATED
     | DevelopmentCandidateFlag.POLICY_VALIDATED
     | DevelopmentCandidateFlag.CHILD_NO_NEW_PRIVS
-    | DevelopmentCandidateFlag.CHILD_DUMPABLE_DISABLED
+    | DevelopmentCandidateFlag.CHILD_PREEXEC_DUMPABLE_DISABLED
     | DevelopmentCandidateFlag.CHILD_SECCOMP_INSTALLED
     | DevelopmentCandidateFlag.PRIMARY_REAPED
     | DevelopmentCandidateFlag.ALL_DESCENDANTS_REAPED
@@ -186,12 +192,8 @@ DEVELOPMENT_CANDIDATE_SETUP_FLAGS: Final[DevelopmentCandidateFlag] = (
     DevelopmentCandidateFlag.REQUEST_VALIDATED
     | DevelopmentCandidateFlag.PROGRAM_DESCRIPTOR_VALIDATED
     | DevelopmentCandidateFlag.FIXTURE_DESCRIPTOR_VALIDATED
-    | DevelopmentCandidateFlag.RUNTIME_SNAPSHOT_VALIDATED
-    | DevelopmentCandidateFlag.WORKSPACE_BASELINE_VALIDATED
-    | DevelopmentCandidateFlag.ALLOWED_TOOLS_VALIDATED
-    | DevelopmentCandidateFlag.POLICY_VALIDATED
     | DevelopmentCandidateFlag.CHILD_NO_NEW_PRIVS
-    | DevelopmentCandidateFlag.CHILD_DUMPABLE_DISABLED
+    | DevelopmentCandidateFlag.CHILD_PREEXEC_DUMPABLE_DISABLED
     | DevelopmentCandidateFlag.CHILD_SECCOMP_INSTALLED
 )
 
@@ -372,6 +374,7 @@ class DevelopmentCandidateResult:
     wall_usec: int
     descendants_reaped: int
     workspace_snapshot_bytes: int
+    cumulative_cpu_usec: int
     request_sha256: bytes
     nonce: bytes
     invocation_sha256: bytes
@@ -538,11 +541,19 @@ def _validate_result_self(result: DevelopmentCandidateResult) -> None:
         "wait4_sys_cpu_usec",
         "wall_usec",
         "workspace_snapshot_bytes",
+        "cumulative_cpu_usec",
     ):
         _plain_int(getattr(result, name), 0, _U64_MAX, name)
     _plain_int(result.descendants_reaped, 0, _U32_MAX, "descendants_reaped")
     if result.wait4_user_cpu_usec + result.wait4_sys_cpu_usec > _U64_MAX:
         raise DevelopmentCandidateProtocolError("cumulative wait4 CPU overflows u64")
+    wait4_total_cpu_usec = (
+        result.wait4_user_cpu_usec + result.wait4_sys_cpu_usec
+    )
+    if result.cumulative_cpu_usec < wait4_total_cpu_usec:
+        raise DevelopmentCandidateProtocolError(
+            "cumulative_cpu_usec must include cumulative wait4 user and system CPU"
+        )
     _exact_nonce(result.nonce)
     for name in (
         "request_sha256",
@@ -595,6 +606,13 @@ def _validate_result_self(result: DevelopmentCandidateResult) -> None:
             raise DevelopmentCandidateProtocolError(
                 "absent workspace snapshot must use zero bytes and the empty digest"
             )
+    if written and (
+        result.workspace_snapshot_bytes < 16
+        or result.workspace_snapshot_sha256 == _EMPTY_SHA256
+    ):
+        raise DevelopmentCandidateProtocolError(
+            "complete workspace snapshot requires at least 16 bytes and a nonempty digest"
+        )
     for count, digest, label in (
         (result.stdout_observed, result.stdout_sha256, "stdout"),
         (result.stderr_observed, result.stderr_sha256, "stderr"),
@@ -700,9 +718,8 @@ def validate_development_candidate_result_binding(
             "workspace snapshot overflow flag disagrees with cap-plus-one capture"
         )
 
-    cumulative_cpu = result.wait4_user_cpu_usec + result.wait4_sys_cpu_usec
     wall_reached = result.wall_usec >= request.wall_timeout_usec
-    cpu_reached = cumulative_cpu >= request.cpu_time_limit_usec
+    cpu_reached = result.cumulative_cpu_usec >= request.cpu_time_limit_usec
     wall_reported = _has(result.flags, DevelopmentCandidateFlag.WALL_LIMIT_REACHED)
     cpu_reported = _has(result.flags, DevelopmentCandidateFlag.CPU_LIMIT_REACHED)
     non_wall_incident_reported = (
@@ -727,7 +744,7 @@ def validate_development_candidate_result_binding(
         )
     if cpu_reported and not cpu_reached:
         raise DevelopmentCandidateProtocolError(
-            "CPU limit flag requires cumulative wait4 CPU at the ceiling"
+            "CPU limit flag requires cumulative CPU at the ceiling"
         )
     if cpu_reached and not cpu_reported and not non_cpu_incident_reported:
         raise DevelopmentCandidateProtocolError(
@@ -794,7 +811,7 @@ def _encode_result_prefix_unchecked(result: DevelopmentCandidateResult) -> bytes
     prefix = bytearray(DEVELOPMENT_CANDIDATE_RESULT_HASHED_PREFIX_BYTES)
     prefix[:8] = DEVELOPMENT_CANDIDATE_RESULT_MAGIC
     struct.pack_into(
-        "<IIIiIIQQQQQIIQ",
+        "<IIIiIIQQQQQIIQQ",
         prefix,
         DEVELOPMENT_CANDIDATE_RESULT_OFFSET_VERSION,
         DEVELOPMENT_CANDIDATE_PROTOCOL_VERSION,
@@ -811,6 +828,7 @@ def _encode_result_prefix_unchecked(result: DevelopmentCandidateResult) -> bytes
         result.descendants_reaped,
         0,
         result.workspace_snapshot_bytes,
+        result.cumulative_cpu_usec,
     )
     fields = (
         (96, result.request_sha256),
@@ -848,8 +866,6 @@ def parse_development_candidate_result(
         raise DevelopmentCandidateProtocolError("result magic is invalid")
     if frame[76:80] != _ZERO_U32:
         raise DevelopmentCandidateProtocolError("result reserved u32 is not zero")
-    if frame[88:96] != _ZERO_RESULT_RESERVED:
-        raise DevelopmentCandidateProtocolError("result reserved bytes are not zero")
     if frame[480:512] != sha256(frame[:480]).digest():
         raise DevelopmentCandidateProtocolError("result_sha256 is invalid")
     (
@@ -867,7 +883,8 @@ def parse_development_candidate_result(
         descendants_reaped,
         reserved_u32,
         workspace_snapshot_bytes,
-    ) = struct.unpack_from("<IIIiIIQQQQQIIQ", frame, 8)
+        cumulative_cpu_usec,
+    ) = struct.unpack_from("<IIIiIIQQQQQIIQQ", frame, 8)
     if version != DEVELOPMENT_CANDIDATE_PROTOCOL_VERSION or reserved_u32 != 0:
         raise DevelopmentCandidateProtocolError("result version or reserved field is invalid")
     try:
@@ -895,6 +912,7 @@ def parse_development_candidate_result(
         wall_usec=wall_usec,
         descendants_reaped=descendants_reaped,
         workspace_snapshot_bytes=workspace_snapshot_bytes,
+        cumulative_cpu_usec=cumulative_cpu_usec,
         request_sha256=frame[96:128],
         nonce=frame[128:160],
         invocation_sha256=frame[160:192],
@@ -930,7 +948,7 @@ def development_candidate_request_record(
         "wire_bytes": DEVELOPMENT_CANDIDATE_REQUEST_BYTES,
         "descriptor_contract": {
             "program_fd": DEVELOPMENT_CANDIDATE_PROGRAM_FD,
-            "fixture_bundle_fd": DEVELOPMENT_CANDIDATE_FIXTURE_BUNDLE_FD,
+            "fixture_identity_fd": DEVELOPMENT_CANDIDATE_FIXTURE_IDENTITY_FD,
             "workspace_snapshot_fd": DEVELOPMENT_CANDIDATE_WORKSPACE_SNAPSHOT_FD,
         },
         "program_bytes": request.program_bytes,
@@ -991,6 +1009,7 @@ def development_candidate_result_record(
         "wait4_total_cpu_usec": (
             result.wait4_user_cpu_usec + result.wait4_sys_cpu_usec
         ),
+        "cumulative_cpu_usec": result.cumulative_cpu_usec,
         "wall_usec": result.wall_usec,
         "descendants_reaped": result.descendants_reaped,
         "workspace_snapshot_bytes": result.workspace_snapshot_bytes,
@@ -1043,9 +1062,10 @@ def _encode_development_candidate_result_for_tests(
     stderr_observed: int = 0,
     wait4_user_cpu_usec: int = 0,
     wait4_sys_cpu_usec: int = 0,
+    cumulative_cpu_usec: int | None = None,
     wall_usec: int = 1,
     descendants_reaped: int = 1,
-    workspace_snapshot_bytes: int = 0,
+    workspace_snapshot_bytes: int | None = None,
     request_sha256: bytes | None = None,
     nonce: bytes | None = None,
     invocation_sha256: bytes | None = None,
@@ -1057,7 +1077,7 @@ def _encode_development_candidate_result_for_tests(
     policy_sha256: bytes | None = None,
     stdout_sha256: bytes = _EMPTY_SHA256,
     stderr_sha256: bytes = _EMPTY_SHA256,
-    workspace_snapshot_sha256: bytes = _EMPTY_SHA256,
+    workspace_snapshot_sha256: bytes | None = None,
 ) -> bytes:
     """Private test-only encoder; production code only parses result frames."""
 
@@ -1066,6 +1086,26 @@ def _encode_development_candidate_result_for_tests(
             "request must be exact DevelopmentCandidateRequest"
         )
     request.__post_init__()
+    if workspace_snapshot_bytes is not None:
+        resolved_workspace_snapshot_bytes = workspace_snapshot_bytes
+    elif _has(flags, DevelopmentCandidateFlag.WORKSPACE_SNAPSHOT_WRITTEN):
+        resolved_workspace_snapshot_bytes = 16
+    elif _has(flags, DevelopmentCandidateFlag.WORKSPACE_SNAPSHOT_OVERFLOW):
+        resolved_workspace_snapshot_bytes = request.workspace_snapshot_cap_bytes + 1
+    else:
+        resolved_workspace_snapshot_bytes = 0
+    resolved_workspace_snapshot_sha256 = (
+        (
+            _EMPTY_SHA256
+            if resolved_workspace_snapshot_bytes == 0
+            else sha256(
+                b"cbds-development-test-snapshot:"
+                + str(resolved_workspace_snapshot_bytes).encode("ascii")
+            ).digest()
+        )
+        if workspace_snapshot_sha256 is None
+        else workspace_snapshot_sha256
+    )
     values: dict[str, object] = {
         "outcome": outcome,
         "process_status": process_status,
@@ -1076,9 +1116,14 @@ def _encode_development_candidate_result_for_tests(
         "stderr_observed": stderr_observed,
         "wait4_user_cpu_usec": wait4_user_cpu_usec,
         "wait4_sys_cpu_usec": wait4_sys_cpu_usec,
+        "cumulative_cpu_usec": (
+            wait4_user_cpu_usec + wait4_sys_cpu_usec
+            if cumulative_cpu_usec is None
+            else cumulative_cpu_usec
+        ),
         "wall_usec": wall_usec,
         "descendants_reaped": descendants_reaped,
-        "workspace_snapshot_bytes": workspace_snapshot_bytes,
+        "workspace_snapshot_bytes": resolved_workspace_snapshot_bytes,
         "request_sha256": request.request_sha256 if request_sha256 is None else request_sha256,
         "nonce": request.nonce if nonce is None else nonce,
         "invocation_sha256": (
@@ -1108,7 +1153,7 @@ def _encode_development_candidate_result_for_tests(
         "policy_sha256": request.policy_sha256 if policy_sha256 is None else policy_sha256,
         "stdout_sha256": stdout_sha256,
         "stderr_sha256": stderr_sha256,
-        "workspace_snapshot_sha256": workspace_snapshot_sha256,
+        "workspace_snapshot_sha256": resolved_workspace_snapshot_sha256,
     }
     provisional = object.__new__(DevelopmentCandidateResult)
     for name, value in values.items():

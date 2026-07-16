@@ -9,6 +9,7 @@ ability loss as a result unless target performance or deployed footprint
 improves.
 
 - [Research plan](PLAN.md)
+- [Experiment logic and claim dependencies](EXPERIMENT_LOGIC.md)
 - [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
@@ -299,18 +300,25 @@ payload snapshot, fixed-protocol descriptor-handoff canary, and candidate-input-
 fixed-BusyBox namespace-transfer canary are also implemented. A separate
 candidate-input-free native PID1 lifecycle canary covers nine fixed fork,
 timeout, output, CPU, seccomp, and spoof scenarios. One frozen first-catalog
-fixture and reviewed Bash response are now bound into a private, nonexecuting
-integration case, and a separate fixed binary protocol binds the identities
-and limits a future native candidate supervisor must consume and return. None
-is a candidate execution path. Evaluation specs validate and
+fixture and reviewed Bash response are bound into a private, nonexecuting
+integration case. A candidate-input-free canary reconstructs that exact
+program, fixture, pinned runtime, and policy; rebuilds the fixed native PID1
+supervisor; launches the one reviewed case through the rootless
+systemd/Bubblewrap envelope; binds a quiescent post-run output projection; and
+runs the existing fixture verifier. Its launcher uses a 16 MiB per-file limit
+for pinned runtime projection, while native PID1 lowers the Bash child to a
+1 MiB `RLIMIT_FSIZE` before exec. This is a reviewed-program execution path,
+not a synthesized-candidate API. Runtime-data closure, external trust, general
+Bash seccomp and exact-tool enforcement, scoring, model selection, and claim
+authority remain false. Evaluation specs validate and
 hash prospective contracts; they do not open benchmark assets or execute
 candidates. The development fixtures are test assets, not sealed evaluation
 data. A bounded public-development namespace/cgroup preflight and
-catalog-bound candidate launch-plan builder are implemented, but candidate
-execution remains unconditionally blocked until the externally trusted Bash
-runtime closure and candidate supervisor integrate a Bash-specific seccomp
-policy, cumulative CPU enforcement, workspace quiescence, exact-tool policy,
-and scored outcome binding.
+catalog-bound candidate launch-plan builder are implemented, but execution of
+synthesized candidates remains blocked until the externally trusted Bash
+runtime closure and general supervisor integrate a Bash-specific allow policy
+and exact-tool enforcement while preserving cumulative CPU, workspace
+quiescence, and scored-outcome binding for arbitrary inputs.
 Complete semantic-family coverage, claim-eligible curated data, research
 training runs, and research results are not yet present. A 2M-visible-token
 Qwen3 dense-SFT canary has completed solely to qualify the training/export
@@ -416,16 +424,37 @@ objects; its public projection contains answer-free audit metadata. It does not
 execute the program, verify a post-execution workspace, or authorize candidate
 execution, scoring, model selection, or a claim.
 
-`src/cbds/development_candidate_protocol.py` separately fixes the binary
-transport contract for that future canary: a 384-byte request binds the nonce,
+`src/cbds/development_reviewed_bash_canary.py` consumes only that fixed case;
+its public execution entry point accepts only an optional nonce and no caller-
+selected program, command, fixture, runtime, or verifier. The controller
+rebuilds and pins the checked-in native supervisor, transfers sealed program
+and runtime payloads through systemd service descriptors, reconstructs a
+read-only root in Bubblewrap, and runs the reviewed Bash program under native
+PID1 supervision. After the transient cgroup is inactive and empty, it seals
+and parses the supervisor's bounded workspace projection, revalidates the
+descriptor-pinned input baseline, compares the output-side tree, and invokes
+the trusted fixture verifier. The resulting evidence is permanently
+nonauthorizing and does not represent a model candidate or a score.
+
+`src/cbds/development_candidate_protocol.py` fixes the binary transport
+contract used by that reviewed canary: a 384-byte request binds the nonce,
 invocation, program, fixture definition, initial workspace, runtime snapshot,
 allowed tools, policy, and resource ceilings; the protocol version separately
-fixes the descriptor roles. A
+fixes descriptors 3, 4, and 5 as the program, fixture identity, and workspace
+snapshot sink. A
 512-byte result repeats those identities and binds process status, classified
-outcome, cap-plus-one stream observations, cumulative `wait4` CPU accounting,
-descendant reaping, wall time, and a workspace snapshot. Strict parsing and
-mutation tests cover the request/result relationship, but the module has no
-launch API and every canonical authority field is permanently false.
+outcome, cap-plus-one stream observations, separate cumulative `wait4`
+user/system totals, and a cumulative CPU maximum that also incorporates live
+namespace-tree observations used for enforcement, plus descendant reaping,
+wall time, and an output-side workspace snapshot. Strict
+parsing and mutation tests cover the request/result relationship. The protocol
+module itself has no launch API, and every canonical authority field is
+permanently false.
+
+The snapshot audit projection is only digest-bearing and raw-payload-byte-
+free. It still exposes paths, modes, sizes, and payload digests, so it is not
+answer-confidential and must not be reused across a sealed-evaluation boundary
+or returned as benchmark feedback.
 
 `src/cbds/development_runtime_bundle.py` builds a source-closure manifest for
 explicitly named ELF executables. It records the `PT_INTERP`/`DT_NEEDED`

@@ -253,16 +253,35 @@ hold a scored workspace quiescent. Those distinctions keep every general
 execution and claim-authority flag false while making the next implementation
 step smaller and testable.
 
-The next seam is also fixed without opening it. One private development case
-now binds an exhaustively admitted first-catalog fixture to a source-reviewed
-Bash response, but stops after authenticated materialization. A separate exact
-binary protocol specifies how a future native canary must bind the invocation,
-program, fixture definition, initial workspace, runtime, tool policy, resource
-limits, process outcome, captured-stream digests, cumulative CPU, descendant
-reaping, and post-run workspace snapshot. This is valuable because controller
-and native implementations can be mutation-tested against one byte-level
-contract. Neither module launches Bash or asserts that the requested controls
-were enforced; every authority projection remains permanently false.
+The next seam connects exactly one reviewed case without opening a candidate
+API. A private development case binds an exhaustively admitted first-catalog
+fixture to a source-reviewed Bash response. Its candidate-input-free controller
+reconstructs that case, a host-pinned Bash/find/sort/mkdir runtime, and one
+fixed policy; rebuilds the checked-in native supervisor; and launches the
+reviewed program through the same systemd/Bubblewrap shape. The exact binary
+protocol binds the invocation, program, fixture definition, initial workspace,
+runtime, tool policy, resource limits, process outcome, captured-stream
+digests, separate `wait4` totals, cumulative CPU including live namespace-tree
+observations, descendant reaping, and a bounded post-run workspace projection.
+
+Native PID1 omits the top-level `input` subtree from that projection because
+the fixture deliberately contains unreadable inputs. After it has killed and
+reaped descendants and the controller has locally verified an inactive, empty
+cgroup through the pinned systemctl observation, it seals and parses the
+snapshot, independently revalidates the descriptor-pinned input baseline,
+compares the output-side tree, and invokes the existing property verifier. The
+canary therefore tests one complete fixed-case integration seam. Its public
+execution entry point accepts only an optional nonce and no caller-selected
+program, command, fixture, runtime, or verifier; it permanently denies
+arbitrary-candidate, scoring, model-selection, and claim authority. The public
+snapshot projection omits
+raw payload bytes but includes paths,
+modes, sizes, and payload digests. It is not answer-confidential and must not
+cross a sealed-evaluation boundary or become benchmark feedback.
+
+Runtime-data/`dlopen` closure, external
+trust, a general synthesized-Bash seccomp policy, and exact-tool enforcement
+also remain unresolved.
 
 ## 8. Dense model inspection and sub-1B accounting
 
@@ -450,27 +469,29 @@ The repository currently has a substantial validation foundation:
 - a candidate-input-free native PID1 lifecycle canary whose fixed scenarios
   exercise descendant cleanup, timeout, output classification, CPU accounting,
   child seccomp, and result framing under the development cgroup envelope;
-- one catalog-bound reviewed Bash fixture case and a separate request/result
-  protocol for the next nonauthorizing candidate-boundary canary.
+- one catalog-bound reviewed Bash fixture and a candidate-input-free execution
+  canary that binds its fixed native result, quiescent output projection,
+  stable input baseline, and trusted verifier without opening a general
+  candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
 is method-development data, the two staged families are not in its frozen
 identity, the large generated suite remains semantic scaffolding, sealed assets
 are unfinished, raw training rows are not admitted, the production supervisor
-has not been promoted from fixed lifecycle scenarios to an externally trusted
-candidate boundary, and no backbone has passed the preregistered feasibility
-and capability gates. All relevant authority flags remain false.
+has not been promoted from fixed reviewed cases to an externally trusted
+general-candidate boundary, and no backbone has passed the preregistered
+feasibility and capability gates. All relevant authority flags remain false.
 
 The critical path is now:
 
 1. independently review and integrate the two staged families, then implement
    the remaining 260 method-development specifications with concrete fixtures,
    independent verifiers, and mutation coverage;
-2. complete the Bash runtime-data/`dlopen` closure and promote the native
-   lifecycle design into an externally reviewed candidate supervisor with a
-   Bash-specific child seccomp policy, cumulative CPU enforcement, workspace
-   quiescence, exact-tool enforcement, and scored-result binding; then validate
-   the complete boundary independently on the target hardware;
+2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed
+   integration, and promote it to a general-candidate supervisor with a
+   Bash-specific allow policy and exact-tool enforcement while preserving
+   cumulative CPU, workspace quiescence, and result-binding guarantees; then
+   validate the complete boundary independently on the target hardware;
 3. finish row-level training admission, license resolution, AST/execution
    verification, decontamination, and utility balancing;
 4. finish architecture-specific model accounting, production training, exact

@@ -220,12 +220,37 @@ evidence that a model or research hypothesis has succeeded.
   policy, nonce, and resource ceilings; the protocol version separately fixes
   descriptor roles. The result repeats
   every identity and binds classified process outcome, cap-plus-one stream
-  observations and digests, cumulative `wait4` CPU, wall time, descendants
-  reaped, and the post-run workspace snapshot. Strict parsing, cross-record
+  observations and digests, separate cumulative `wait4` user/system totals,
+  the enforced cumulative maximum including live namespace-tree CPU, wall
+  time, descendants reaped, and the post-run workspace snapshot. Strict parsing, cross-record
   binding, malformed-frame, mutation, and normal/optimized-mode tests are
   complete. This is transport only: it opens no descriptor, constructs no
   namespace, executes no program, verifies no workspace, and permanently
   denies candidate, scoring, model-selection, and claim authority.
+- [x] Candidate-input-free execution of the one fixed reviewed Bash case. The
+  controller reconstructs the frozen invocation and descriptor-pinned
+  workspace, materializes a host-pinned Bash/find/sort/mkdir ELF closure,
+  rebuilds and seals the checked-in static native supervisor, and transfers
+  the exact program, fixture identity, writable snapshot sink, workspace, and
+  runtime payloads through systemd `OpenFile=` descriptors into a fresh
+  rootless Bubblewrap namespace. The launcher receives a 16 MiB per-file
+  ceiling so Bubblewrap can materialize the largest pinned runtime payload;
+  native PID1 lowers the Bash child to a 1 MiB `RLIMIT_FSIZE` before exec.
+  Native PID1 applies the fixed child policy,
+  bounds and hashes both streams, enforces cumulative CPU and wall limits,
+  kills and reaps descendants, and serializes only the workspace root and
+  paths outside top-level `input`. After the transient cgroup is inactive and
+  empty, the controller seals and binds that snapshot, independently
+  revalidates the omitted descriptor-pinned input tree, compares the
+  output-side projection, and runs the existing property verifier. The public
+  execution entry point accepts only an optional nonce and no caller-selected
+  program, command, fixture, runtime, or verifier. It executes one reviewed
+  program only; arbitrary candidates, runtime-data and
+  `dlopen` closure, external trust, a general Bash seccomp/exact-tool policy,
+  scoring, model selection, and claims remain false.
+  Its public snapshot record omits raw payload bytes but retains paths, modes,
+  sizes, and payload digests. It is not answer-confidential or eligible for
+  reuse across a sealed boundary or as benchmark feedback.
 - [x] Public-development systemd-user/bubblewrap namespace and cgroup canary
   inspection plus a content-safe candidate launch-plan builder that accepts
   only an exact validated `DevelopmentInvocation`. The execution entry point
@@ -349,8 +374,9 @@ cumulative-suite SHA-256
 and additive-catalog SHA-256
 `e2ad6a3124491bc25410d40278400aeac9cd8791a9f08a530c823d5f14c09e18`.
 The cumulative 200 specifications and 1,000 fixtures remain public,
-development-only, and nonauthorizing; the remaining 300 specifications and
-the trusted sandbox/supervisor are still required before candidate execution.
+development-only, and nonauthorizing; the remaining 300 specifications and a
+separately reviewed general-candidate sandbox/supervisor are still required
+before synthesized-candidate execution.
 The current V1 invocation protocol remains intentionally bound to the first
 tranche only.
 
@@ -451,20 +477,18 @@ flag remains false.
 - [ ] Pin and audit the container image and utility versions; verify runtime
   resource enforcement on the actual hardware.
 - [ ] Complete and pin the Bash runtime-data and `dlopen` closure, externally
-  trust the required launcher/runtime executables, independently validate the
-  namespace observations, and extend the fixed BusyBox
-  `OpenFile=`/`--ro-bind-data` request to the reviewed candidate runtime without
-  reopening mutable source paths. The candidate-input-free namespace canary is
-  parser/transport-request development evidence only and does not authorize
-  launch.
-- [ ] Promote the fixed native lifecycle design into an externally reviewed
-  and trusted candidate supervisor: accept only the authenticated invocation,
-  apply a Bash/runtime-specific child seccomp policy, enforce a cumulative CPU
-  ceiling, hold the workspace quiescent through verification, enforce the
-  exact-tool policy, and bind every classified outcome into the scored result.
-  The fixed native canary now exercises PID1, reaping, timeout and cap-plus-one
-  overflow behavior under systemd quotas, but it has no candidate API and does
-  not establish candidate `resource_limit` outcomes.
+  trust the required launcher/runtime executables, and independently validate
+  the namespace, descriptor handoff, supervisor, and post-quiescence workspace
+  observations. The fixed reviewed case now integrates those seams locally,
+  but local content hashes and self-observation are not a production trust
+  anchor.
+- [ ] Promote the fixed reviewed-program boundary into an externally reviewed
+  and trusted general-candidate supervisor: accept only an authenticated
+  arbitrary invocation, apply a Bash/runtime-specific allow policy, preserve
+  cumulative CPU and quiescence guarantees for all outcomes, enforce the exact
+  tool policy, and bind every classified outcome into a scored result. The
+  current controller has no candidate input API and establishes resource and
+  verification behavior only for one source-reviewed program.
 - [ ] Extend verifier mutation tests beyond the ten implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.

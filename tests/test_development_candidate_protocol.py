@@ -19,6 +19,7 @@ import cbds.development_candidate_protocol as protocol  # noqa: E402
 from cbds.development_candidate_protocol import (  # noqa: E402
     DEVELOPMENT_CANDIDATE_CLEANUP_FLAGS,
     DEVELOPMENT_CANDIDATE_FIXTURE_BUNDLE_FD,
+    DEVELOPMENT_CANDIDATE_FIXTURE_IDENTITY_FD,
     DEVELOPMENT_CANDIDATE_KNOWN_FLAGS,
     DEVELOPMENT_CANDIDATE_MAXIMUM_CPU_TIME_USEC,
     DEVELOPMENT_CANDIDATE_MAXIMUM_PROGRAM_BYTES,
@@ -57,6 +58,7 @@ from cbds.development_candidate_protocol import (  # noqa: E402
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_ALLOWED_TOOLS_SHA256,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CHILD_EXIT_CODE,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CHILD_SIGNAL,
+    DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_DESCENDANTS_REAPED,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_FIXTURE_DEFINITION_SHA256,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_FLAGS,
@@ -68,7 +70,6 @@ from cbds.development_candidate_protocol import (  # noqa: E402
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_PROCESS_STATUS,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_PROGRAM_SHA256,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_REQUEST_SHA256,
-    DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESERVED,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESERVED_U32,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESULT_SHA256,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RUNTIME_SNAPSHOT_SHA256,
@@ -83,7 +84,6 @@ from cbds.development_candidate_protocol import (  # noqa: E402
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_BASELINE_SHA256,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_BYTES,
     DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_SHA256,
-    DEVELOPMENT_CANDIDATE_RESULT_RESERVED_BYTES,
     DEVELOPMENT_CANDIDATE_SETUP_FLAGS,
     DEVELOPMENT_CANDIDATE_WORKSPACE_SNAPSHOT_FD,
     DevelopmentCandidateFlag,
@@ -116,7 +116,7 @@ def make_request(**changes: object) -> DevelopmentCandidateRequest:
         "cpu_time_limit_usec": 500_000,
         "stdout_cap_bytes": 8,
         "stderr_cap_bytes": 9,
-        "workspace_snapshot_cap_bytes": 10,
+        "workspace_snapshot_cap_bytes": 64,
         "nonce": bytes(range(1, 33)),
         "invocation_sha256": digest("invocation"),
         "program_sha256": digest("program"),
@@ -170,6 +170,8 @@ class CandidateRequestProtocolTests(unittest.TestCase):
         frame = encode_development_candidate_request(request)
 
         self.assertEqual(len(frame), DEVELOPMENT_CANDIDATE_REQUEST_BYTES)
+        self.assertEqual(DEVELOPMENT_CANDIDATE_PROTOCOL_VERSION, 2)
+        self.assertEqual(DEVELOPMENT_CANDIDATE_REQUEST_MAGIC, b"CBDSBRQ2")
         self.assertEqual(frame[:8], DEVELOPMENT_CANDIDATE_REQUEST_MAGIC)
         self.assertEqual(DEVELOPMENT_CANDIDATE_REQUEST_OFFSET_MAGIC, 0)
         self.assertEqual(DEVELOPMENT_CANDIDATE_REQUEST_OFFSET_VERSION, 8)
@@ -216,10 +218,14 @@ class CandidateRequestProtocolTests(unittest.TestCase):
         self.assertEqual(
             (
                 DEVELOPMENT_CANDIDATE_PROGRAM_FD,
-                DEVELOPMENT_CANDIDATE_FIXTURE_BUNDLE_FD,
+                DEVELOPMENT_CANDIDATE_FIXTURE_IDENTITY_FD,
                 DEVELOPMENT_CANDIDATE_WORKSPACE_SNAPSHOT_FD,
             ),
             (3, 4, 5),
+        )
+        self.assertEqual(
+            DEVELOPMENT_CANDIDATE_FIXTURE_BUNDLE_FD,
+            DEVELOPMENT_CANDIDATE_FIXTURE_IDENTITY_FD,
         )
 
     def test_every_request_numeric_offset_is_exported_and_aligned(self) -> None:
@@ -318,7 +324,7 @@ class CandidateRequestProtocolTests(unittest.TestCase):
         changed[0] ^= 1
         variants.append(bytes(changed))
         changed = bytearray(frame)
-        struct.pack_into("<I", changed, 8, 2)
+        struct.pack_into("<I", changed, 8, 1)
         variants.append(bytes(changed))
         for offset in (12, 320, 383):
             changed = bytearray(frame)
@@ -349,11 +355,12 @@ class CandidateRequestProtocolTests(unittest.TestCase):
         self.assertEqual(request.canonical_record_bytes(), payload)
         self.assertEqual(json.loads(payload), record)
         self.assertNotIn(b" ", payload)
-        self.assertEqual(record["wire_magic"], "CBDSBRQ1")
+        self.assertEqual(record["wire_magic"], "CBDSBRQ2")
+        self.assertEqual(record["protocol_version"], 2)
         self.assertEqual(record["request_sha256"], request.request_sha256.hex())
         self.assertEqual(
             record["descriptor_contract"],
-            {"program_fd": 3, "fixture_bundle_fd": 4, "workspace_snapshot_fd": 5},
+            {"program_fd": 3, "fixture_identity_fd": 4, "workspace_snapshot_fd": 5},
         )
         for field in (
             "candidate_execution_authorized",
@@ -373,13 +380,14 @@ class CandidateResultProtocolTests(unittest.TestCase):
     def test_result_layout_offsets_hashes_and_repeated_identities_are_exact(self) -> None:
         frame = self.frame
         self.assertEqual(len(frame), DEVELOPMENT_CANDIDATE_RESULT_BYTES)
+        self.assertEqual(DEVELOPMENT_CANDIDATE_RESULT_MAGIC, b"CBDSBRS2")
         self.assertEqual(frame[:8], DEVELOPMENT_CANDIDATE_RESULT_MAGIC)
         self.assertEqual(DEVELOPMENT_CANDIDATE_RESULT_OFFSET_MAGIC, 0)
         self.assertEqual(DEVELOPMENT_CANDIDATE_RESULT_OFFSET_VERSION, 8)
         self.assertEqual(
-            struct.unpack_from("<IIIiIIQQQQQIIQ", frame, 8),
+            struct.unpack_from("<IIIiIIQQQQQIIQQ", frame, 8),
             (
-                1,
+                2,
                 1,
                 1,
                 0,
@@ -396,11 +404,12 @@ class CandidateResultProtocolTests(unittest.TestCase):
                 1,
                 1,
                 0,
+                16,
                 0,
             ),
         )
         self.assertEqual(frame[76:80], b"\0" * 4)
-        self.assertEqual(frame[88:96], b"\0" * DEVELOPMENT_CANDIDATE_RESULT_RESERVED_BYTES)
+        self.assertEqual(struct.unpack_from("<Q", frame, 88), (0,))
         expected = (
             (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_REQUEST_SHA256, self.request.request_sha256),
             (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_NONCE, self.request.nonce),
@@ -430,7 +439,7 @@ class CandidateResultProtocolTests(unittest.TestCase):
             (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_STDERR_SHA256, EMPTY_SHA256),
             (
                 DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_SHA256,
-                EMPTY_SHA256,
+                sha256(b"cbds-development-test-snapshot:16").digest(),
             ),
         )
         for offset, payload in expected:
@@ -456,7 +465,7 @@ class CandidateResultProtocolTests(unittest.TestCase):
             (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_DESCENDANTS_REAPED, 72),
             (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESERVED_U32, 76),
             (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_BYTES, 80),
-            (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_RESERVED, 88),
+            (DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC, 88),
         )
         for actual, required in expected:
             with self.subTest(required=required):
@@ -575,10 +584,8 @@ class CandidateResultProtocolTests(unittest.TestCase):
             self.frame[:-1],
             self.frame + b"x",
             mutate_result_bytes(self.frame, 0, b"BADMAGIC"),
-            mutate_result_u32(self.frame, 8, 2),
+            mutate_result_u32(self.frame, 8, 1),
             mutate_result_u32(self.frame, 76, 1),
-            mutate_result_bytes(self.frame, 88, b"x"),
-            mutate_result_bytes(self.frame, 95, b"x"),
         )
         for frame in variants:
             with self.subTest(length=len(frame)):
@@ -686,7 +693,7 @@ class CandidateResultProtocolTests(unittest.TestCase):
         parsed = parse_development_candidate_result(overflow, request=self.request)
         self.assertEqual(parsed.stdout_observed, self.request.stdout_cap_bytes + 1)
 
-    def test_wall_and_cumulative_wait4_cpu_flags_require_real_crossings(self) -> None:
+    def test_wall_and_explicit_cumulative_cpu_flags_require_real_crossings(self) -> None:
         variants = (
             mutate_result_u64(
                 self.frame,
@@ -695,7 +702,7 @@ class CandidateResultProtocolTests(unittest.TestCase):
             ),
             mutate_result_u64(
                 self.frame,
-                DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WAIT4_USER_CPU_USEC,
+                DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC,
                 self.request.cpu_time_limit_usec,
             ),
         )
@@ -716,14 +723,55 @@ class CandidateResultProtocolTests(unittest.TestCase):
                 | DevelopmentCandidateFlag.WORKSPACE_SNAPSHOT_WRITTEN
                 | DevelopmentCandidateFlag.CPU_LIMIT_REACHED
             ),
-            wait4_user_cpu_usec=self.request.cpu_time_limit_usec - 1,
+            wait4_user_cpu_usec=7,
             wait4_sys_cpu_usec=1,
+            cumulative_cpu_usec=self.request.cpu_time_limit_usec,
         )
         parsed = parse_development_candidate_result(cpu, request=self.request)
-        self.assertEqual(
-            parsed.wait4_user_cpu_usec + parsed.wait4_sys_cpu_usec,
-            self.request.cpu_time_limit_usec,
+        self.assertEqual(parsed.wait4_user_cpu_usec + parsed.wait4_sys_cpu_usec, 8)
+        self.assertEqual(parsed.cumulative_cpu_usec, self.request.cpu_time_limit_usec)
+
+    def test_cumulative_cpu_must_dominate_wait4_and_controls_cpu_outcome(self) -> None:
+        valid = make_result_frame(
+            self.request,
+            wait4_user_cpu_usec=3,
+            wait4_sys_cpu_usec=4,
+            cumulative_cpu_usec=8,
         )
+        parsed = parse_development_candidate_result(valid, request=self.request)
+        self.assertEqual(parsed.cumulative_cpu_usec, 8)
+
+        below_wait4 = mutate_result_u64(
+            valid,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC,
+            6,
+        )
+        with self.assertRaises(DevelopmentCandidateProtocolError):
+            parse_development_candidate_result(below_wait4, request=self.request)
+
+        valid_cpu_limit = make_result_frame(
+            self.request,
+            outcome=DevelopmentCandidateOutcome.CPU_LIMIT,
+            process_status=DevelopmentCandidateProcessStatus.SIGNALED,
+            child_exit_code=-1,
+            child_signal=9,
+            flags=(
+                DEVELOPMENT_CANDIDATE_SETUP_FLAGS
+                | DEVELOPMENT_CANDIDATE_CLEANUP_FLAGS
+                | DevelopmentCandidateFlag.WORKSPACE_SNAPSHOT_WRITTEN
+                | DevelopmentCandidateFlag.CPU_LIMIT_REACHED
+            ),
+            cumulative_cpu_usec=self.request.cpu_time_limit_usec,
+        )
+        flagged_below_threshold = mutate_result_u64(
+            valid_cpu_limit,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC,
+            self.request.cpu_time_limit_usec - 1,
+        )
+        with self.assertRaises(DevelopmentCandidateProtocolError):
+            parse_development_candidate_result(
+                flagged_below_threshold, request=self.request
+            )
 
     def test_multiple_resource_incidents_use_fixed_outcome_precedence(self) -> None:
         valid = make_result_frame(
@@ -779,6 +827,22 @@ class CandidateResultProtocolTests(unittest.TestCase):
         )
         with self.assertRaises(DevelopmentCandidateProtocolError):
             parse_development_candidate_result(relabeled, request=self.request)
+
+        stdout_and_cpu = mutate_result_u64(
+            valid,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_CUMULATIVE_CPU_USEC,
+            self.request.cpu_time_limit_usec,
+        )
+        stdout_and_cpu = mutate_result_u32(
+            stdout_and_cpu,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_FLAGS,
+            struct.unpack_from("<I", stdout_and_cpu, 28)[0]
+            | int(DevelopmentCandidateFlag.CPU_LIMIT_REACHED),
+        )
+        parsed = parse_development_candidate_result(
+            stdout_and_cpu, request=self.request
+        )
+        self.assertIs(parsed.outcome, DevelopmentCandidateOutcome.STDOUT_OVERFLOW)
 
         workspace_and_stdout = make_result_frame(
             self.request,
@@ -852,18 +916,16 @@ class CandidateResultProtocolTests(unittest.TestCase):
                 with self.assertRaises(DevelopmentCandidateProtocolError):
                     parse_development_candidate_result(frame, request=self.request)
 
-    def test_nonerror_outcomes_require_all_setup_cleanup_and_workspace_evidence(self) -> None:
+    def test_nonerror_outcomes_require_native_setup_cleanup_and_workspace_evidence(self) -> None:
         original_flags = struct.unpack_from("<I", self.frame, 28)[0]
         for missing in (
+            DevelopmentCandidateFlag.REQUEST_VALIDATED,
             DevelopmentCandidateFlag.PROGRAM_DESCRIPTOR_VALIDATED,
             DevelopmentCandidateFlag.FIXTURE_DESCRIPTOR_VALIDATED,
-            DevelopmentCandidateFlag.RUNTIME_SNAPSHOT_VALIDATED,
-            DevelopmentCandidateFlag.WORKSPACE_BASELINE_VALIDATED,
-            DevelopmentCandidateFlag.ALLOWED_TOOLS_VALIDATED,
-            DevelopmentCandidateFlag.POLICY_VALIDATED,
             DevelopmentCandidateFlag.CHILD_NO_NEW_PRIVS,
-            DevelopmentCandidateFlag.CHILD_DUMPABLE_DISABLED,
+            DevelopmentCandidateFlag.CHILD_PREEXEC_DUMPABLE_DISABLED,
             DevelopmentCandidateFlag.CHILD_SECCOMP_INSTALLED,
+            DevelopmentCandidateFlag.PRIMARY_REAPED,
             DevelopmentCandidateFlag.ALL_DESCENDANTS_REAPED,
             DevelopmentCandidateFlag.SOLE_PID1,
             DevelopmentCandidateFlag.WORKSPACE_SNAPSHOT_WRITTEN,
@@ -876,6 +938,32 @@ class CandidateResultProtocolTests(unittest.TestCase):
             with self.subTest(missing=missing):
                 with self.assertRaises(DevelopmentCandidateProtocolError):
                     parse_development_candidate_result(frame, request=self.request)
+
+    def test_controller_identity_flags_are_known_but_not_native_mandatory(self) -> None:
+        self.assertEqual(
+            DEVELOPMENT_CANDIDATE_SETUP_FLAGS,
+            DevelopmentCandidateFlag.REQUEST_VALIDATED
+            | DevelopmentCandidateFlag.PROGRAM_DESCRIPTOR_VALIDATED
+            | DevelopmentCandidateFlag.FIXTURE_DESCRIPTOR_VALIDATED
+            | DevelopmentCandidateFlag.CHILD_NO_NEW_PRIVS
+            | DevelopmentCandidateFlag.CHILD_PREEXEC_DUMPABLE_DISABLED
+            | DevelopmentCandidateFlag.CHILD_SECCOMP_INSTALLED,
+        )
+        optional = (
+            DevelopmentCandidateFlag.RUNTIME_SNAPSHOT_VALIDATED,
+            DevelopmentCandidateFlag.WORKSPACE_BASELINE_VALIDATED,
+            DevelopmentCandidateFlag.ALLOWED_TOOLS_VALIDATED,
+            DevelopmentCandidateFlag.POLICY_VALIDATED,
+        )
+        parsed = parse_development_candidate_result(self.frame, request=self.request)
+        for flag in optional:
+            self.assertFalse(parsed.flags & flag)
+            frame = make_result_frame(self.request, flags=parsed.flags | flag)
+            with self.subTest(flag=flag):
+                observed = parse_development_candidate_result(
+                    frame, request=self.request
+                )
+                self.assertTrue(observed.flags & flag)
 
     def test_workspace_snapshot_written_overflow_and_absent_shapes_are_distinct(self) -> None:
         overflow = make_result_frame(
@@ -906,16 +994,49 @@ class CandidateResultProtocolTests(unittest.TestCase):
             with self.assertRaises(DevelopmentCandidateProtocolError):
                 parse_development_candidate_result(frame, request=self.request)
 
-    def test_zero_byte_payloads_require_empty_sha256(self) -> None:
+    def test_complete_workspace_snapshot_has_minimum_framing_and_nonempty_digest(self) -> None:
+        parsed = parse_development_candidate_result(self.frame, request=self.request)
+        self.assertEqual(parsed.workspace_snapshot_bytes, 16)
+        self.assertNotEqual(parsed.workspace_snapshot_sha256, EMPTY_SHA256)
+
+        too_short = mutate_result_u64(
+            self.frame,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_BYTES,
+            15,
+        )
+        empty_digest = mutate_result_bytes(
+            self.frame,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_SHA256,
+            EMPTY_SHA256,
+        )
+        cap_plus_one_without_overflow = mutate_result_u64(
+            self.frame,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_BYTES,
+            self.request.workspace_snapshot_cap_bytes + 1,
+        )
+        for frame in (too_short, empty_digest, cap_plus_one_without_overflow):
+            with self.subTest(snapshot_bytes=struct.unpack_from("<Q", frame, 80)[0]):
+                with self.assertRaises(DevelopmentCandidateProtocolError):
+                    parse_development_candidate_result(frame, request=self.request)
+
+    def test_zero_byte_streams_and_complete_snapshot_have_exact_digest_shapes(self) -> None:
         for offset in (
             DEVELOPMENT_CANDIDATE_RESULT_OFFSET_STDOUT_SHA256,
             DEVELOPMENT_CANDIDATE_RESULT_OFFSET_STDERR_SHA256,
-            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_SHA256,
         ):
             frame = mutate_result_bytes(self.frame, offset, digest(f"wrong-{offset}"))
             with self.subTest(offset=offset):
                 with self.assertRaises(DevelopmentCandidateProtocolError):
                     parse_development_candidate_result(frame, request=self.request)
+        empty_snapshot_digest = mutate_result_bytes(
+            self.frame,
+            DEVELOPMENT_CANDIDATE_RESULT_OFFSET_WORKSPACE_SNAPSHOT_SHA256,
+            EMPTY_SHA256,
+        )
+        with self.assertRaises(DevelopmentCandidateProtocolError):
+            parse_development_candidate_result(
+                empty_snapshot_digest, request=self.request
+            )
 
     def test_result_canonical_record_is_complete_and_permanently_nonauthorizing(self) -> None:
         result = parse_development_candidate_result(self.frame, request=self.request)
@@ -926,8 +1047,12 @@ class CandidateResultProtocolTests(unittest.TestCase):
         self.assertEqual(result.canonical_record_bytes(), payload)
         self.assertEqual(json.loads(payload), record)
         self.assertNotIn(b" ", payload)
-        self.assertEqual(record["wire_magic"], "CBDSBRS1")
+        self.assertEqual(record["wire_magic"], "CBDSBRS2")
+        self.assertEqual(record["protocol_version"], 2)
         self.assertEqual(record["wait4_total_cpu_usec"], 0)
+        self.assertEqual(record["cumulative_cpu_usec"], 0)
+        self.assertIn("child_preexec_dumpable_disabled", record["flags"])
+        self.assertNotIn("child_dumpable_disabled", record["flags"])
         self.assertEqual(record["request_sha256"], self.request.request_sha256.hex())
         for field in (
             "candidate_execution_authorized",
@@ -945,6 +1070,7 @@ class CandidateResultProtocolTests(unittest.TestCase):
             {"process_status": 1},
             {"flags": int(result.flags)},
             {"stdout_observed": True},
+            {"cumulative_cpu_usec": True},
             {"child_signal": False},
             {"request_sha256": bytearray(result.request_sha256)},
             {"nonce": b"\0" * 32},
