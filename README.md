@@ -55,6 +55,7 @@ improves.
 - [Nested JSON migration component guide](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md)
 - [Dependency-DAG execution-plan component guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md)
 - [Process-lifecycle delta component guide](PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md)
+- [Prospective symlink tree-reconciliation design](SYMLINK_TREE_RECONCILE_DESIGN.md)
 - [Current executable method-development coverage lock](configs/executable-method-development-coverage-v8.json)
 - [Coverage v7-to-v8 migration evidence](configs/executable-method-development-coverage-v7-to-v8-migration.json)
 - [Historical executable coverage v7 record](configs/executable-method-development-coverage-v7.json)

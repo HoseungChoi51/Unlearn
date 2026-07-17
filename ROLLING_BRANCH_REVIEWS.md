@@ -109,3 +109,62 @@ serialized whenever contention could alter the endpoint.
 - Next authorized action: design Gate 1 and review that design before
   implementing `symlink-aware-tree-reconcile`. Gate 1 is not implemented by
   this decision.
+
+## Review: `infra-016a-symlink-lock-audit`
+
+- Status: `complete`.
+- Scope: read-only audit of the sole planned coverage-v8 family before any
+  task, fixture, or publication implementation.
+- Predecessor: Git commit `0d0fbf4` and its `coverage v8` artifact.
+- Question: is the planned `symlink-aware-tree-reconcile` record sufficiently
+  specified and tool-complete to implement unchanged?
+- Evidence: the audit reopened the central family declaration, coverage-v8
+  admission rules, generic workspace and fixture contracts, relevant
+  hardlink/rename/path-query families, and the remaining-gate documents.
+  Three independent reviewers and the root review agreed on the material
+  findings.
+- Findings:
+  - the 4×5 axes, Bash-native track, identities, tags, and 20-task allocation
+    are coherent;
+  - none of the five policies, four codec grammars, safe-link equivalence, or
+    operation-log semantics was defined;
+  - the planned tool set cannot robustly parse JSONL/CSV or compare and copy
+    arbitrary regular-file bytes;
+  - generic bundle verification intentionally rejects expected symlink
+    outputs, so the family needs an additive custom bundle/verifier;
+  - output final-state evidence cannot prove in-place mutation or operation
+    history.
+- Runtime, seeds, and cost: this was a read-only source/design audit on the
+  CPython 3.14.4/Linux 7.0.0-27-generic environment recorded by the predecessor
+  review. No randomized, training, or model seed applies. Four concurrent
+  reviewers used isolated reads; no shared artifact or hash was published.
+- Claim boundary: design diagnosis only; no task behavior, candidate
+  feasibility, 500-task review, score, or model result.
+- Decision: `modify`.
+- Rationale: implementing the planned record unchanged would force brittle
+  bespoke parsers or silently narrow regular files to trivial payloads and
+  would leave the policy axis underdetermined.
+- Next authorized action: draft and adversarially review a corrected design
+  while preserving the axes and scope. Do not implement or freeze family
+  identities until the revised design receives its own decision.
+
+## Review: `infra-016b-symlink-revised-design`
+
+- Status: `review in progress`.
+- Scope: the corrected prospective contract in
+  [SYMLINK_TREE_RECONCILE_DESIGN.md](SYMLINK_TREE_RECONCILE_DESIGN.md).
+- Question: does the revised copy-on-write design close the codec, policy,
+  safe-link, verifier, resource, and feasibility ambiguities without widening
+  the research claim?
+- Acceptance criteria:
+  - retain the frozen 4×5 axes and all non-tool allocation fields;
+  - expose any tool-budget correction explicitly;
+  - distinguish all five policies on one common state in every profile;
+  - require four-way semantic equivalence across desired-state formats;
+  - define exact final-tree and declarative-log semantics, safe links,
+    malformed-input behavior, bounds, independent derivations, mutations,
+    and observation limits;
+  - keep implementation, hash publication, candidate execution, scoring,
+    sealing, model selection, and claims disabled.
+- Pending evidence: independent adversarial review of the corrected document.
+- Decision: not yet made. Family implementation remains unauthorized.
