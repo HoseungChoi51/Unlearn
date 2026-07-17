@@ -1,0 +1,250 @@
+{
+  "$comment": "This schema checks the public migration shape and frozen principal identities. Exact admission additionally requires cbds.executable_development_coverage_v7_to_v8_migration.load_executable_development_coverage_v7_to_v8_migration, which compares canonical bytes with live v7/v8 evidence.",
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://cbds.invalid/schemas/executable-method-development-coverage-v7-to-v8-migration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_execution_authorized": {
+      "const": false
+    },
+    "changed_family_count": {
+      "const": 1
+    },
+    "changed_family_id": {
+      "const": "process-lifecycle-delta"
+    },
+    "claim_authorized": {
+      "const": false
+    },
+    "from": {
+      "const": {
+        "config_byte_count": 26558,
+        "config_bytes_sha256": "3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc",
+        "config_relative_path": "configs/executable-method-development-coverage-v7.json",
+        "coverage_sha256": "177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569",
+        "coverage_version": "7.0.0",
+        "git_commit": "199eba7759cf49215a4e1da09dc59d2c175ee41f"
+      }
+    },
+    "migration_sha256": {
+      "const": "31ce6e0a45f49bc6c31208f3429666aa5d713b78d2186ab7ef228ed768f8e5ff"
+    },
+    "migration_version": {
+      "const": "1.0.0"
+    },
+    "model_selection_eligible": {
+      "const": false
+    },
+    "new_family_sha256": {
+      "const": "f5ef27ca10caedbad1e6e3652e6020c12524309698970438946969cf89310510"
+    },
+    "new_lifecycle_state": {
+      "const": "integrated"
+    },
+    "new_source_registry_commitment": {
+      "const": {
+        "added_task_count": 20,
+        "cumulative_suite_sha256": "fce6939985a541c0bdb0e9f456b0e713f835b283a001e8a0f124047abe6ad99a",
+        "cumulative_task_count": 480,
+        "registry_sha256": "2d2773bcab7f83c99638541803516d893d3749b6c7b1b0091c6633f1c54493a5",
+        "tranche_id": "fifteenth-tranche"
+      }
+    },
+    "old_family_sha256": {
+      "const": "b7f590855836e878258829209e707f3b1b4c00bdc22d6352c65ce3e7f4f88c46"
+    },
+    "old_lifecycle_state": {
+      "const": "planned"
+    },
+    "preserved_allowed_tools": {
+      "const": [
+        "awk",
+        "comm",
+        "jq",
+        "mkdir",
+        "sort"
+      ]
+    },
+    "preserved_capability_tags": {
+      "const": [
+        "process-state",
+        "structured-output",
+        "temporal-diff",
+        "unix-concepts"
+      ]
+    },
+    "preserved_filesystem_schema": {
+      "const": "paired-process-state-snapshots"
+    },
+    "preserved_output_contract": {
+      "const": "pid-lifecycle-transition-report"
+    },
+    "preserved_parameter_axes": {
+      "const": [
+        {
+          "axis_name": "snapshot_pair",
+          "values": [
+            "status-only",
+            "status-and-cmdline",
+            "status-and-cgroups",
+            "complete-synthetic-proc"
+          ]
+        },
+        {
+          "axis_name": "selection_policy",
+          "values": [
+            "all-changes",
+            "starts-only",
+            "exits-only",
+            "state-changes",
+            "resource-threshold-crossings"
+          ]
+        }
+      ]
+    },
+    "preserved_promotion_history": {
+      "const": [
+        {
+          "discrimination_sha256": "ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21",
+          "family_id": "compressed-archive-roundtrip-verify",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "tenth-tranche",
+          "task_set_sha256": "450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a"
+        },
+        {
+          "discrimination_sha256": "f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa",
+          "family_id": "checksum-repair-plan",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "eleventh-tranche",
+          "task_set_sha256": "e52fb74ece2a94baa9bd1b2f6da25ca103839e1e9666361fe5406c34a36b9bb0"
+        },
+        {
+          "discrimination_sha256": "732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94",
+          "family_id": "jsonl-csv-enrichment-compose",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "twelfth-tranche",
+          "task_set_sha256": "60a8ab6770bae6de43d430db9e3edf136f28f0a0ad2dacfd09b627ce19cf75c3"
+        },
+        {
+          "discrimination_sha256": "416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42",
+          "family_id": "nested-json-schema-migration",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "thirteenth-tranche",
+          "task_set_sha256": "2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b"
+        },
+        {
+          "discrimination_sha256": "25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c",
+          "family_id": "dependency-dag-execution-plan",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "fourteenth-tranche",
+          "task_set_sha256": "57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279"
+        }
+      ]
+    },
+    "preserved_solution_track": {
+      "const": "bash-native"
+    },
+    "promotion_evidence": {
+      "const": {
+        "discrimination_sha256": "1a94ccdd0d75698973f172daa5a90e660747718969b05f0d6b414ac934c7e383",
+        "family_id": "process-lifecycle-delta",
+        "new_lifecycle_state": "integrated",
+        "old_lifecycle_state": "planned",
+        "source_tranche_id": "fifteenth-tranche",
+        "task_set_sha256": "2add107b1b16270837968e477662f721faef4ea32b4432b5efe41c5af8097d4d"
+      }
+    },
+    "public_method_development": {
+      "const": true
+    },
+    "reason_codes": {
+      "const": [
+        "planned-contract-preserved",
+        "canonical-grid-integration",
+        "process-lifecycle-delta-discrimination",
+        "fifteenth-tranche-integration",
+        "prior-promotion-history-preserved"
+      ]
+    },
+    "record_type": {
+      "const": "cbds.executable-method-development-coverage-v7-to-v8-migration"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scored": {
+      "const": false
+    },
+    "scored_evaluation_authorized": {
+      "const": false
+    },
+    "sealed": {
+      "const": false
+    },
+    "to": {
+      "const": {
+        "config_relative_path": "configs/executable-method-development-coverage-v8.json",
+        "coverage_sha256": "606ba0a90adc8f19cafd7495ab24ff117f31edb653b4b3cf8b6917a14b70ad05",
+        "coverage_version": "8.0.0"
+      }
+    },
+    "unchanged_family_count": {
+      "const": 24
+    },
+    "unchanged_family_sha256": {
+      "items": {
+        "$ref": "#/$defs/sha256"
+      },
+      "maxItems": 24,
+      "minItems": 24,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "migration_version",
+    "record_type",
+    "from",
+    "to",
+    "changed_family_count",
+    "unchanged_family_count",
+    "changed_family_id",
+    "old_lifecycle_state",
+    "new_lifecycle_state",
+    "old_family_sha256",
+    "new_family_sha256",
+    "preserved_parameter_axes",
+    "preserved_solution_track",
+    "preserved_allowed_tools",
+    "preserved_filesystem_schema",
+    "preserved_output_contract",
+    "preserved_capability_tags",
+    "preserved_promotion_history",
+    "promotion_evidence",
+    "new_source_registry_commitment",
+    "reason_codes",
+    "unchanged_family_sha256",
+    "migration_sha256",
+    "public_method_development",
+    "sealed",
+    "scored",
+    "candidate_execution_authorized",
+    "scored_evaluation_authorized",
+    "model_selection_eligible",
+    "claim_authorized"
+  ],
+  "title": "CBDS executable development coverage v7-to-v8 migration",
+  "type": "object"
+}

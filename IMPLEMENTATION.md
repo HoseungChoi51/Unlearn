@@ -2,7 +2,9 @@
 
 This file separates implemented and tested infrastructure from the research
 campaign specified in [PLAN.md](PLAN.md). A checked infrastructure item is not
-evidence that a model or research hypothesis has succeeded.
+evidence that a model or research hypothesis has succeeded. Exact identities
+for current artifacts are indexed by stable name in
+[ARTIFACT_IDENTITY_LEDGER.md](ARTIFACT_IDENTITY_LEDGER.md).
 
 ## Foundation milestone
 
@@ -192,6 +194,11 @@ evidence that a model or research hypothesis has succeeded.
   concrete families/40 tasks. Its v6-to-v7 migration record proves the other
   24 family values unchanged and preserves the first four promotion records
   exactly.
+  V8 preserves exact v7 bytes, promotes only `process-lifecycle-delta`,
+  reconciles 24 integrated families/480 tasks to fifteen live cumulative
+  registry identities, and reserves 1 concrete family/20 tasks. Its
+  v7-to-v8 migration record proves the other 24 family values unchanged and
+  preserves the first five promotion records exactly.
   All configs are public, unsealed, unscored,
   nonauthorizing, and record no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
@@ -389,6 +396,22 @@ evidence that a model or research hypothesis has succeeded.
   first-tranche-only V1 invocation, and without independent human review. Its
   final-state verifier cannot attest algorithm, Python module/syscall,
   tool/read, atomicity, transient-state, quiescence, or exit-status history.
+- [x] Additive fifteenth-tranche `process-lifecycle-delta` family with 20 task
+  contracts and five deterministic profiles per task (100 fixtures). Four
+  bounded synthetic process projections cross five exact transition-selection
+  policies. Primary and independently implemented reference paths separately
+  validate raw snapshot metadata, process records, PID generations,
+  changed-field order, and resource-threshold crossings. Boundary, workspace,
+  independence, randomized, and all-profile discrimination tests cover all
+  100 bundles in normal and optimized modes. A fixed source-reviewed Bash
+  program solves every bundle using exactly `awk`, `comm`, `jq`, `mkdir`, and
+  `sort`. Through-fourteenth predecessor evidence reconstructs every
+  predecessor identity once before the fifteenth registry/catalog append.
+  The family remains public, unsealed, unscored, nonauthorizing, outside
+  first-tranche-only V1 invocation, and without independent human review. It
+  compares only static synthetic pairs and does not establish live-process
+  observation, supervisor safety, tool/read history, atomicity, global
+  quiescence, or candidate exit status.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -786,10 +809,20 @@ and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
 They are summarized in
 [the family infrastructure guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md).
 
-The cumulative 460 specifications and 2,300 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the fourteenth
+The additive fifteenth tranche is bound by
+[reports/executable-fifteenth-tranche/manifest.json](reports/executable-fifteenth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `process-lifecycle-delta` through
+exact local types and one shared through-fourteenth predecessor snapshot. Its
+distinct semantic and file identities are listed as the fifteenth-tranche
+entries in the
+[artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md#fifteenth-tranche-and-coverage-v8).
+The component is summarized in
+[the family infrastructure guide](PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md).
+
+The cumulative 480 specifications and 2,400 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the fifteenth
 manifest explicitly records `independent_human_review_attested: false`. The
-remaining 40 specifications, independent human review, and a separately reviewed
+remaining 20 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
@@ -860,7 +893,7 @@ semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
 for 5,423 canonical bytes.
-The current
+The historical
 [v7 lock](configs/executable-method-development-coverage-v7.json) preserves
 exact v6 bytes, promotes only `dependency-dag-execution-plan`, binds 23
 integrated families/460 tasks plus 2 planned families/40 tasks, and preserves
@@ -873,8 +906,21 @@ proves the other 24 family records unchanged. Its semantic/config-byte
 SHA-256 values are
 `7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
 and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
-for 5,744 canonical bytes. The next planned implementation is
-`process-lifecycle-delta`.
+for 5,744 canonical bytes.
+The current
+[v8 lock](configs/executable-method-development-coverage-v8.json) preserves
+exact v7 bytes, promotes only `process-lifecycle-delta`, binds 24 integrated
+families/480 tasks plus 1 planned family/20 tasks, and preserves the first
+five promotion records. Its semantic/config-byte SHA-256 values are
+recorded as `coverage v8` and `coverage v8 config file` in the
+[artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md#fifteenth-tranche-and-coverage-v8).
+The
+[v7-to-v8 migration](configs/executable-method-development-coverage-v7-to-v8-migration.json)
+proves the other 24 family records unchanged. Its semantic/config-byte
+identities are recorded as `coverage v7-to-v8 migration` and
+`coverage v7-to-v8 migration config file` in the same ledger. The next
+planned implementation is
+`symlink-aware-tree-reconcile`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -887,7 +933,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-twenty-three concrete cataloged families above, these generated records do not yet
+twenty-four concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -959,10 +1005,19 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 40 method-development specifications not yet implemented and
+Treat each coherent item or tightly coupled item group below as a branch with
+an intermediate review, not as an automatic queue. Record evidence and an
+explicit `continue`, `modify`, `merge`, or `stop` decision in
+[ROLLING_BRANCH_REVIEWS.md](ROLLING_BRANCH_REVIEWS.md) before opening the next
+branch. Use up to eight CPU cores for independent read-only builds, checks, and
+experimental arms when their outputs and resource envelopes are isolated;
+serialize shared hash publication and stateful execution.
+
+- [ ] Add the 20 `symlink-aware-tree-reconcile` method-development
+  specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 460-
+  development inventory before sealing. The frozen cumulative 480-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -980,7 +1035,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the twenty-three implemented families
+- [ ] Extend verifier mutation tests beyond the twenty-four implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

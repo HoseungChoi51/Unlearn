@@ -155,9 +155,9 @@ require portable hardware measurements from the exact exported artifact.
 The repository has not produced a model-quality result. It currently provides
 contracts, data and training canaries, model/runtime inspection, and public
 method-development benchmark infrastructure. The benchmark allocation is
-locked at 25 families and 500 tasks; 23 families/460 tasks and 2,300 fixture
-bundles are implemented across fourteen additive tranches. Two families/40
-tasks remain, beginning with `process-lifecycle-delta`. The current
+locked at 25 families and 500 tasks; 24 families/480 tasks and 2,400 fixture
+bundles are implemented across fifteen additive tranches. One family/20 tasks
+remains: `symlink-aware-tree-reconcile`. The current
 coverage lineage promotes only one frozen family per version and proves the
 other 24 family records unchanged. Earlier coverage versions remain immutable
 historical records.
@@ -186,3 +186,7 @@ The fourteenth tranche, strict dependency-graph codecs, deterministic Kahn
 policies, exact cycle classification, and append-only evidence are explained
 in
 [DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md).
+The fifteenth tranche, bounded synthetic process pairs, exact lifecycle
+transitions, source-reviewed Bash canary, and v7-to-v8 promotion are explained
+in
+[PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md](PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md).

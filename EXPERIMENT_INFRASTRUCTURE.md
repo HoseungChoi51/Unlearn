@@ -5,7 +5,9 @@ explains why each component exists, what conclusion it can support, and what
 must connect to it before the result becomes research evidence. The detailed
 research design is in [PLAN.md](PLAN.md); implemented and remaining work is
 tracked in [IMPLEMENTATION.md](IMPLEMENTATION.md); commands and artifact links
-are collected in [README.md](README.md).
+are collected in [README.md](README.md). Exact current artifact identities are
+kept in the [artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md) so this
+guide can use unambiguous human-readable names.
 
 The most important current fact is:
 
@@ -145,7 +147,7 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The fourteen executable tranches are pinned by
+secret. The fifteen executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
@@ -159,9 +161,11 @@ the [additive tenth manifest](reports/executable-tenth-tranche/manifest.json),
 the [additive eleventh manifest](reports/executable-eleventh-tranche/manifest.json),
 [the additive twelfth manifest](reports/executable-twelfth-tranche/manifest.json),
 [the additive thirteenth manifest](reports/executable-thirteenth-tranche/manifest.json),
-and
-[the additive fourteenth manifest](reports/executable-fourteenth-tranche/manifest.json).
-They currently contain 460 public method-development specifications with five
+the
+[additive fourteenth manifest](reports/executable-fourteenth-tranche/manifest.json),
+and the
+[additive fifteenth manifest](reports/executable-fifteenth-tranche/manifest.json).
+They currently contain 480 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -303,8 +307,19 @@ and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
 The exact contract and observation limits are in the
 [family infrastructure guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md).
 
-The fourteenth manifest records `independent_human_review_attested: false`,
-and all fourteen tranches remain public, unsealed, unscored, and
+The fifteenth addition contributes 20 `process-lifecycle-delta` tasks and 100
+fixtures. Four bounded synthetic process projections cross five exact
+transition-selection policies. Independent raw-input derivations agree on the
+complete canonical transition report, and a fixed source-reviewed Bash
+program solves all 100 public fixtures with the exact five-tool budget. Its
+distinct semantic and file identities are listed as the fifteenth-tranche
+entries in the
+[artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md#fifteenth-tranche-and-coverage-v8).
+The exact static boundary and observation limits are in the
+[family infrastructure guide](PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md).
+
+The fifteenth manifest records `independent_human_review_attested: false`,
+and all fifteen tranches remain public, unsealed, unscored, and
 nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
@@ -369,7 +384,7 @@ semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
 for 5,423 canonical bytes.
-[Current coverage v7](configs/executable-method-development-coverage-v7.json)
+[Historical coverage v7](configs/executable-method-development-coverage-v7.json)
 promotes only `dependency-dag-execution-plan`, binds 23 integrated
 families/460 tasks and 2 planned families/40 tasks, and preserves the first
 four promotion records. Its semantic/config-byte SHA-256 values are
@@ -382,6 +397,18 @@ SHA-256 values
 `7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
 and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
 for 5,744 canonical bytes.
+
+[Current coverage v8](configs/executable-method-development-coverage-v8.json)
+promotes only `process-lifecycle-delta`, binds 24 integrated families/480
+tasks and 1 planned family/20 tasks, and preserves the first five promotion
+records. Its semantic and exact-file identities are `coverage v8` and
+`coverage v8 config file` in the
+[artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md#fifteenth-tranche-and-coverage-v8).
+Its
+[v7-to-v8 migration](configs/executable-method-development-coverage-v7-to-v8-migration.json)
+proves the other 24 family records unchanged. Its semantic and exact-file
+identities are `coverage v7-to-v8 migration` and
+`coverage v7-to-v8 migration config file` in the same ledger.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -800,10 +827,10 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 460 frozen public-development executable tasks and 2,300 concrete fixture
-  bundles across twenty-three integrated families and fourteen additive
+- 480 frozen public-development executable tasks and 2,400 concrete fixture
+  bundles across twenty-four integrated families and fifteen additive
   tranches;
-- a locked 25-family/500-task allocation with 2 families/40 tasks still
+- a locked 25-family/500-task allocation with 1 family/20 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, materialization, no-follow, and mutation tests for the
   integrated families, with independently structured reference paths where
@@ -813,7 +840,9 @@ The repository currently has a substantial validation foundation:
   checksum repair, strict mixed-codec/multiplicity/policy checks for
   enrichment composition, strict nested-schema/migration/order checks for
   nested JSON migration, and strict multi-codec/Kahn/residual checks for
-  dependency-DAG planning;
+  dependency-DAG planning, plus independent raw-input parsing, PID-generation
+  joins, threshold crossings, and all-profile discrimination for static
+  process-lifecycle deltas;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
@@ -837,7 +866,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through fourteenth additions have no
+is method-development data, its third through fifteenth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -914,12 +943,20 @@ transient state, global quiescence, or candidate exit status. Its fixed
 Bash/Python canary does not widen that boundary or authorize arbitrary
 candidates.
 
-The critical path is now:
+The critical path is now six major gates. Each numbered gate is a branch
+boundary, not an instruction to execute the whole list automatically. Before
+starting the next gate, record the observed artifacts, checks, failures,
+compute cost, and one explicit decision from `continue`, `modify`, `merge`, or
+`stop` in [the rolling review log](ROLLING_BRANCH_REVIEWS.md). A `modify` or
+`stop` decision overrides the downstream schedule. Independent read-only work
+should use up to eight CPU cores when it does not contend for a shared output
+or weaken determinism; hash-producing writes and stateful execution remain
+serialized.
 
-1. implement the remaining 40 method-development specifications, beginning
-   with `process-lifecycle-delta`, with concrete fixtures, independent
+1. implement the remaining 20 `symlink-aware-tree-reconcile`
+   method-development specifications with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
-   development inventory before sealing;
+   500-task development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed
    integration, and promote it to a general-candidate supervisor with a
    Bash-specific allow policy and exact-tool enforcement while preserving
@@ -934,8 +971,8 @@ The critical path is now:
 5. extend the narrow completed floating-dense companion into exporter-specific
    selected-unit/value and vocabulary-map realization, fresh or attested
    runtime-graph evidence, and structural/hybrid/quantizer-metadata accounting;
-   then finish production training, exact executed-FLOP binding, quantization
-   calibration, and hardware reopening;
+   then finish the production-training backend, exact executed-FLOP binding,
+   quantization calibration, and hardware reopening;
 6. only then run the behavioral backbone floor/ceiling gates,
    capability-support audit, and matched-compute operator funnels before fresh
    confirmation and the single sealed opening.

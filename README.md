@@ -18,6 +18,8 @@ improves.
 - [Experiment evidence chain and component rationale](EXPERIMENT_EVIDENCE_CHAIN.md)
 - [Experiment setup and research readiness](RESEARCH_READINESS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
+- [Artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md)
+- [Rolling branch review log](ROLLING_BRANCH_REVIEWS.md)
 - [Hardlink experiment infrastructure](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md)
 - [Compressed archive round-trip experiment infrastructure](ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md)
 - [Checksum repair-plan experiment infrastructure](CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md)
@@ -49,9 +51,13 @@ improves.
 - [Executable additive twelfth-tranche hash manifest](reports/executable-twelfth-tranche/manifest.json)
 - [Executable additive thirteenth-tranche hash manifest](reports/executable-thirteenth-tranche/manifest.json)
 - [Executable additive fourteenth-tranche hash manifest](reports/executable-fourteenth-tranche/manifest.json)
+- [Executable additive fifteenth-tranche hash manifest](reports/executable-fifteenth-tranche/manifest.json)
 - [Nested JSON migration component guide](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md)
 - [Dependency-DAG execution-plan component guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md)
-- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v7.json)
+- [Process-lifecycle delta component guide](PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md)
+- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v8.json)
+- [Coverage v7-to-v8 migration evidence](configs/executable-method-development-coverage-v7-to-v8-migration.json)
+- [Historical executable coverage v7 record](configs/executable-method-development-coverage-v7.json)
 - [Coverage v6-to-v7 migration evidence](configs/executable-method-development-coverage-v6-to-v7-migration.json)
 - [Historical executable coverage v6 record](configs/executable-method-development-coverage-v6.json)
 - [Coverage v5-to-v6 migration evidence](configs/executable-method-development-coverage-v5-to-v6-migration.json)
@@ -382,8 +388,8 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and twenty-three cataloged public-development
-static fixture/verifier families are implemented across fourteen additive
+fail-closed claim-policy evaluation, and twenty-four cataloged public-development
+static fixture/verifier families are implemented across fifteen additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
@@ -396,7 +402,8 @@ adds `case-routed-batch-transform`. The eighth adds
 `checksum-repair-plan`; the twelfth adds
 `jsonl-csv-enrichment-compose`; and the thirteenth adds
 `nested-json-schema-migration`. The fourteenth adds
-`dependency-dag-execution-plan`. These additions remain outside the
+`dependency-dag-execution-plan`; and the fifteenth adds
+`process-lifecycle-delta`. These additions remain outside the
 first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
@@ -717,11 +724,30 @@ Its checked-in
 retains explicitly false candidate-execution, model-selection, claim, and
 independent-human-review fields.
 
-Together the fourteen tranches provide 460 of the 500 required
-method-development specifications and 2,300 concrete fixture bundles across
-23 integrated families. They remain public, unsealed, unscored, and
+The additive fifteenth tranche contributes 20
+`process-lifecycle-delta` tasks and 100 fixtures. Four bounded synthetic
+process-snapshot projections cross five exact transition-selection policies.
+Two raw-input derivations independently parse, classify, and compare the
+immutable before/after states and must agree on complete canonical JSONL
+transition reports. A fixed source-reviewed Bash program solves all 100 public
+fixtures with `PATH` limited to `awk`, `comm`, `jq`, `mkdir`, and `sort`. See
+[the fifteenth-tranche component guide](PROCESS_LIFECYCLE_DELTA_EXPERIMENT_INFRASTRUCTURE.md)
+for the static-process contract and assurance limits. The task-set,
+added-registry, cumulative-suite, cumulative-catalog, discrimination, and
+canonical report are represented by distinct semantic or file identities.
+The corresponding fifteenth-tranche entries are published in the
+[artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md#fifteenth-tranche-and-coverage-v8).
+Its checked-in
+[hash-only manifest](reports/executable-fifteenth-tranche/manifest.json)
+retains explicitly false candidate-execution, model-selection, claim, and
+independent-human-review fields. This bounded two-snapshot comparison does not
+inspect live processes or establish live-monitoring or supervisor safety.
+
+Together the fifteen tranches provide 480 of the 500 required
+method-development specifications and 2,400 concrete fixture bundles across
+24 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-40 specifications and the trusted sandbox/supervisor still block general
+20 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -808,7 +834,7 @@ records unchanged. Its semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
 for 5,423 canonical bytes.
-The current backward-linked
+The historical backward-linked
 [v7 coverage lock](configs/executable-method-development-coverage-v7.json)
 preserves exact v6 bytes, promotes only `dependency-dag-execution-plan`, and
 binds 23 integrated families/460 tasks plus 2 planned families/40 tasks. Its
@@ -821,8 +847,24 @@ preserves the first four promotion records and proves the other 24 family
 records unchanged. Its semantic/config-byte SHA-256 values are
 `7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
 and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
-for 5,744 canonical bytes. The next planned family is
-`process-lifecycle-delta`.
+for 5,744 canonical bytes.
+The current backward-linked
+[v8 coverage lock](configs/executable-method-development-coverage-v8.json)
+preserves exact v7 bytes, promotes only `process-lifecycle-delta`, and binds
+24 integrated families/480 tasks plus 1 planned family/20 tasks. Its semantic
+and exact-file identities are named `coverage v8` and
+`coverage v8 config file` in the
+[artifact identity ledger](ARTIFACT_IDENTITY_LEDGER.md#fifteenth-tranche-and-coverage-v8).
+The
+[v7-to-v8 migration record](configs/executable-method-development-coverage-v7-to-v8-migration.json)
+preserves the first five promotion records and proves the other 24 family
+records unchanged. Its semantic and exact-file identities are named
+`coverage v7-to-v8 migration` and
+`coverage v7-to-v8 migration config file` in the same ledger. The one
+remaining planned 20-task family is
+`symlink-aware-tree-reconcile`. Coverage v8 and its migration remain public,
+unsealed, unscored, nonauthorizing, ineligible for model selection or claims,
+and not independently human-reviewed.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two

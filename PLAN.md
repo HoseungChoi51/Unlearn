@@ -30,6 +30,38 @@ teacher is permitted during training, but its inference and data-generation
 cost must be reported. Mixture-of-experts models are excluded from the main
 study and may appear only in the triggered appendix defined below.
 
+## Rolling branch decisions and parallelism
+
+Do not execute the infrastructure sequence or operator funnel as one
+uninterrupted checklist. Every coherent infrastructure branch, feasibility
+pilot, operator arm, and confirmation stage ends with an intermediate-result
+review before downstream work begins. The review records:
+
+- the branch question and preregistered acceptance or diagnostic criteria;
+- exact inputs, artifacts, hashes, seeds, task counts, and compute consumed;
+- observed results, uncertainty, failures, and deviations;
+- what the result does and does not establish; and
+- exactly one decision: `continue`, `modify`, `merge`, or `stop`, with a
+  concrete rationale and next action.
+
+`Continue` keeps the same branch open for already-scoped evidence. `Modify`
+revises the branch and requires new affected identities or preregistration.
+`Merge` accepts the branch into the main evidence chain. `Stop` terminates the
+branch without silently substituting a more favorable one. No downstream
+branch inherits authority from work that has not received an explicit review
+decision. Reviews are tracked in
+[ROLLING_BRANCH_REVIEWS.md](ROLLING_BRANCH_REVIEWS.md).
+
+Use parallelism where it reduces wall time without changing semantics. The
+default CPU ceiling is eight cores across independent read-only checks,
+fixture cells, seeds, or experimental arms. Give each worker isolated
+temporary/output state and record its allocation. Serialize shared manifest
+publication, hash freezing, mutable workspace tests, and any operation whose
+resource contention could change the measured endpoint. GPU arms may overlap
+CPU verification, but competing GPU training or latency measurements do not
+run concurrently unless the relevant protocol explicitly models that
+contention.
+
 ## Literature verdict and novelty boundary
 
 Search cutoff: **2026-07-14**.
