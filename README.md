@@ -10,6 +10,7 @@ improves.
 
 - [Research plan](PLAN.md)
 - [Short experiment setup overview](EXPERIMENT_SETUP_OVERVIEW.md)
+- [High-level experiment setup component map](EXPERIMENT_SETUP_COMPONENT_MAP.md)
 - [Why the experiment setup is built this way](EXPERIMENT_SETUP_RATIONALE.md)
 - [Experiment logic and claim dependencies](EXPERIMENT_LOGIC.md)
 - [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
