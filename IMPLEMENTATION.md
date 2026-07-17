@@ -181,6 +181,11 @@ evidence that a model or research hypothesis has succeeded.
   to twelve live cumulative registry identities, and reserves 4 concrete
   families/80 tasks. Its v4-to-v5 migration record proves the other 24 family
   values unchanged and preserves the first two promotion records exactly.
+  V6 preserves exact v5 bytes, promotes only
+  `nested-json-schema-migration`, reconciles 22 integrated families/440 tasks
+  to thirteen live cumulative registry identities, and reserves 3 concrete
+  families/60 tasks. Its v5-to-v6 migration record proves the other 24 family
+  values unchanged and preserves the first three promotion records exactly.
   All configs are public, unsealed, unscored,
   nonauthorizing, and record no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
@@ -344,6 +349,23 @@ evidence that a model or research hypothesis has succeeded.
   independent human review. Its final-state verifier cannot attest physical
   intermediate materialization, tool/read history, atomicity, transient
   state, global quiescence, or exit status.
+- [x] Additive thirteenth-tranche `nested-json-schema-migration` family with
+  20 task contracts and five deterministic profiles per task (100 fixtures).
+  Four strict source layouts cross five exact v1-to-v2 policies. Primary and
+  reconstructive reference engines agree on strict JSON framing, closed
+  schemas, policy-specific output, raw-UTF8 keyed-map ordering, and
+  deterministic numbered publication. Boundary and workspace tests cover all
+  100 bundles, duplicate keys, Unicode control categories, canonical numeric
+  forms, source/scalar ceilings, semantic-output mutations, input
+  preservation, symlink targets, and hardlink substitution in normal and
+  optimized modes. A fixed Bash wrapper with isolated standard-library Python
+  solves all 100 bundles using exactly `mkdir`, `python3`, and `sort`.
+  Through-twelfth predecessor evidence reconstructs every predecessor
+  identity once before the thirteenth registry/catalog append. The family
+  remains public, unsealed, unscored, nonauthorizing, outside
+  first-tranche-only V1 invocation, and without independent human review. Its
+  final-state verifier cannot attest Python module/syscall use, tool/read
+  history, atomicity, transient state, global quiescence, or exit status.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -711,10 +733,25 @@ discrimination, and canonical 56,394-byte report SHA-256 values are
 `732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
 and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
 
-The cumulative 420 specifications and 2,100 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the twelfth manifest
-explicitly records `independent_human_review_attested: false`. The remaining
-80 specifications, independent human review, and a separately reviewed
+The additive thirteenth tranche is bound by
+[reports/executable-thirteenth-tranche/manifest.json](reports/executable-thirteenth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `nested-json-schema-migration`
+through exact local types and one shared through-twelfth predecessor snapshot.
+Its final task-set, added-registry, cumulative-suite, cumulative-catalog,
+discrimination, and canonical 56,396-byte report SHA-256 values are
+`2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b`,
+`01990ca4355ef20736861d7bb7753e09e5ccbbfbddf8d21c4ffce3a451d83873`,
+`bb7b78b68879eb32d4849bb5d82cac7a90b0695dc3fa72b9836dd7b6e70863e0`,
+`25142ebdc014f4d4a53bba34bb9ffeaffa6f87789169180fe0caab69b02fcb9f`,
+`416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
+and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
+They are frozen by the checked-in manifest and summarized in
+[the family infrastructure guide](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md).
+
+The cumulative 440 specifications and 2,200 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the thirteenth
+manifest explicitly records `independent_human_review_attested: false`. The
+remaining 60 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
@@ -746,7 +783,7 @@ for 23,943 bytes. The migration semantic/config-byte SHA-256 values are
 and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
 for 4,358 bytes. These historical locks fix allocation metadata only; a planned family is
 not implemented, reviewed, sealed, scored, or executable because it appears
-in a record. The current
+in a record. The historical
 [v4 lock](configs/executable-method-development-coverage-v4.json) preserves
 the exact v3 artifact, promotes only `checksum-repair-plan`, and binds 20
 integrated families/400 tasks plus 5 planned families/100 tasks. Its semantic
@@ -760,7 +797,7 @@ proves the other 24 family records unchanged. Its semantic/config-byte
 SHA-256 values are
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
-for 4,701 canonical bytes. The current v5 lock preserves those exact v4
+for 4,701 canonical bytes. The historical v5 lock preserves those exact v4
 bytes, promotes only `jsonl-csv-enrichment-compose`, and binds 21 integrated
 families/420 tasks plus 4 planned families/80 tasks. Its v4-to-v5 migration
 preserves the prior two promotion records and proves the other 24 family
@@ -771,8 +808,21 @@ for 25,241 canonical bytes. The v4-to-v5 migration semantic/config-byte
 SHA-256 values are
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
 and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
-for 5,052 canonical bytes. The next planned implementation is
-`nested-json-schema-migration`.
+for 5,052 canonical bytes. The current
+[v6 lock](configs/executable-method-development-coverage-v6.json) preserves
+exact v5 bytes,
+promotes only `nested-json-schema-migration`, binds 22 integrated
+families/440 tasks plus 3 planned families/60 tasks, and preserves the first
+three promotion records. Its semantic/config-byte SHA-256 values are
+`044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
+and `e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68`
+for 25,899 canonical bytes. The
+[v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
+semantic/config-byte SHA-256 values are
+`5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
+and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
+for 5,423 canonical bytes. The next planned implementation is
+`dependency-dag-execution-plan`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -785,7 +835,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-twenty-one concrete cataloged families above, these generated records do not yet
+twenty-two concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -857,10 +907,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 80 method-development specifications not yet implemented and
+- [ ] Add the 60 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 420-
+  development inventory before sealing. The frozen cumulative 440-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -878,7 +928,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the twenty-one implemented families
+- [ ] Extend verifier mutation tests beyond the twenty-two implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

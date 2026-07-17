@@ -306,14 +306,13 @@ required to establish when a prospective commitment existed.
 
 The repository currently contains scientific contracts, model/data/training
 canaries, public method-development task families, semantic verifiers,
-content-addressed registries, and bounded execution foundations. The committed
-coverage v5 allocation records 21 integrated families and 420 public
-method-development tasks; the next locked family is
-`nested-json-schema-migration`.
+content-addressed registries, and bounded execution foundations. The current
+allocation has 22 integrated families and 440 public method-development tasks;
+the next locked family is `dependency-dag-execution-plan`.
 
 These assets are deliberately public, unsealed, unscored, and
-nonauthorizing. A passing fixed reviewed Bash canary demonstrates engineering
-feasibility only. It does not authorize arbitrary candidate execution,
+nonauthorizing. A passing fixed source-reviewed Bash canary demonstrates
+engineering feasibility only. It does not authorize arbitrary candidate execution,
 research model selection, or a model-quality claim.
 
 The near-term critical path is therefore:

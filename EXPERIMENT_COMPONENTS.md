@@ -159,10 +159,10 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Twenty-one families/420 tasks have concrete oracles and 2,100
-fixture bundles across twelve additive tranches; four families/80 tasks remain
-planned, beginning with `nested-json-schema-migration`. The
-[v5 coverage record](configs/executable-method-development-coverage-v5.json) fixes
+500 tasks. Twenty-two families/440 tasks have concrete oracles and 2,200
+fixture bundles across thirteen additive tranches; three families/60 tasks
+remain planned, beginning with `dependency-dag-execution-plan`. The
+coverage ledger fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
 candidate-execution authority, scoring, or model-selection evidence. All
@@ -197,7 +197,7 @@ are
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
 for 4,701 canonical bytes.
-The current v5 semantic/config-byte SHA-256 values are
+The historical v5 semantic/config-byte SHA-256 values are
 `e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
 and `cfb91bef706fc1c4fd4f95d7891f42e3ec058bbaba28997a22a0f72614d6268f`
 for 25,241 canonical bytes. Its v4-to-v5 migration semantic/config-byte
@@ -205,6 +205,20 @@ SHA-256 values are
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
 and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
 for 5,052 canonical bytes.
+The
+[v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
+promotes only `nested-json-schema-migration`, binds
+the thirteenth integration evidence, preserves the first three promotion
+records, and proves the other 24 family records unchanged. The current
+[v6 lock](configs/executable-method-development-coverage-v6.json)
+semantic/config-byte SHA-256 values are
+`044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
+and `e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68`
+for 25,899 canonical bytes. Its v5-to-v6 migration semantic/config-byte
+SHA-256 values are
+`5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
+and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
+for 5,423 canonical bytes.
 
 The [sixth-tranche manifest](reports/executable-sixth-tranche/manifest.json)
 binds the `bounded-retry-state-machine` task set, added registry, cumulative
@@ -273,6 +287,17 @@ suite, cumulative catalog, behavioral-discrimination evidence, and canonical
 `98cf6ffa48cbe11ece96195450335e5be9a3d0898d54e91396d0c2756171f169`,
 `732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
 and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
+The
+[thirteenth-tranche manifest](reports/executable-thirteenth-tranche/manifest.json)
+binds the `nested-json-schema-migration` task set, added registry, cumulative
+suite, cumulative catalog, behavioral-discrimination evidence, and canonical
+56,396-byte report. The corresponding SHA-256 values are
+`2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b`,
+`01990ca4355ef20736861d7bb7753e09e5ccbbfbddf8d21c4ffce3a451d83873`,
+`bb7b78b68879eb32d4849bb5d82cac7a90b0695dc3fa72b9836dd7b6e70863e0`,
+`25142ebdc014f4d4a53bba34bb9ffeaffa6f87789169180fe0caab69b02fcb9f`,
+`416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
+and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
 The preserved v1 coverage and config-byte identities are
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
@@ -482,8 +507,8 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 4-family/80-task remainder, beginning with
-   `nested-json-schema-migration`, and independently review
+1. implement the locked 3-family/60-task remainder, beginning with
+   `dependency-dag-execution-plan`, and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

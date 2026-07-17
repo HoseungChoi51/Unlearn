@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Twenty-one families/420 tasks currently have concrete oracles
-  and 2,100 authenticated fixture bundles across twelve additive tranches.
+  and 500 tasks. Twenty-two families/440 tasks currently have concrete oracles
+  and 2,200 authenticated fixture bundles across thirteen additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 4 families/80 tasks, beginning with
-  `nested-json-schema-migration`, still need implementation and review.
+- The remaining 3 families/60 tasks, beginning with
+  `dependency-dag-execution-plan`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -171,16 +171,17 @@ not reporting a successful specialization or compression experiment.
 
 The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.md).
 The current public allocation and its exact content identity are in
-[coverage v5](configs/executable-method-development-coverage-v5.json). Its
-v4-to-v5 migration preserves the exact v4 artifact and proves that only the
-twelfth family was promoted. The v5 semantic/config-byte SHA-256 values are
-`e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
-and `cfb91bef706fc1c4fd4f95d7891f42e3ec058bbaba28997a22a0f72614d6268f`
-for 25,241 canonical bytes. The migration semantic/config-byte SHA-256 values
+[coverage v6](configs/executable-method-development-coverage-v6.json). Its
+[v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
+preserves exact v5 bytes and proves that only the
+thirteenth family was promoted. The v6 semantic/config-byte SHA-256 values are
+`044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
+and `e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68`
+for 25,899 canonical bytes. The migration semantic/config-byte SHA-256 values
 are
-`7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
-and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
-for 5,052 canonical bytes.
+`5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
+and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
+for 5,423 canonical bytes.
 The original [v1 record](configs/executable-method-development-coverage-v1.json)
 and [v2 record](configs/executable-method-development-coverage-v2.json) are
 preserved byte-for-byte. The
@@ -314,6 +315,9 @@ and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 - [JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md](JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md):
   the twelfth tranche's strict mixed-codec sources, join and missing-field
   semantics, verifier, canary, and v4-to-v5 promotion.
+- [NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md):
+  the thirteenth tranche's strict nested JSON, migration policies, verifier,
+  Python-permitted canary, and v5-to-v6 promotion.
 - [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md): how component
   outputs compose into claim-eligible evidence.
 - [RESEARCH_READINESS.md](RESEARCH_READINESS.md): compact build-state versus

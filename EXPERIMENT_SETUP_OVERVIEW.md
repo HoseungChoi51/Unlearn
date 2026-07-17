@@ -155,14 +155,12 @@ require portable hardware measurements from the exact exported artifact.
 The repository has not produced a model-quality result. It currently provides
 contracts, data and training canaries, model/runtime inspection, and public
 method-development benchmark infrastructure. The benchmark allocation is
-locked at 25 families and 500 tasks; 21 families/420 tasks and 2,100 fixture
-bundles are implemented across twelve additive tranches. Four families/80
-tasks remain, beginning with `nested-json-schema-migration`. Coverage v5
-preserves the exact v4 artifact, promotes only
-`jsonl-csv-enrichment-compose`, and binds the twelfth registry plus its
-task-set and discrimination evidence. The v4-to-v5 migration record proves
-that the other 24 family records are unchanged and preserves the prior two
-promotion events. V1 through v4 remain immutable historical records.
+locked at 25 families and 500 tasks; 22 families/440 tasks and 2,200 fixture
+bundles are implemented across thirteen additive tranches. Three families/60
+tasks remain, beginning with `dependency-dag-execution-plan`. The current
+coverage lineage promotes only one frozen family per version and proves the
+other 24 family records unchanged. Earlier coverage versions remain immutable
+historical records.
 
 These public assets are unsealed, unscored, and not authorized for candidate
 execution, model selection, or scientific claims. They reduce implementation
@@ -181,3 +179,6 @@ The twelfth tranche, strict mixed-codec parsing, multiplicity-preserving join,
 missing-field policies, reviewed Bash canary, and v4-to-v5 promotion are
 explained in
 [JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md](JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md).
+The thirteenth tranche, strict versioned nested JSON, exact migration policies,
+source-reviewed Python-permitted canary, and append-only evidence are explained in
+[NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md).

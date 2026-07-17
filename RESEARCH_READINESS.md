@@ -85,11 +85,11 @@ parameters do not establish a smaller or faster deployment.
 | Capability-support and signed-transfer audit | Finds abilities that help, hurt, or do not affect terminal work instead of guessing from labels | Contracts and interpretation rules exist | Planned | Measure above-floor capabilities, cross-fit interventions, and add-back effects |
 | Training-source admission | Prevents invalid, ambiguous, unlicensed, duplicated, or evaluation-contaminated examples from driving a false gain | Raw import, authentication, lexical filtering, and tokenizer scheduling are implemented | Gated: zero rows are claim-admitted | Add Bash parsing, fixture execution, row lineage, ambiguity repair, balancing, and decontamination |
 | Token and compute ledger | Makes equal-target-token and equal-total-FLOP comparisons meaningful | Exact engineering token schedules and update ledgers exist | Partial: production executed-FLOP binding is absent | Derive FLOPs from the actual production operator trace |
-| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 420 integrated public-development tasks/2,100 fixtures across twelve additive tranches; the backward-linked v5 25-family/500-task allocation is locked | Gated: 4 families/80 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
+| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 440 integrated public-development tasks/2,200 fixtures across thirteen additive tranches; the backward-linked 25-family/500-task allocation is locked | Gated: 3 families/60 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
 | Lifecycle splits and leakage control | Stops training, selection, and repeated inspection from consuming the final test set | Split contracts and fail-closed lifecycle routing exist | Partial | Freeze real suite identities and generate prompt/AST/graph/trace leakage reports |
 | Parser and deterministic decoding | Fixes how one model response becomes one candidate and prevents rerun policy from changing scores | Frozen response parser and diagnostic syntax classification exist | Partial: production decoder/action loop is absent | Freeze generation settings and implement the bounded static and interactive decoders |
 | Runtime closure, sandbox, and supervisor | Lets untrusted code run against identical tools without reaching the host or surviving a timeout | Namespace, descriptor, runtime-bundle, PID1, and one reviewed fixed-Bash canary exist | Gated: arbitrary candidates, exact Bash tool policy, external trust, and runtime-data closure are absent | Promote an independently reviewed general-candidate boundary with tmpfs/quiescence/resource guarantees |
-| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Mutation checks exist for twenty-one integrated families, with independently structured oracle paths where available; the hardlink family checks topology, the archive family adds bounded codec/ustar/report checks, checksum repair adds strict multi-format parsing, and enrichment composition adds mixed-codec joins and policy validation | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
+| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Mutation checks exist for twenty-two integrated families, with independently structured oracle paths where available; topology, archive, checksum, mixed-codec composition, and nested Python-permitted migration receive family-specific checks | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
 | Production trainer and operator funnel | Determines empirically whether dense tuning, pruning, factorization, quantization, or reset/regrow offers the best performance/size tradeoff | A real-text dense-SFT engineering canary and prospective operator schemas exist | Planned for research runs | Implement production training/export, then screen matched operators instead of assuming SwiGLU channels win |
 | Model-aware operator binding | Prevents out-of-range indices, partial GQA groups, fictitious pruning savings, or misleading average-bit claims | Prospective exact binding covers tensor roles/factorization tuples, representable pruning, and quantization payload lower bounds; completed floating-dense reconciliation rejects wrong architecture dimensions for supported pruning | Gated: exact selected-unit/value realization, embedding-map replay, residual/hidden physical pruning, and factorized/quantized/hybrid exporters remain absent | Add exporter-specific topology and mapping replay before accepting operator realization |
 | Baselines and causal interventions | Separates useful specialization from extra compute, random plasticity, sparse tuning, or generic compression | Prospective arms and interpretation rules exist | Planned | Run matched dense, random, target-only, no-reset, uniform-quantization, restoration, and add-back controls |
@@ -113,8 +113,9 @@ proves the other 24 family records remain unchanged. It is a scope commitment,
 not benchmark completion: it grants no fixture, review, sealing, execution,
 scoring, selection, or claim status to planned families. Coverage v4 promotes
 only `checksum-repair-plan`. Coverage v5 promotes only
-`jsonl-csv-enrichment-compose`; the next locked family is
-`nested-json-schema-migration`.
+`jsonl-csv-enrichment-compose`. Coverage v6 promotes only
+`nested-json-schema-migration`, leaving `dependency-dag-execution-plan` as the
+next locked family.
 The v3 semantic/config-byte SHA-256 values are
 `b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`
 and `de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`
@@ -134,7 +135,7 @@ has semantic/config-byte SHA-256 values
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
 for 4,701 canonical bytes.
-The current
+The historical
 [v5 allocation](configs/executable-method-development-coverage-v5.json) has
 semantic/config-byte SHA-256 values
 `e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
@@ -145,6 +146,17 @@ has semantic/config-byte SHA-256 values
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
 and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
 for 5,052 canonical bytes.
+The current
+[v6 allocation](configs/executable-method-development-coverage-v6.json) has
+semantic/config-byte SHA-256 values
+`044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
+and `e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68`
+for 25,899 canonical bytes. Its
+[v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
+has semantic/config-byte SHA-256 values
+`5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
+and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
+for 5,423 canonical bytes.
 
 The fifth `pipefail-atomic-report` addition contributes 20 tasks and 100
 fixtures with exact complete-stream aggregation, ordered status vectors, and
@@ -278,6 +290,22 @@ values are
 `98cf6ffa48cbe11ece96195450335e5be9a3d0898d54e91396d0c2756171f169`,
 `732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
 and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
+
+The thirteenth `nested-json-schema-migration` addition contributes 20 tasks
+and 100 fixtures on the Python-permitted track. Four bounded source shapes
+cross five exact v1-to-v2 migration policies. Independent construction paths,
+strict parser and tree mutations, and a fixed Bash wrapper using embedded
+`python3 -I -S` cover all 100 public fixtures. This establishes development
+feasibility and verifier sensitivity, not Python confinement, a production
+sandbox, model score, model-selection result, or research claim. The task-set,
+registry, cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,396-byte report SHA-256 values are
+`2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b`,
+`01990ca4355ef20736861d7bb7753e09e5ccbbfbddf8d21c4ffce3a451d83873`,
+`bb7b78b68879eb32d4849bb5d82cac7a90b0695dc3fa72b9836dd7b6e70863e0`,
+`25142ebdc014f4d4a53bba34bb9ffeaffa6f87789169180fe0caab69b02fcb9f`,
+`416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
+and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
 
 ## What the architecture-specific gate now establishes
 

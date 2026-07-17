@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 420
-integrated public method-development tasks with 2,100 concrete fixtures across
-twelve additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 440
+integrated public method-development tasks with 2,200 concrete fixtures across
+thirteen additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -298,6 +298,22 @@ cumulative-suite, cumulative-catalog, discrimination, and canonical
 `732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
 and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
 
+The thirteenth addition contributes 20 `nested-json-schema-migration`
+tasks/100 fixtures. Its
+[hash-only manifest](reports/executable-thirteenth-tranche/manifest.json)
+binds the task set, added registry, cumulative suite, cumulative catalog,
+behavioral-discrimination evidence, and report bytes. Four bounded source
+shapes cross five exact v1-to-v2 migration policies with strict parsing,
+numbered-output-tree, manifest, and input-preservation semantics. The
+task-set, registry, cumulative-suite, cumulative-catalog, discrimination, and
+canonical 56,396-byte report SHA-256 values are
+`2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b`,
+`01990ca4355ef20736861d7bb7753e09e5ccbbfbddf8d21c4ffce3a451d83873`,
+`bb7b78b68879eb32d4849bb5d82cac7a90b0695dc3fa72b9836dd7b6e70863e0`,
+`25142ebdc014f4d4a53bba34bb9ffeaffa6f87789169180fe0caab69b02fcb9f`,
+`416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
+and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
+
 The historical
 [v4 allocation lock](configs/executable-method-development-coverage-v4.json)
 contains 20 integrated families/400 tasks and 5 planned families/100 tasks.
@@ -325,7 +341,7 @@ values
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
 for 4,701 canonical bytes.
-The current v5 lock promotes only `jsonl-csv-enrichment-compose`, contains 21
+The historical v5 lock promotes only `jsonl-csv-enrichment-compose`, contains 21
 integrated families/420 tasks and 4 planned families/80 tasks, appends the
 twelfth source commitment, and preserves the first two promotion records. Its
 semantic/config-byte SHA-256 values are
@@ -335,16 +351,30 @@ for 25,241 canonical bytes. Its v4-to-v5 migration proves the other 24 family
 records unchanged; the migration semantic/config-byte SHA-256 values are
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
 and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
-for 5,052 canonical bytes. The lock
+for 5,052 canonical bytes. The current
+[v6 lock](configs/executable-method-development-coverage-v6.json) promotes only
+`nested-json-schema-migration`, contains 22 integrated families/440 tasks and
+3 planned families/60 tasks, appends the thirteenth source commitment, and
+preserves the first three promotion records. Its semantic/config-byte SHA-256
+values are
+`044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
+and `e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68`
+for 25,899 canonical bytes. Its
+[v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
+proves the other 24 family records unchanged; the migration
+semantic/config-byte SHA-256 values are
+`5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
+and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
+for 5,423 canonical bytes. The lock
 fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through twelfth manifests and the allocation lock explicitly record
+third through thirteenth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 80 method-development tasks, beginning with
-`nested-json-schema-migration`, independent review of the complete development
+**Planned:** the remaining 60 method-development tasks, beginning with
+`dependency-dag-execution-plan`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -376,7 +406,7 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-twenty-one integrated fixture/oracle families with mutation coverage and
+twenty-two integrated fixture/oracle families with mutation coverage and
 independently structured oracle paths where available; the hardlink family
 independently checks parsing and grouping but shares final-state assembly;
 the archive family checks bounded single-stream decoding, strict ustar
@@ -385,7 +415,9 @@ family checks strict multi-format parsing, no-follow classification,
 duplicate-preserving ordering, and whole-batch policy semantics;
 the enrichment-composition family checks strict mixed-codec parsing,
 duplicate-key Cartesian multiplicity, missing-field policy behavior, and
-ordered semantic JSONL;
+ordered semantic JSONL; the nested-migration family checks bounded versioned
+JSON, exact policy transforms, deterministic document-set publication, and a
+Python-permitted feasibility path;
 namespace, runtime-snapshot, and native PID1 canaries; and one exact reviewed
 Bash case connected through the local boundary.
 

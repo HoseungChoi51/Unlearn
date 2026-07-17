@@ -145,7 +145,7 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The twelve executable tranches are pinned by
+secret. The thirteen executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
@@ -157,9 +157,10 @@ the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
 the [additive ninth manifest](reports/executable-ninth-tranche/manifest.json),
 the [additive tenth manifest](reports/executable-tenth-tranche/manifest.json),
 the [additive eleventh manifest](reports/executable-eleventh-tranche/manifest.json),
+[the additive twelfth manifest](reports/executable-twelfth-tranche/manifest.json),
 and
-[the additive twelfth manifest](reports/executable-twelfth-tranche/manifest.json).
-They currently contain 420 public method-development specifications with five
+[the additive thirteenth manifest](reports/executable-thirteenth-tranche/manifest.json).
+They currently contain 440 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -265,8 +266,28 @@ canonical 56,394-byte report SHA-256 values are
 `732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
 and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
 
-The twelfth manifest records `independent_human_review_attested: false`, and
-all twelve tranches remain public, unsealed, unscored, and nonauthorizing. V1
+The thirteenth addition contributes 20 `nested-json-schema-migration` tasks
+and 100 fixtures. Four strict source layouts cross five exact v1-to-v2
+migration policies. Independent semantic paths agree on strict JSON framing,
+closed schemas, policy-specific reconstruction, raw-UTF8 keyed-map ordering,
+and deterministic numbered publication. The fixed source-reviewed Bash wrapper uses
+an isolated standard-library Python program and passes all 100 public
+fixtures. This is Python-permitted development feasibility, not candidate
+authorization or a model result. Its exact content identities are recorded in
+the thirteenth manifest and the
+[family infrastructure guide](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md).
+The task-set, added-registry, cumulative-suite, cumulative-catalog,
+discrimination, and canonical 56,396-byte report SHA-256 values are
+`2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b`,
+`01990ca4355ef20736861d7bb7753e09e5ccbbfbddf8d21c4ffce3a451d83873`,
+`bb7b78b68879eb32d4849bb5d82cac7a90b0695dc3fa72b9836dd7b6e70863e0`,
+`25142ebdc014f4d4a53bba34bb9ffeaffa6f87789169180fe0caab69b02fcb9f`,
+`416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
+and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
+
+The thirteenth manifest records `independent_human_review_attested: false`,
+and all thirteen tranches remain public, unsealed, unscored, and
+nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
@@ -316,8 +337,21 @@ and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
 for 5,052 canonical bytes. This is an
 allocation lock only: planned entries
 have no implied fixture, oracle, verifier, review, sealing, score, or
-execution status. The next family in canonical order is
-`nested-json-schema-migration`.
+execution status.
+[Coverage v6](configs/executable-method-development-coverage-v6.json)
+promotes only
+`nested-json-schema-migration`; its exact migration proof and current
+identities are generated from the thirteenth task evidence. Its
+semantic/config-byte SHA-256 values are
+`044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
+and `e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68`
+for 25,899 canonical bytes. The
+[v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
+semantic/config-byte SHA-256 values are
+`5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
+and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
+for 5,423 canonical bytes. The next family in canonical order is
+`dependency-dag-execution-plan`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -706,6 +740,9 @@ Canaries answer narrow questions cheaply before the expensive campaign:
 - the collision-safe rename Bash canary asks whether one fixed, source-reviewed
   program can realize all 20 rule/policy cells on the binary profile under a
   restricted tool `PATH`, including exact arbitrary-byte equality.
+- the nested-JSON migration canary asks whether one fixed Bash wrapper and
+  isolated standard-library Python program can realize all 100 strict
+  shape/policy/profile contracts under the declared three-tool `PATH`.
 
 Their reports are in
 [`reports/engineering-pilot/`](reports/engineering-pilot/),
@@ -733,17 +770,19 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 420 frozen public-development executable tasks and 2,100 concrete fixture
-  bundles across twenty-one integrated families and twelve additive tranches;
-- a locked 25-family/500-task allocation with 4 families/80 tasks still
+- 440 frozen public-development executable tasks and 2,200 concrete fixture
+  bundles across twenty-two integrated families and thirteen additive
+  tranches;
+- a locked 25-family/500-task allocation with 3 families/60 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, materialization, no-follow, and mutation tests for the
   integrated families, with independently structured reference paths where
   available and shared final-state assembly explicitly recorded for the
   hardlink family, bounded single-stream/strict-ustar/relational-report
   checks for the archive family, strict multi-format/batch-policy checks for
-  checksum repair, and strict mixed-codec/multiplicity/policy checks for
-  enrichment composition;
+  checksum repair, strict mixed-codec/multiplicity/policy checks for
+  enrichment composition, and strict nested-schema/migration/order checks for
+  nested JSON migration;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
@@ -767,7 +806,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through tenth additions have no
+is method-development data, its third through thirteenth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -829,10 +868,17 @@ operation order, atomicity, transient state, global quiescence, or exit
 status. Its all-fixture reviewed Bash canary does not widen that boundary or
 authorize arbitrary candidates.
 
+The nested-JSON migration family verifies a strict source document set, the
+selected v1-to-v2 transformation, deterministic numbered JSON publication,
+and stable inputs under trusted quiescence. It does not observe Python module
+or syscall use, read history, atomicity, transient state, global quiescence,
+or candidate exit status. Its fixed Bash/Python canary does not widen that
+boundary or authorize arbitrary candidates.
+
 The critical path is now:
 
-1. implement the remaining 80 method-development specifications, beginning
-   with `nested-json-schema-migration`, with concrete fixtures, independent
+1. implement the remaining 60 method-development specifications, beginning
+   with `dependency-dag-execution-plan`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed
