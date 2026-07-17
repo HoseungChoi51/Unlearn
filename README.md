@@ -17,6 +17,7 @@ improves.
 - [Experiment setup and research readiness](RESEARCH_READINESS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
 - [Hardlink experiment infrastructure](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md)
+- [Compressed archive round-trip experiment infrastructure](ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
 - [Portable hardware benchmarking guide](HARDWARE.md)
 - [Hardware result JSON Schema](hardware-result.schema.json)
@@ -39,7 +40,10 @@ improves.
 - [Executable additive seventh-tranche hash manifest](reports/executable-seventh-tranche/manifest.json)
 - [Executable additive eighth-tranche hash manifest](reports/executable-eighth-tranche/manifest.json)
 - [Executable additive ninth-tranche hash manifest](reports/executable-ninth-tranche/manifest.json)
-- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v2.json)
+- [Executable additive tenth-tranche hash manifest](reports/executable-tenth-tranche/manifest.json)
+- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v3.json)
+- [Coverage v2-to-v3 migration evidence](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+- [Historical executable coverage v2 record](configs/executable-method-development-coverage-v2.json)
 - [Coverage v1-to-v2 migration evidence](configs/executable-method-development-coverage-v1-to-v2-migration.json)
 - [Superseded executable coverage v1 record](configs/executable-method-development-coverage-v1.json)
 
@@ -360,8 +364,8 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and eighteen cataloged public-development
-static fixture/verifier families are implemented across nine additive
+fail-closed claim-policy evaluation, and nineteen cataloged public-development
+static fixture/verifier families are implemented across ten additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
@@ -369,7 +373,8 @@ bundle types; and the fifth adds `pipefail-atomic-report` under the same
 additive rule. The sixth adds `bounded-retry-state-machine`, and the seventh
 adds `case-routed-batch-transform`. The eighth adds
 `collision-safe-batch-rename`; the ninth adds the topology-sensitive
-`hardlink-deduplicated-mirror`. These additions remain outside the
+`hardlink-deduplicated-mirror`; and the tenth adds
+`compressed-archive-roundtrip-verify`. These additions remain outside the
 first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
@@ -584,11 +589,35 @@ See
 [the component guide](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md) for the
 observation and authority limits.
 
-Together the nine tranches provide 360 of the 500 required
-method-development specifications and 1,800 concrete fixture bundles across
-18 integrated families. They remain public, unsealed, unscored, and
+The additive tenth tranche contributes 20
+`compressed-archive-roundtrip-verify` tasks and 100 fixtures. Its 4-by-5 grid
+crosses gzip, bzip2, xz, and uncompressed ustar with archive-, member-,
+round-trip-, mode-, and strict-evidence projections. Every policy still faces
+the same semantic archive and reconstructed-tree checks. The verifier accepts
+portable codec output only when it is one bounded complete stream, parses the
+decompressed ustar without extracting it, checks normalized regular members,
+and derives the closed report from the candidate's actual archive bytes. A
+fixed reviewed Bash canary solves all 100 public fixtures with `PATH` limited
+to the declared seven utilities. This is feasibility and verifier evidence,
+not a candidate API, score, model-selection result, or research result. See
+[the tenth-tranche component guide](ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md)
+for its exact observation limits. The task-set, added-registry,
+cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,553-byte
+[hash-only manifest](reports/executable-tenth-tranche/manifest.json) SHA-256
+values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
+
+Together the ten tranches provide 380 of the 500 required
+method-development specifications and 1,900 concrete fixture bundles across
+19 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-140 specifications and the trusted sandbox/supervisor still block general
+120 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -619,8 +648,21 @@ The separate
 [migration record](configs/executable-method-development-coverage-v1-to-v2-migration.json)
 proves that exactly one family declaration changed. Neither record grants
 implementation sealing, review, scoring, execution, model-selection, or claim
-authority. The next planned family is
-`compressed-archive-roundtrip-verify`.
+authority. Coverage v2 remains immutable historical evidence. The
+[v3 coverage lock](configs/executable-method-development-coverage-v3.json)
+preserves its exact bytes, promotes only
+`compressed-archive-roundtrip-verify`, and binds 19 integrated families/380
+tasks plus 6 planned families/120 tasks. Its semantic SHA-256 is
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`,
+and its 23,943 canonical bytes have SHA-256
+`de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`.
+The
+[v2-to-v3 migration record](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+proves the other 24 family records are unchanged. Its semantic SHA-256 is
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`;
+its 4,358 canonical bytes have SHA-256
+`77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`.
+The next planned family is `checksum-repair-plan`.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two

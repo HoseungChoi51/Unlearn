@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Eighteen families/360 tasks currently have concrete oracles
-  and 1,800 authenticated fixture bundles across nine additive tranches.
+  and 500 tasks. Nineteen families/380 tasks currently have concrete oracles
+  and 1,900 authenticated fixture bundles across ten additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 7 families/140 tasks, beginning with
-  `compressed-archive-roundtrip-verify`, still need implementation and review.
+- The remaining 6 families/120 tasks, beginning with
+  `checksum-repair-plan`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -171,13 +171,22 @@ not reporting a successful specialization or compression experiment.
 
 The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.md).
 The current public allocation and its exact content identity are in
-[coverage v2](configs/executable-method-development-coverage-v2.json).
-Its semantic coverage SHA-256 is
-`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
+[coverage v3](configs/executable-method-development-coverage-v3.json).
+Its semantic SHA-256 is
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`,
+and its 23,943 canonical bytes have SHA-256
+`de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`.
 The original [v1 record](configs/executable-method-development-coverage-v1.json)
-is preserved byte-for-byte, and the
+and [v2 record](configs/executable-method-development-coverage-v2.json) are
+preserved byte-for-byte. The
 [migration evidence](configs/executable-method-development-coverage-v1-to-v2-migration.json)
-proves that only the hardlink family declaration changed.
+proves that only the hardlink family declaration changed in v2, while the
+[v2-to-v3 migration evidence](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+proves that v3 changes only the archive family's lifecycle and bound
+integration evidence. Its semantic SHA-256 is
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`;
+its 4,358 canonical bytes have SHA-256
+`77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`.
 
 The sixth
 [`bounded-retry-state-machine` manifest](reports/executable-sixth-tranche/manifest.json)
@@ -258,6 +267,28 @@ reviewed Bash program passes all 100 public fixtures using only the declared
 seven external tools. This is feasibility and verifier evidence, not candidate
 authorization, a score, model selection, or a research result.
 
+The tenth
+[`compressed-archive-roundtrip-verify` manifest](reports/executable-tenth-tranche/manifest.json)
+binds another 20 tasks and 100 fixtures. Four outer encodings cross five
+closed evidence-report projections, while every cell retains the same strict
+inner-ustar and reconstructed-tree semantics. The verifier decodes exactly one
+bounded stream, rejects truncation, concatenation and trailing data, parses
+ustar bytes without extraction, checks the complete output tree and preserved
+inputs, and derives report evidence from the candidate artifact. A fixed
+reviewed Bash program passes all 100 public fixtures under the declared
+seven-tool `PATH`. Final state cannot establish the candidate's actual
+verification sequence, tool history, transient paths, causal derivation of
+the round-trip tree, global quiescence, or exit status. The canary establishes
+public-development feasibility only.
+The task-set, registry, cumulative-suite, cumulative-catalog, discrimination,
+and canonical 56,553-byte report SHA-256 values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
+
 ## Where the detailed answers live
 
 - [PLAN.md](PLAN.md): authoritative scientific protocol and success thresholds.
@@ -269,6 +300,9 @@ authorization, a score, model selection, or a research result.
   runtime isolation, artifact contracts, and evidence plumbing.
 - [HARDLINK_EXPERIMENT_INFRASTRUCTURE.md](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md):
   the ninth tranche's topology model, coverage migration, and failure modes.
+- [ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md](ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md):
+  the tenth tranche's codec/archive boundary, relational report, canary, and
+  v2-to-v3 promotion.
 - [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md): how component
   outputs compose into claim-eligible evidence.
 - [RESEARCH_READINESS.md](RESEARCH_READINESS.md): compact build-state versus

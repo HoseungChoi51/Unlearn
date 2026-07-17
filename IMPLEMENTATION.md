@@ -166,10 +166,15 @@ evidence that a model or research hypothesis has succeeded.
   evidence. V2 reconciles 18 integrated families/360 tasks to all nine live
   cumulative registry identities and reserves 7 concrete families/140 tasks
   without pretending that planned entries have fixtures or verifiers. The
-  migration record proves that only the hardlink family changed after its v1
+  v1-to-v2 migration record proves that only the hardlink family changed after its v1
   grid was found to contain redundant, nondeterministic, and nonorthogonal
-  cells. Both configs are public, unsealed, unscored, nonauthorizing, and
-  record no independent human-review attestation.
+  cells. V3 preserves exact v2 bytes, promotes only
+  `compressed-archive-roundtrip-verify`, reconciles 19 integrated
+  families/380 tasks to ten live cumulative registry identities, and reserves
+  6 concrete families/120 tasks. Its v2-to-v3 migration record proves the
+  other 24 family values are unchanged. All configs are public, unsealed,
+  unscored, nonauthorizing, and record no independent human-review
+  attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
   contracts and five deterministic profiles per task (100 fixtures). It
   crosses four mode-readable selectors with five archive-mode policies,
@@ -276,6 +281,24 @@ evidence that a model or research hypothesis has succeeded.
   independent human review. Its final-state verifier assumes trusted
   quiescence and cannot attest creation, tool, transient-path, or exit-status
   history.
+- [x] Additive tenth-tranche `compressed-archive-roundtrip-verify` family
+  with 20 task contracts and five deterministic profiles per task (100
+  fixtures). Four outer formats cross five closed evidence-report
+  projections, while all cells retain identical normalized-ustar,
+  reconstructed-tree, output-closure, and input-preservation semantics. The
+  trusted verifier accepts exactly one bounded selected-format stream, parses
+  decompressed ustar bytes without extraction, and derives report evidence
+  from the actual candidate artifact. Wrong format, truncation,
+  concatenation, trailing data, expansion-limit, unsafe/member/tar/report,
+  input, and final-tree mutants are rejected in normal and optimized modes.
+  A fixed source-reviewed Bash canary solves all 100 public fixtures with
+  exactly `bzip2`, `gzip`, `mkdir`, `sha256sum`, `sort`, `tar`, and `xz`.
+  Through-ninth predecessor evidence reconstructs every predecessor identity
+  once before the tenth registry/catalog append. The family remains public,
+  unsealed, unscored, nonauthorizing, outside first-tranche-only V1
+  invocation, and without independent human review. Its final-state verifier
+  assumes trusted quiescence and cannot attest verification order, tool use,
+  transient state, causal reconstruction, global quiescence, or exit status.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -603,10 +626,24 @@ canonical 56,392-byte report SHA-256 values are
 `1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
 and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
 
-The cumulative 360 specifications and 1,800 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the ninth manifest
+The additive tenth tranche is bound by
+[reports/executable-tenth-tranche/manifest.json](reports/executable-tenth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from
+`compressed-archive-roundtrip-verify` through exact local types and
+through-ninth predecessor evidence. Its family task-set, added-registry,
+cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,553-byte report SHA-256 values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
+
+The cumulative 380 specifications and 1,900 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the tenth manifest
 explicitly records `independent_human_review_attested: false`. The remaining
-140 specifications, independent human review, and a separately reviewed
+120 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
@@ -623,9 +660,22 @@ backward-linked to those exact bytes and binds 18 integrated families/360
 tasks plus 7 planned families/140 tasks. The
 [migration record](configs/executable-method-development-coverage-v1-to-v2-migration.json)
 proves that the hardlink declaration is the only changed family. These locks
-fix allocation metadata only; a planned family is not implemented, reviewed,
-sealed, scored, or executable because it appears in a record. The next planned
-implementation is `compressed-archive-roundtrip-verify`.
+remain historical. The
+[v3 lock](configs/executable-method-development-coverage-v3.json) preserves
+the exact v2 bytes and binds 19 integrated families/380 tasks plus 6 planned
+families/120 tasks. The
+[v2-to-v3 migration record](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+proves that only the archive family was promoted and that its locked axes,
+solution track, tools, filesystem schema, output contract, and capability tags
+were preserved. The v3 semantic/config-byte SHA-256 values are
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`
+and `de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`
+for 23,943 bytes. The migration semantic/config-byte SHA-256 values are
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
+and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
+for 4,358 bytes. These locks fix allocation metadata only; a planned family is
+not implemented, reviewed, sealed, scored, or executable because it appears
+in a record. The next planned implementation is `checksum-repair-plan`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -638,7 +688,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-eighteen concrete cataloged families above, these generated records do not yet
+nineteen concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -710,10 +760,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 140 method-development specifications not yet implemented and
+- [ ] Add the 120 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 360-
+  development inventory before sealing. The frozen cumulative 380-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -731,7 +781,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the eighteen implemented families
+- [ ] Extend verifier mutation tests beyond the nineteen implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

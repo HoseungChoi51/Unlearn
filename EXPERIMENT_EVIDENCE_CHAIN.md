@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 360
-integrated public method-development tasks with 1,800 concrete fixtures across
-nine additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 380
+integrated public method-development tasks with 1,900 concrete fixtures across
+ten additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -250,21 +250,47 @@ fixture-discrimination, and canonical report-byte SHA-256 values
 `1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
 and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
 
-The v2 allocation lock contains 18 integrated families/360 tasks and 7
-planned families/140 tasks. Its semantic coverage SHA-256 is
-`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
-It backward-links the immutable v1 coverage/config-byte SHA-256 values
+The tenth addition contributes 20 `compressed-archive-roundtrip-verify`
+tasks/100 fixtures. Its
+[hash-only manifest](reports/executable-tenth-tranche/manifest.json) binds the
+task set, added registry, cumulative suite, cumulative catalog,
+fixture-discrimination evidence, and report bytes. Four compression formats
+cross five closed report projections, while every cell receives identical
+semantic archive and reconstructed-tree validation. The task-set, registry,
+cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,553-byte report SHA-256 values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
+
+The [v3 allocation lock](configs/executable-method-development-coverage-v3.json)
+contains 19 integrated families/380 tasks and 6 planned families/120 tasks.
+Its semantic SHA-256 is
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`;
+its 23,943 canonical bytes have SHA-256
+`de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`.
+It preserves the complete immutable v2 artifact,
+which in turn backward-links the immutable v1 coverage/config-byte SHA-256 values
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
+The
+[v2-to-v3 migration](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+semantic/config-byte SHA-256 values are
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
+and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
+for 4,358 canonical bytes.
 The lock fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through ninth manifests and the allocation lock explicitly record
+third through tenth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 140 method-development tasks, beginning with
-`compressed-archive-roundtrip-verify`, independent review of the complete development
+**Planned:** the remaining 120 method-development tasks, beginning with
+`checksum-repair-plan`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -296,9 +322,11 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-eighteen integrated fixture/oracle families with mutation coverage and
+nineteen integrated fixture/oracle families with mutation coverage and
 independently structured oracle paths where available; the hardlink family
 independently checks parsing and grouping but shares final-state assembly;
+the archive family checks bounded single-stream decoding, strict ustar
+semantics, relational reports, and complete reconstructed state;
 namespace, runtime-snapshot, and native PID1 canaries; and one exact reviewed
 Bash case connected through the local boundary.
 
@@ -356,6 +384,23 @@ Bash program realizes all 20 grid cells on the binary profile under a
 restricted tool `PATH`; its all-byte/NUL equality probe is engineering
 feasibility, not an arbitrary-candidate API, production sandbox, score,
 selection result, or research claim.
+
+The ninth-family verifier makes hardlink topology observable through inode
+sharing, link counts, exact bytes and metadata, a portable group digest, and
+input preservation. It does not establish the candidate's link-creation
+history, tool use, transient paths, global quiescence, or exit status. Its
+all-fixture reviewed Bash canary is feasibility evidence only.
+
+The tenth-family verifier first checks the selected outer stream under bounded
+single-stream rules, then parses the decompressed ustar without extracting
+untrusted names. It requires the exact ordered regular-member semantics,
+candidate-derived closed report, reconstructed file tree, zero mtimes, link
+count one, output closure, and stable inputs. It cannot prove which
+verification operations or tools ran, the order or atomicity of steps, the
+causal path from archive to reconstructed tree, temporary state, global
+quiescence, or candidate exit status. Its all-100 reviewed Bash canary is not
+an arbitrary-candidate interface, production sandbox, score, selection
+result, or research claim.
 
 **Planned:** a production, independently reviewed arbitrary-candidate service
 with a trusted Bash runtime closure, exact-tool enforcement, tmpfs/workspace

@@ -159,10 +159,10 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Eighteen families/360 tasks have concrete oracles and 1,800 fixture
-bundles across nine additive tranches; seven families/140 tasks remain
-planned, beginning with `compressed-archive-roundtrip-verify`. The
-[v2 coverage record](configs/executable-method-development-coverage-v2.json) fixes
+500 tasks. Nineteen families/380 tasks have concrete oracles and 1,900 fixture
+bundles across ten additive tranches; six families/120 tasks remain planned,
+beginning with `checksum-repair-plan`. The
+[v3 coverage record](configs/executable-method-development-coverage-v3.json) fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
 candidate-execution authority, scoring, or model-selection evidence. All
@@ -175,6 +175,11 @@ hardlink grid contained redundant, nondeterministic, and nonorthogonal cells.
 The [migration record](configs/executable-method-development-coverage-v1-to-v2-migration.json)
 binds the replacement grid, the 20-signature discrimination evidence, and the
 fact that all other 24 family records are unchanged.
+Coverage v2 is likewise retained byte-for-byte. The
+[v2-to-v3 migration](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+promotes only the previously planned archive family, preserves its locked
+axes and contract, binds the tenth integration evidence, and proves that the
+other 24 family records are unchanged.
 
 The [sixth-tranche manifest](reports/executable-sixth-tranche/manifest.json)
 binds the `bounded-retry-state-machine` task set, added registry, cumulative
@@ -211,11 +216,29 @@ report. The corresponding SHA-256 values are
 `56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`,
 `1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
 and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
+The [tenth-tranche manifest](reports/executable-tenth-tranche/manifest.json)
+binds the `compressed-archive-roundtrip-verify` task set, added registry,
+cumulative suite, cumulative catalog, discrimination evidence, and canonical
+56,553-byte report. The corresponding SHA-256 values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 The preserved v1 coverage and config-byte identities are
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
 the backward-linked v2 coverage identity is
 `7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
+The current v3 semantic/config-byte SHA-256 values are
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`
+and `de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`
+for 23,943 bytes. The v2-to-v3 migration semantic/config-byte SHA-256
+values are
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
+and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
+for 4,358 bytes.
 
 The fifth `pipefail-atomic-report` family makes an important evaluator
 distinction concrete. Its exact semantics model complete logical streams, the
@@ -290,6 +313,20 @@ Bash program passes all 100 public fixtures under the exact seven-tool `PATH`.
 This is development feasibility and verifier evidence only; it cannot prove
 creation history, tool history, transient state, global quiescence, exit
 status, sealed generalization, or model performance.
+
+The tenth `compressed-archive-roundtrip-verify` family composes normalized
+ustar creation, one of four outer encodings, exact reconstruction, and one of
+five evidence projections. Its trusted decoder admits exactly one bounded
+gzip, bzip2, xz, or uncompressed stream under the closed format contract; its
+ustar parser checks ordered regular members, bytes, modes, and normalized
+metadata without extracting untrusted names. The workspace verifier then
+checks the candidate-derived relational report, reconstructed file bytes,
+modes, zero mtimes, link count one, output closure, and input preservation. A
+fixed reviewed Bash canary passes all 100 public fixtures with exactly the
+seven declared utilities. These observations establish final-state
+feasibility and verifier sensitivity. They do not establish the commands,
+verification order, temporary checks, causal reconstruction path, transient
+state, global quiescence, or exit status of a future candidate.
 
 Lifecycle roles prevent feedback leakage:
 
@@ -398,7 +435,8 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 7-family/140-task remainder and independently review
+1. implement the locked 6-family/120-task remainder, beginning with
+   `checksum-repair-plan`, and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

@@ -85,11 +85,11 @@ parameters do not establish a smaller or faster deployment.
 | Capability-support and signed-transfer audit | Finds abilities that help, hurt, or do not affect terminal work instead of guessing from labels | Contracts and interpretation rules exist | Planned | Measure above-floor capabilities, cross-fit interventions, and add-back effects |
 | Training-source admission | Prevents invalid, ambiguous, unlicensed, duplicated, or evaluation-contaminated examples from driving a false gain | Raw import, authentication, lexical filtering, and tokenizer scheduling are implemented | Gated: zero rows are claim-admitted | Add Bash parsing, fixture execution, row lineage, ambiguity repair, balancing, and decontamination |
 | Token and compute ledger | Makes equal-target-token and equal-total-FLOP comparisons meaningful | Exact engineering token schedules and update ledgers exist | Partial: production executed-FLOP binding is absent | Derive FLOPs from the actual production operator trace |
-| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 360 integrated public-development tasks/1,800 fixtures across nine additive tranches; the backward-linked v2 25-family/500-task allocation is locked | Gated: 7 families/140 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
+| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 380 integrated public-development tasks/1,900 fixtures across ten additive tranches; the backward-linked v3 25-family/500-task allocation is locked | Gated: 6 families/120 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
 | Lifecycle splits and leakage control | Stops training, selection, and repeated inspection from consuming the final test set | Split contracts and fail-closed lifecycle routing exist | Partial | Freeze real suite identities and generate prompt/AST/graph/trace leakage reports |
 | Parser and deterministic decoding | Fixes how one model response becomes one candidate and prevents rerun policy from changing scores | Frozen response parser and diagnostic syntax classification exist | Partial: production decoder/action loop is absent | Freeze generation settings and implement the bounded static and interactive decoders |
 | Runtime closure, sandbox, and supervisor | Lets untrusted code run against identical tools without reaching the host or surviving a timeout | Namespace, descriptor, runtime-bundle, PID1, and one reviewed fixed-Bash canary exist | Gated: arbitrary candidates, exact Bash tool policy, external trust, and runtime-data closure are absent | Promote an independently reviewed general-candidate boundary with tmpfs/quiescence/resource guarantees |
-| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Mutation checks exist for eighteen integrated families, with independently structured oracle paths where available; the hardlink family independently checks parsing/grouping but shares final-state assembly | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
+| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Mutation checks exist for nineteen integrated families, with independently structured oracle paths where available; the hardlink family independently checks parsing/grouping but shares final-state assembly, while the archive family adds bounded codec/ustar/report checks | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
 | Production trainer and operator funnel | Determines empirically whether dense tuning, pruning, factorization, quantization, or reset/regrow offers the best performance/size tradeoff | A real-text dense-SFT engineering canary and prospective operator schemas exist | Planned for research runs | Implement production training/export, then screen matched operators instead of assuming SwiGLU channels win |
 | Model-aware operator binding | Prevents out-of-range indices, partial GQA groups, fictitious pruning savings, or misleading average-bit claims | Prospective exact binding covers tensor roles/factorization tuples, representable pruning, and quantization payload lower bounds; completed floating-dense reconciliation rejects wrong architecture dimensions for supported pruning | Gated: exact selected-unit/value realization, embedding-map replay, residual/hidden physical pruning, and factorized/quantized/hybrid exporters remain absent | Add exporter-specific topology and mapping replay before accepting operator realization |
 | Baselines and causal interventions | Separates useful specialization from extra compute, random plasticity, sparse tuning, or generic compression | Prospective arms and interpretation rules exist | Planned | Run matched dense, random, target-only, no-reset, uniform-quantization, restoration, and add-back controls |
@@ -104,10 +104,23 @@ and canonical config-byte SHA-256
 The backward-linked v2 allocation has semantic SHA-256
 `7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`
 and promotes only the fully discriminable hardlink family, leaving 24 family
-records unchanged. It is a scope commitment, not benchmark completion: it
-grants no fixture, review, sealing, execution, scoring, selection, or claim
-status to the 7 planned families. The next locked family is
-`compressed-archive-roundtrip-verify`.
+records unchanged. It remains immutable historical evidence. The current
+[v3 allocation](configs/executable-method-development-coverage-v3.json)
+preserves the exact v2 bytes and promotes only
+`compressed-archive-roundtrip-verify`; its
+[migration record](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+proves the other 24 family records remain unchanged. It is a scope commitment,
+not benchmark completion: it grants no fixture, review, sealing, execution,
+scoring, selection, or claim status to the 6 planned families. The next locked
+family is `checksum-repair-plan`.
+The v3 semantic/config-byte SHA-256 values are
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`
+and `de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`
+for 23,943 canonical bytes. The v2-to-v3 migration semantic/config-byte
+SHA-256 values are
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
+and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
+for 4,358 canonical bytes.
 
 The fifth `pipefail-atomic-report` addition contributes 20 tasks and 100
 fixtures with exact complete-stream aggregation, ordered status vectors, and
@@ -199,6 +212,28 @@ the exact seven-tool allowlist. This establishes development feasibility and
 verifier sensitivity, not a production sandbox, model score, model-selection
 result, or research claim. Trusted quiescence, external tool/runtime trust,
 sealed generalization, and independent human review remain open gates.
+
+The tenth `compressed-archive-roundtrip-verify` addition contributes 20 tasks
+and 100 fixtures. Four outer formats cross five report projections. Every
+policy still requires one bounded selected-format stream, strict normalized
+ustar members, exact reconstructed bytes/modes/zero mtimes, link count one,
+output closure, a candidate-derived relational report, and stable inputs.
+Codec truncation, concatenation, trailing data, wrong-format artifacts,
+archive/member/report mutations, unsafe paths, and final-workspace mutations
+are rejected. A fixed reviewed Bash implementation passes all 100 public
+fixtures using only the declared seven utilities. This establishes
+development feasibility and verifier sensitivity, not a production sandbox,
+model score, model-selection result, or research claim. The final-state check
+cannot establish actual verification steps, tool use, operation order,
+temporary state, causal reconstruction, global quiescence, or exit status.
+The task-set, registry, cumulative-suite, cumulative-catalog, discrimination,
+and canonical 56,553-byte report SHA-256 values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 
 ## What the architecture-specific gate now establishes
 
@@ -305,6 +340,9 @@ It does not yet support claims that:
   logic.
 - [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md) owns detailed
   trust boundaries and evidence plumbing.
+- [ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md](ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md)
+  owns the tenth family's codec/archive semantics, canary boundary, and
+  publication identities.
 - [IMPLEMENTATION.md](IMPLEMENTATION.md) is the detailed mutable task ledger.
 - This document owns the compact build-state/evidence-state synthesis.
 - [README.md](README.md) is the repository orientation and command index.

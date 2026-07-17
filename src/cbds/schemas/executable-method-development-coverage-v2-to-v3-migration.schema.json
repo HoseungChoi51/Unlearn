@@ -1,0 +1,282 @@
+{
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://cbds.invalid/schemas/executable-method-development-coverage-v2-to-v3-migration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "This schema checks the public migration shape and frozen principal identities. Exact admission additionally requires cbds.executable_development_coverage_v2_to_v3_migration.load_executable_development_coverage_v2_to_v3_migration, which compares canonical bytes with live v2/v3 evidence.",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_execution_authorized": {
+      "const": false
+    },
+    "changed_family_count": {
+      "const": 1
+    },
+    "changed_family_id": {
+      "const": "compressed-archive-roundtrip-verify"
+    },
+    "claim_authorized": {
+      "const": false
+    },
+    "from": {
+      "additionalProperties": false,
+      "properties": {
+        "config_byte_count": {
+          "const": 23267
+        },
+        "config_bytes_sha256": {
+          "const": "b7c130b4b6436eb833548e69261da3ded1519c9680d82dc1e59063dd4af92ac9"
+        },
+        "config_relative_path": {
+          "const": "configs/executable-method-development-coverage-v2.json"
+        },
+        "coverage_sha256": {
+          "const": "7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd"
+        },
+        "coverage_version": {
+          "const": "2.0.0"
+        },
+        "git_commit": {
+          "const": "33119f824e8ab0d4d60538d58ba9e5c477e4804d"
+        }
+      },
+      "required": [
+        "coverage_version",
+        "coverage_sha256",
+        "config_relative_path",
+        "config_bytes_sha256",
+        "config_byte_count",
+        "git_commit"
+      ],
+      "type": "object"
+    },
+    "migration_sha256": {
+      "const": "8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2"
+    },
+    "migration_version": {
+      "const": "1.0.0"
+    },
+    "model_selection_eligible": {
+      "const": false
+    },
+    "new_family_sha256": {
+      "const": "971ed53000934f78f8d16e9842112d98c9c08a3abe18d999a88bd71b7dd1a1aa"
+    },
+    "new_lifecycle_state": {
+      "const": "integrated"
+    },
+    "new_source_registry_commitment": {
+      "additionalProperties": false,
+      "properties": {
+        "added_task_count": {
+          "const": 20
+        },
+        "cumulative_suite_sha256": {
+          "const": "629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f"
+        },
+        "cumulative_task_count": {
+          "const": 380
+        },
+        "registry_sha256": {
+          "const": "0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab"
+        },
+        "tranche_id": {
+          "const": "tenth-tranche"
+        }
+      },
+      "required": [
+        "tranche_id",
+        "added_task_count",
+        "cumulative_task_count",
+        "registry_sha256",
+        "cumulative_suite_sha256"
+      ],
+      "type": "object"
+    },
+    "old_family_sha256": {
+      "const": "8138a4dbf70dce775100b28658468da7bfbb6c1a2ee97ac24b6794011a09d3ab"
+    },
+    "old_lifecycle_state": {
+      "const": "planned"
+    },
+    "preserved_allowed_tools": {
+      "const": [
+        "bzip2",
+        "gzip",
+        "mkdir",
+        "sha256sum",
+        "sort",
+        "tar",
+        "xz"
+      ]
+    },
+    "preserved_capability_tags": {
+      "const": [
+        "archive-creation",
+        "checksums",
+        "compression",
+        "roundtrip-verification"
+      ]
+    },
+    "preserved_filesystem_schema": {
+      "const": "archive-roundtrip-source-tree"
+    },
+    "preserved_output_contract": {
+      "const": "compressed-archive-with-verification-report"
+    },
+    "preserved_parameter_axes": {
+      "const": [
+        {
+          "axis_name": "compression_format",
+          "values": [
+            "gzip",
+            "bzip2",
+            "xz",
+            "none"
+          ]
+        },
+        {
+          "axis_name": "verification_policy",
+          "values": [
+            "archive-digest",
+            "member-digests",
+            "roundtrip-bytes",
+            "roundtrip-bytes-and-modes",
+            "strict-all"
+          ]
+        }
+      ]
+    },
+    "preserved_solution_track": {
+      "const": "bash-native"
+    },
+    "promotion_evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "discrimination_sha256": {
+          "const": "ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21"
+        },
+        "family_id": {
+          "const": "compressed-archive-roundtrip-verify"
+        },
+        "new_lifecycle_state": {
+          "const": "integrated"
+        },
+        "old_lifecycle_state": {
+          "const": "planned"
+        },
+        "source_tranche_id": {
+          "const": "tenth-tranche"
+        },
+        "task_set_sha256": {
+          "const": "450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a"
+        }
+      },
+      "required": [
+        "family_id",
+        "old_lifecycle_state",
+        "new_lifecycle_state",
+        "source_tranche_id",
+        "task_set_sha256",
+        "discrimination_sha256"
+      ],
+      "type": "object"
+    },
+    "public_method_development": {
+      "const": true
+    },
+    "reason_codes": {
+      "const": [
+        "planned-contract-preserved",
+        "canonical-grid-integration",
+        "archive-roundtrip-discrimination",
+        "tenth-tranche-integration"
+      ]
+    },
+    "record_type": {
+      "const": "cbds.executable-method-development-coverage-v2-to-v3-migration"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scored": {
+      "const": false
+    },
+    "scored_evaluation_authorized": {
+      "const": false
+    },
+    "sealed": {
+      "const": false
+    },
+    "to": {
+      "additionalProperties": false,
+      "properties": {
+        "config_relative_path": {
+          "const": "configs/executable-method-development-coverage-v3.json"
+        },
+        "coverage_sha256": {
+          "const": "b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79"
+        },
+        "coverage_version": {
+          "const": "3.0.0"
+        }
+      },
+      "required": [
+        "coverage_version",
+        "coverage_sha256",
+        "config_relative_path"
+      ],
+      "type": "object"
+    },
+    "unchanged_family_count": {
+      "const": 24
+    },
+    "unchanged_family_sha256": {
+      "items": {
+        "$ref": "#/$defs/sha256"
+      },
+      "maxItems": 24,
+      "minItems": 24,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "migration_version",
+    "record_type",
+    "from",
+    "to",
+    "changed_family_count",
+    "unchanged_family_count",
+    "changed_family_id",
+    "old_lifecycle_state",
+    "new_lifecycle_state",
+    "old_family_sha256",
+    "new_family_sha256",
+    "preserved_parameter_axes",
+    "preserved_solution_track",
+    "preserved_allowed_tools",
+    "preserved_filesystem_schema",
+    "preserved_output_contract",
+    "preserved_capability_tags",
+    "promotion_evidence",
+    "new_source_registry_commitment",
+    "reason_codes",
+    "unchanged_family_sha256",
+    "migration_sha256",
+    "public_method_development",
+    "sealed",
+    "scored",
+    "candidate_execution_authorized",
+    "scored_evaluation_authorized",
+    "model_selection_eligible",
+    "claim_authorized"
+  ],
+  "title": "CBDS executable development coverage v2-to-v3 migration",
+  "type": "object"
+}

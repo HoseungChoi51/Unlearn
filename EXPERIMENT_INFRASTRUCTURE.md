@@ -145,7 +145,7 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The nine executable tranches are pinned by
+secret. The ten executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
@@ -154,8 +154,9 @@ the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
 [the additive sixth manifest](reports/executable-sixth-tranche/manifest.json),
 [the additive seventh manifest](reports/executable-seventh-tranche/manifest.json),
 [the additive eighth manifest](reports/executable-eighth-tranche/manifest.json),
-and [the additive ninth manifest](reports/executable-ninth-tranche/manifest.json).
-They currently contain 360 public method-development specifications with five
+the [additive ninth manifest](reports/executable-ninth-tranche/manifest.json),
+and [the additive tenth manifest](reports/executable-tenth-tranche/manifest.json).
+They currently contain 380 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -214,26 +215,53 @@ discrimination, and canonical 56,392-byte report SHA-256 values are
 `56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`,
 `1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
 and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
-The ninth manifest records `independent_human_review_attested: false`, and
-all nine tranches remain public, unsealed, unscored, and nonauthorizing. V1
+
+The tenth addition contributes 20 `compressed-archive-roundtrip-verify` tasks
+and 100 fixtures. Its four compression formats cross five closed evidence
+projections, but every cell must satisfy the same bounded single-stream,
+normalized-ustar, reconstructed-tree, report, and input-preservation checks.
+The fixed reviewed Bash canary passes all 100 public fixtures using only the
+declared seven utilities. This is development feasibility, not candidate
+authorization or a model result. The task-set, added-registry,
+cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,553-byte report SHA-256 values are
+`450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a`,
+`0d07fd82de275ffd9dc274b97a6fa02fdd0620f83d5ee90a2bea0ad64f06f0ab`,
+`629119116c53a0be2cc7cacb5461ae13de7d50f29b0a129707a840089ab48d2f`,
+`5a29ea69111028fe69322d892e061a723ab53fb857ce4077cca924e314a4f4d6`,
+`ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
+and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
+
+The tenth manifest records `independent_human_review_attested: false`, and
+all ten tranches remain public, unsealed, unscored, and nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
 The current
-[executable-method-development-coverage-v2.json](configs/executable-method-development-coverage-v2.json)
+[executable-method-development-coverage-v3.json](configs/executable-method-development-coverage-v3.json)
 locks the 25-family/500-task allocation before the remaining implementations
-are written. It binds 18 integrated families/360 tasks to the nine source
-registries and reserves 7 named families/140 tasks with exact parameter axes,
+are written. It binds 19 integrated families/380 tasks to the ten source
+registries and reserves 6 named families/120 tasks with exact parameter axes,
 solution tracks, allowed tools, filesystem schemas, output contracts, and
-capability tags. Its semantic coverage SHA-256 is
-`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
-It backward-links the preserved v1 semantic/config-byte identities
+capability tags. It preserves the complete v2 artifact, which backward-links
+the preserved v1 semantic/config-byte identities
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
-the migration record proves that only the implemented hardlink grid changed.
+the v1-to-v2 migration proves that only the hardlink grid changed, and the
+[v2-to-v3 migration](configs/executable-method-development-coverage-v2-to-v3-migration.json)
+proves that v3 promotes only the archive family while leaving the other 24
+family records unchanged.
+The v3 semantic SHA-256 is
+`b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`;
+its 23,943 canonical bytes have SHA-256
+`de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`.
+The v2-to-v3 migration semantic SHA-256 is
+`8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`;
+its 4,358 canonical bytes have SHA-256
+`77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`.
 This is an allocation lock only: planned entries have no implied fixture,
 oracle, verifier, review, sealing, score, or execution status. The next family
-in canonical order is `compressed-archive-roundtrip-verify`.
+in canonical order is `checksum-repair-plan`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -335,6 +363,21 @@ complete ledger. It requires trusted quiescence and cannot establish creation,
 tool, transient-path, global-quiescence, or exit-status history. Its fixed
 reviewed Bash canary proves only public-development feasibility for the
 declared tool set.
+
+The tenth `compressed-archive-roundtrip-verify` family separates a canonical
+oracle representative from semantic candidate acceptance. The trusted path
+decodes one bounded stream under the selected gzip, bzip2, xz, or uncompressed
+contract and parses the resulting ustar without extracting untrusted names.
+It rejects unsafe or noncanonical member paths, wrong order or metadata,
+links and extensions, duplicate or unexpected members, malformed padding, and
+data beyond the terminator. The report is relational: its digests are derived
+from the actual candidate archive and parsed members, not copied from the
+oracle's representative compressed bytes. The workspace verifier additionally
+requires exact reconstructed bytes/modes/zero mtimes, link count one, output
+closure, and stable inputs. These checks require trusted quiescence and cannot
+establish actual verification steps, tool use, operation order, temporary
+paths, causal reconstruction history, global quiescence, or candidate exit
+status. The reviewed all-fixture Bash canary is feasibility evidence only.
 
 ## 6. Parser, decoding, and deterministic outcomes
 
@@ -634,14 +677,15 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 360 frozen public-development executable tasks and 1,800 concrete fixture
-  bundles across eighteen integrated families and nine additive tranches;
-- a locked 25-family/500-task allocation with 7 families/140 tasks still
+- 380 frozen public-development executable tasks and 1,900 concrete fixture
+  bundles across nineteen integrated families and ten additive tranches;
+- a locked 25-family/500-task allocation with 6 families/120 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, materialization, no-follow, and mutation tests for the
   integrated families, with independently structured reference paths where
   available and shared final-state assembly explicitly recorded for the
-  hardlink family;
+  hardlink family, plus bounded single-stream/strict-ustar/relational-report
+  checks for the archive family;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
@@ -665,7 +709,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through ninth additions have no
+is method-development data, its third through tenth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -706,10 +750,17 @@ tool use, transient paths, global quiescence, or exit status. Its all-fixture
 reviewed Bash canary does not widen that boundary or authorize arbitrary
 candidates.
 
+The archive round-trip family verifies the selected outer format, normalized
+inner ustar semantics, relational evidence report, reconstructed final tree,
+and stable inputs under trusted quiescence. It does not observe the
+candidate's verification sequence, tool use, temporary checks, causal
+extraction path, global quiescence, or exit status. Its all-fixture reviewed
+Bash canary does not widen that boundary or authorize arbitrary candidates.
+
 The critical path is now:
 
-1. implement the remaining 140 method-development specifications, beginning
-   with `compressed-archive-roundtrip-verify`, with concrete fixtures, independent
+1. implement the remaining 120 method-development specifications, beginning
+   with `checksum-repair-plan`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed
