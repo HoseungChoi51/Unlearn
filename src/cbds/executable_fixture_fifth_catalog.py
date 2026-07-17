@@ -402,14 +402,14 @@ def _validate_live_base_and_global_uniqueness(
         )
 
 
-def build_fifth_tranche_fixture_catalog(
-    registry: FifthTrancheTaskRegistry | None = None,
+def build_fifth_tranche_fixture_catalog_local(
+    registry: FifthTrancheTaskRegistry,
 ) -> FifthTrancheFixtureCatalog:
-    selected_registry = (
-        build_fifth_tranche_task_registry() if registry is None else registry
-    )
-    if type(selected_registry) is not FifthTrancheTaskRegistry:
+    """Build only this tranche without rebuilding predecessor catalogs."""
+
+    if type(registry) is not FifthTrancheTaskRegistry:
         raise TypeError("registry must be an exact FifthTrancheTaskRegistry")
+    selected_registry = registry
     validate_fifth_tranche_task_registry(selected_registry)
     bundles = tuple(
         _build_bundle(task, profile)
@@ -419,7 +419,6 @@ def build_fifth_tranche_fixture_catalog(
     selected_registry, selected_bundles = _validate_inputs(
         selected_registry, bundles, regenerate=False
     )
-    _validate_live_base_and_global_uniqueness(selected_bundles)
     digest = _catalog_digest(selected_registry, selected_bundles)
 
     # All values came from closed builders and were checked above.  Avoid a
@@ -446,6 +445,17 @@ def build_fifth_tranche_fixture_catalog(
     return catalog
 
 
+def build_fifth_tranche_fixture_catalog(
+    registry: FifthTrancheTaskRegistry | None = None,
+) -> FifthTrancheFixtureCatalog:
+    selected_registry = (
+        build_fifth_tranche_task_registry() if registry is None else registry
+    )
+    catalog = build_fifth_tranche_fixture_catalog_local(selected_registry)
+    _validate_live_base_and_global_uniqueness(catalog.bundles)
+    return catalog
+
+
 __all__ = [
     "FIFTH_TRANCHE_ADDED_FIXTURE_COUNT",
     "FIFTH_TRANCHE_CATALOG_SCHEMA_VERSION",
@@ -460,6 +470,7 @@ __all__ = [
     "FifthTrancheFixtureCatalog",
     "FifthTrancheFixtureCatalogError",
     "build_fifth_tranche_fixture_catalog",
+    "build_fifth_tranche_fixture_catalog_local",
     "compute_fifth_tranche_fixture_catalog_sha256",
     "validate_fifth_tranche_fixture_catalog",
     "verify_fifth_tranche_fixture_catalog",

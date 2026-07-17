@@ -247,6 +247,8 @@ class _TreeEntry:
     size: int
     mtime_ns: int
     link_count: int
+    device: int
+    inode: int
     content_sha256: str | None = None
     symlink_target: str | None = None
 
@@ -1139,6 +1141,8 @@ def _scan_tree_descriptor(
                     "size": metadata.st_size,
                     "mtime_ns": metadata.st_mtime_ns,
                     "link_count": metadata.st_nlink,
+                    "device": metadata.st_dev,
+                    "inode": metadata.st_ino,
                 }
                 if stat.S_ISLNK(metadata.st_mode):
                     target = os.readlink(name, dir_fd=directory_descriptor)

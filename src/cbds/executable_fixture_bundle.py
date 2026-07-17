@@ -26,6 +26,7 @@ from .executable_workspace import (
     ExpectedFile,
     FixtureDefinition,
     InputFile,
+    InputHardlink,
     InputSymlink,
 )
 
@@ -222,7 +223,8 @@ def _validate_definition_type(definition: object) -> FixtureDefinition:
             "definition must be an exact FixtureDefinition"
         )
     if type(definition.inputs) is not tuple or any(
-        type(item) not in {InputFile, InputSymlink} for item in definition.inputs
+        type(item) not in {InputFile, InputSymlink, InputHardlink}
+        for item in definition.inputs
     ):
         raise ExecutableFixtureBundleError(
             "definition inputs must contain exact immutable workspace input types"
@@ -232,6 +234,20 @@ def _validate_definition_type(definition: object) -> FixtureDefinition:
     ):
         raise ExecutableFixtureBundleError(
             "definition expected_files must contain exact ExpectedFile values"
+        )
+    if any(
+        item.required_link_count != 1
+        for item in definition.expected_files
+    ):
+        raise ExecutableFixtureBundleError(
+            "generic fixture oracles require output link count one"
+        )
+    if (
+        type(definition.expected_symlinks) is not tuple
+        or definition.expected_symlinks
+    ):
+        raise ExecutableFixtureBundleError(
+            "generic fixture oracles do not support expected symlinks"
         )
     try:
         # Reconstruct for validation so frozen-object bypasses in nested input or

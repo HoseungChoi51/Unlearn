@@ -449,14 +449,14 @@ def _validate_live_base_and_global_uniqueness(
         )
 
 
-def build_seventh_tranche_fixture_catalog(
-    registry: SeventhTrancheTaskRegistry | None = None,
+def build_seventh_tranche_fixture_catalog_local(
+    registry: SeventhTrancheTaskRegistry,
 ) -> SeventhTrancheFixtureCatalog:
-    selected_registry = (
-        build_seventh_tranche_task_registry() if registry is None else registry
-    )
-    if type(selected_registry) is not SeventhTrancheTaskRegistry:
+    """Build only this tranche without rebuilding predecessor catalogs."""
+
+    if type(registry) is not SeventhTrancheTaskRegistry:
         raise TypeError("registry must be an exact SeventhTrancheTaskRegistry")
+    selected_registry = registry
     validate_seventh_tranche_task_registry(selected_registry)
     bundles = tuple(
         _build_bundle(task, profile)
@@ -466,7 +466,6 @@ def build_seventh_tranche_fixture_catalog(
     selected_registry, selected_bundles = _validate_inputs(
         selected_registry, bundles, regenerate=False
     )
-    _validate_live_base_and_global_uniqueness(selected_bundles)
     digest = _catalog_digest(selected_registry, selected_bundles)
 
     catalog = object.__new__(SeventhTrancheFixtureCatalog)
@@ -490,6 +489,17 @@ def build_seventh_tranche_fixture_catalog(
     return catalog
 
 
+def build_seventh_tranche_fixture_catalog(
+    registry: SeventhTrancheTaskRegistry | None = None,
+) -> SeventhTrancheFixtureCatalog:
+    selected_registry = (
+        build_seventh_tranche_task_registry() if registry is None else registry
+    )
+    catalog = build_seventh_tranche_fixture_catalog_local(selected_registry)
+    _validate_live_base_and_global_uniqueness(catalog.bundles)
+    return catalog
+
+
 __all__ = [
     "FROZEN_FIRST_CATALOG_SHA256",
     "FROZEN_SECOND_CATALOG_SHA256",
@@ -506,6 +516,7 @@ __all__ = [
     "SeventhTrancheFixtureCatalog",
     "SeventhTrancheFixtureCatalogError",
     "build_seventh_tranche_fixture_catalog",
+    "build_seventh_tranche_fixture_catalog_local",
     "compute_seventh_tranche_fixture_catalog_sha256",
     "validate_seventh_tranche_fixture_catalog",
     "verify_seventh_tranche_fixture_catalog",

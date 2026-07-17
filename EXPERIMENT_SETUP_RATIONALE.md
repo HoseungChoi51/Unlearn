@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Seventeen families/340 tasks currently have concrete oracles
-  and 1,700 authenticated fixture bundles across eight additive tranches.
+  and 500 tasks. Eighteen families/360 tasks currently have concrete oracles
+  and 1,800 authenticated fixture bundles across nine additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 8 families/160 tasks, beginning with
-  `hardlink-deduplicated-mirror`, still need implementation and review.
+- The remaining 7 families/140 tasks, beginning with
+  `compressed-archive-roundtrip-verify`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -171,11 +171,13 @@ not reporting a successful specialization or compression experiment.
 
 The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.md).
 The current public allocation and its exact content identity are in
-[configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
+[coverage v2](configs/executable-method-development-coverage-v2.json).
 Its semantic coverage SHA-256 is
-`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
-and the canonical config-byte SHA-256 is
-`46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
+`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
+The original [v1 record](configs/executable-method-development-coverage-v1.json)
+is preserved byte-for-byte, and the
+[migration evidence](configs/executable-method-development-coverage-v1-to-v2-migration.json)
+proves that only the hardlink family declaration changed.
 
 The sixth
 [`bounded-retry-state-machine` manifest](reports/executable-sixth-tranche/manifest.json)
@@ -244,6 +246,18 @@ The family remains public, unsealed, unscored, nonauthorizing, outside first-
 tranche-only V1 invocation, and records
 `independent_human_review_attested: false`.
 
+The ninth
+[`hardlink-deduplicated-mirror` manifest](reports/executable-ninth-tranche/manifest.json)
+binds 20 tasks and 100 fixtures whose correctness includes real shared-inode
+topology. Four equivalence keys cross five deterministic owner policies, and
+dedicated probes make all 20 cells distinguishable. Separately structured
+parsing and grouping paths must agree before shared final-state assembly; the
+verifier checks exact bytes, modes, mtimes, input preservation, link counts,
+portable hardlink groups, and the complete ledger. A fixed
+reviewed Bash program passes all 100 public fixtures using only the declared
+seven external tools. This is feasibility and verifier evidence, not candidate
+authorization, a score, model selection, or a research result.
+
 ## Where the detailed answers live
 
 - [PLAN.md](PLAN.md): authoritative scientific protocol and success thresholds.
@@ -253,6 +267,8 @@ tranche-only V1 invocation, and records
   guide to individual components.
 - [EXPERIMENT_INFRASTRUCTURE.md](EXPERIMENT_INFRASTRUCTURE.md): trust boundaries,
   runtime isolation, artifact contracts, and evidence plumbing.
+- [HARDLINK_EXPERIMENT_INFRASTRUCTURE.md](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md):
+  the ninth tranche's topology model, coverage migration, and failure modes.
 - [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md): how component
   outputs compose into claim-eligible evidence.
 - [RESEARCH_READINESS.md](RESEARCH_READINESS.md): compact build-state versus

@@ -157,15 +157,19 @@ evidence that a model or research hypothesis has succeeded.
   third-tranche families add 40 tasks/200 fixtures, bringing the cumulative
   public-development identity to 240 tasks/1,200 fixtures while all execution,
   model-selection, and claim-authority flags remain false.
-- [x] Content-addressed method-development coverage lock for exactly 25
+- [x] Backward-linked content-addressed method-development coverage lock for
+  exactly 25
   families, 20 tasks per family, and 500 tasks total. The canonical 4-by-5
   parameter grids bind each family's lifecycle state, Bash-native or
   Python-permitted solution track, allowed tools, filesystem schema, output
-  contract, and capability tags. It reconciles 17 integrated families/340
-  tasks to all eight live cumulative registry identities and reserves 8
-  concrete families/160 tasks without pretending that planned entries have
-  fixtures or verifiers. The config is public, unsealed, unscored,
-  nonauthorizing, and records no independent human-review attestation.
+  contract, and capability tags. V1 is preserved as historical planning
+  evidence. V2 reconciles 18 integrated families/360 tasks to all nine live
+  cumulative registry identities and reserves 7 concrete families/140 tasks
+  without pretending that planned entries have fixtures or verifiers. The
+  migration record proves that only the hardlink family changed after its v1
+  grid was found to contain redundant, nondeterministic, and nonorthogonal
+  cells. Both configs are public, unsealed, unscored, nonauthorizing, and
+  record no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
   contracts and five deterministic profiles per task (100 fixtures). It
   crosses four mode-readable selectors with five archive-mode policies,
@@ -253,6 +257,25 @@ evidence that a model or research hypothesis has succeeded.
   identities, and the family remains public, unsealed, unscored,
   nonauthorizing, outside first-tranche-only V1 invocation, and without
   independent human review.
+- [x] Additive ninth-tranche `hardlink-deduplicated-mirror` family with 20
+  task contracts and five deterministic profiles per task (100 fixtures). It
+  crosses four fixture-distinguishable equivalence keys with five
+  deterministic metadata-owner policies. The fixtures contain a four-way
+  partition probe, five-way owner probe, pre-existing input hardlinks, exact
+  committed mtimes, symlink distractors, binary and empty data, hostile
+  pathnames, and mode variation. Dictionary-partition and sorted-stream
+  semantic engines must agree. The workspace verifier checks exact bytes,
+  modes, mtimes, input preservation, output link counts, and portable visible
+  hardlink-group digests; split-inode, external-link, ledger, input-alias,
+  type, and hash mutants are rejected. A fixed source-reviewed Bash canary
+  solves all 100 public bundles using exactly `cp`, `find`, `ln`, `mkdir`,
+  `sha256sum`, `sort`, and `stat`. Linear predecessor evidence reconstructs
+  each earlier task tranche and fixture catalog once while preserving all
+  frozen identities. The family remains public, unsealed, unscored,
+  nonauthorizing, outside first-tranche-only V1 invocation, and without
+  independent human review. Its final-state verifier assumes trusted
+  quiescence and cannot attest creation, tool, transient-path, or exit-status
+  history.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -567,24 +590,42 @@ and its canonical
 `56,369`-byte report SHA-256 is
 `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
 
-The cumulative 340 specifications and 1,700 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the eighth manifest
+The additive ninth tranche is bound by
+[reports/executable-ninth-tranche/manifest.json](reports/executable-ninth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `hardlink-deduplicated-mirror` through
+exact local types and linear predecessor evidence. Its family task-set,
+added-registry, cumulative-suite, cumulative-catalog, discrimination, and
+canonical 56,392-byte report SHA-256 values are
+`0415daa5f9bccfcd75b621ef4ae71c9e79a5b7c19763ceb470e5ef21169706d1`,
+`ff886754b054445a90ad30197d004e4071dba72bf0af17931d05e461c7e90703`,
+`d0647e24f29abd59f8c2d6b2ac2a404aee78b92c780f8be4f9b16d200885843b`,
+`56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`,
+`1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
+and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
+
+The cumulative 360 specifications and 1,800 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the ninth manifest
 explicitly records `independent_human_review_attested: false`. The remaining
-160 specifications, independent human review, and a separately reviewed
+140 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
 
-The complete allocation is frozen separately in
-[configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
-It binds 17 integrated families/340 tasks and 8 planned families/160 tasks to
-the 25-family/500-task target. The semantic coverage SHA-256 is
+The original allocation remains frozen in
+[coverage v1](configs/executable-method-development-coverage-v1.json).
+It bound 17 integrated families/340 tasks and 8 planned families/160 tasks to
+the 25-family/500-task target. Its semantic coverage SHA-256 is
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
 and the canonical config byte SHA-256 is
 `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
-This lock fixes allocation metadata only; a planned family is not implemented,
-reviewed, sealed, scored, or executable because it appears in the record. The
-next planned implementation is `hardlink-deduplicated-mirror`.
+The [v2 lock](configs/executable-method-development-coverage-v2.json) is
+backward-linked to those exact bytes and binds 18 integrated families/360
+tasks plus 7 planned families/140 tasks. The
+[migration record](configs/executable-method-development-coverage-v1-to-v2-migration.json)
+proves that the hardlink declaration is the only changed family. These locks
+fix allocation metadata only; a planned family is not implemented, reviewed,
+sealed, scored, or executable because it appears in a record. The next planned
+implementation is `compressed-archive-roundtrip-verify`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -597,7 +638,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-seventeen concrete cataloged families above, these generated records do not yet
+eighteen concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -669,10 +710,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 160 method-development specifications not yet implemented and
+- [ ] Add the 140 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 340-
+  development inventory before sealing. The frozen cumulative 360-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -690,7 +731,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the seventeen implemented families
+- [ ] Extend verifier mutation tests beyond the eighteen implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

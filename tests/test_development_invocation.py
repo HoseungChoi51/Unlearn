@@ -33,6 +33,7 @@ from cbds.development_invocation import (  # noqa: E402
     validate_development_invocation_record_against_catalog,
     verify_development_invocation,
 )
+import cbds.development_invocation as invocation_module  # noqa: E402
 from cbds.executable_fixture_catalog import (  # noqa: E402
     build_first_tranche_fixture_catalog,
 )
@@ -43,6 +44,7 @@ from cbds.executable_static_registry import (  # noqa: E402
     build_public_method_development_registry,
 )
 from cbds.executable_static_types import domain_sha256  # noqa: E402
+from cbds.executable_workspace import InputFile, InputHardlink  # noqa: E402
 
 
 def canonical(value: object) -> bytes:
@@ -170,6 +172,28 @@ class DevelopmentInvocationTests(unittest.TestCase):
         validate_development_invocation_record_against_catalog(
             decoded, self.admission
         )
+
+    def test_v1_protocol_fails_closed_on_unrepresentable_input_extensions(
+        self,
+    ) -> None:
+        with self.assertRaisesRegex(
+            DevelopmentInvocationError,
+            "does not carry committed input mtimes",
+        ):
+            invocation_module._input_protocol_record(
+                InputFile(
+                    "input/file",
+                    b"content",
+                    mtime_seconds=123,
+                )
+            )
+        with self.assertRaisesRegex(
+            DevelopmentInvocationError,
+            "input type",
+        ):
+            invocation_module._input_protocol_record(  # type: ignore[arg-type]
+                InputHardlink("input/alias", "input/0-source")
+            )
 
     def test_parser_floor_and_frozen_response_ceiling_fail_closed(self) -> None:
         cases = (

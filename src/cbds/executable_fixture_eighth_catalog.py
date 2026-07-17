@@ -454,14 +454,14 @@ def _validate_live_base_and_global_uniqueness(
         )
 
 
-def build_eighth_tranche_fixture_catalog(
-    registry: EighthTrancheTaskRegistry | None = None,
+def build_eighth_tranche_fixture_catalog_local(
+    registry: EighthTrancheTaskRegistry,
 ) -> EighthTrancheFixtureCatalog:
-    selected_registry = (
-        build_eighth_tranche_task_registry() if registry is None else registry
-    )
-    if type(selected_registry) is not EighthTrancheTaskRegistry:
+    """Build only this tranche without rebuilding predecessor catalogs."""
+
+    if type(registry) is not EighthTrancheTaskRegistry:
         raise TypeError("registry must be an exact EighthTrancheTaskRegistry")
+    selected_registry = registry
     validate_eighth_tranche_task_registry(selected_registry)
     bundles = tuple(
         _build_bundle(task, profile)
@@ -471,7 +471,6 @@ def build_eighth_tranche_fixture_catalog(
     selected_registry, selected_bundles = _validate_inputs(
         selected_registry, bundles, regenerate=False
     )
-    _validate_live_base_and_global_uniqueness(selected_bundles)
     digest = _catalog_digest(selected_registry, selected_bundles)
 
     catalog = object.__new__(EighthTrancheFixtureCatalog)
@@ -495,6 +494,17 @@ def build_eighth_tranche_fixture_catalog(
     return catalog
 
 
+def build_eighth_tranche_fixture_catalog(
+    registry: EighthTrancheTaskRegistry | None = None,
+) -> EighthTrancheFixtureCatalog:
+    selected_registry = (
+        build_eighth_tranche_task_registry() if registry is None else registry
+    )
+    catalog = build_eighth_tranche_fixture_catalog_local(selected_registry)
+    _validate_live_base_and_global_uniqueness(catalog.bundles)
+    return catalog
+
+
 __all__ = [
     "EIGHTH_TRANCHE_ADDED_FIXTURE_COUNT",
     "EIGHTH_TRANCHE_CATALOG_SCHEMA_VERSION",
@@ -512,6 +522,7 @@ __all__ = [
     "FROZEN_SIXTH_CATALOG_SHA256",
     "FROZEN_SEVENTH_CATALOG_SHA256",
     "build_eighth_tranche_fixture_catalog",
+    "build_eighth_tranche_fixture_catalog_local",
     "compute_eighth_tranche_fixture_catalog_sha256",
     "validate_eighth_tranche_fixture_catalog",
     "verify_eighth_tranche_fixture_catalog",

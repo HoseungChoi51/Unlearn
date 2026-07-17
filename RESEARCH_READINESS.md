@@ -85,11 +85,11 @@ parameters do not establish a smaller or faster deployment.
 | Capability-support and signed-transfer audit | Finds abilities that help, hurt, or do not affect terminal work instead of guessing from labels | Contracts and interpretation rules exist | Planned | Measure above-floor capabilities, cross-fit interventions, and add-back effects |
 | Training-source admission | Prevents invalid, ambiguous, unlicensed, duplicated, or evaluation-contaminated examples from driving a false gain | Raw import, authentication, lexical filtering, and tokenizer scheduling are implemented | Gated: zero rows are claim-admitted | Add Bash parsing, fixture execution, row lineage, ambiguity repair, balancing, and decontamination |
 | Token and compute ledger | Makes equal-target-token and equal-total-FLOP comparisons meaningful | Exact engineering token schedules and update ledgers exist | Partial: production executed-FLOP binding is absent | Derive FLOPs from the actual production operator trace |
-| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 340 integrated public-development tasks/1,700 fixtures across eight additive tranches; the full 25-family/500-task allocation is locked | Gated: 8 families/160 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
+| Generator-backed benchmark | Tests semantic programs and edge cases rather than prompt-template similarity | 360 integrated public-development tasks/1,800 fixtures across nine additive tranches; the backward-linked v2 25-family/500-task allocation is locked | Gated: 7 families/140 tasks remain planned, independent human review is unfinished, and no sealed suite exists | Implement the locked remainder, review the complete inventory, then build closed ID/OOD suites |
 | Lifecycle splits and leakage control | Stops training, selection, and repeated inspection from consuming the final test set | Split contracts and fail-closed lifecycle routing exist | Partial | Freeze real suite identities and generate prompt/AST/graph/trace leakage reports |
 | Parser and deterministic decoding | Fixes how one model response becomes one candidate and prevents rerun policy from changing scores | Frozen response parser and diagnostic syntax classification exist | Partial: production decoder/action loop is absent | Freeze generation settings and implement the bounded static and interactive decoders |
 | Runtime closure, sandbox, and supervisor | Lets untrusted code run against identical tools without reaching the host or surviving a timeout | Namespace, descriptor, runtime-bundle, PID1, and one reviewed fixed-Bash canary exist | Gated: arbitrary candidates, exact Bash tool policy, external trust, and runtime-data closure are absent | Promote an independently reviewed general-candidate boundary with tmpfs/quiescence/resource guarantees |
-| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Independent constructions and full-catalog mutation checks exist for seventeen integrated families | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
+| Oracle and semantic verifier | Decides whether output and filesystem state satisfy the task rather than merely resemble a reference string | Mutation checks exist for eighteen integrated families, with independently structured oracle paths where available; the hardlink family independently checks parsing/grouping but shares final-state assembly | Gated: family coverage and stratified human review are incomplete | Finish semantic coverage, mutation audit, and external human review before sealing |
 | Production trainer and operator funnel | Determines empirically whether dense tuning, pruning, factorization, quantization, or reset/regrow offers the best performance/size tradeoff | A real-text dense-SFT engineering canary and prospective operator schemas exist | Planned for research runs | Implement production training/export, then screen matched operators instead of assuming SwiGLU channels win |
 | Model-aware operator binding | Prevents out-of-range indices, partial GQA groups, fictitious pruning savings, or misleading average-bit claims | Prospective exact binding covers tensor roles/factorization tuples, representable pruning, and quantization payload lower bounds; completed floating-dense reconciliation rejects wrong architecture dimensions for supported pruning | Gated: exact selected-unit/value realization, embedding-map replay, residual/hidden physical pruning, and factorized/quantized/hybrid exporters remain absent | Add exporter-specific topology and mapping replay before accepting operator realization |
 | Baselines and causal interventions | Separates useful specialization from extra compute, random plasticity, sparse tuning, or generic compression | Prospective arms and interpretation rules exist | Planned | Run matched dense, random, target-only, no-reset, uniform-quantization, restoration, and add-back controls |
@@ -97,13 +97,17 @@ parameters do not establish a smaller or faster deployment.
 | Export and portable hardware measurement | Tests whether nominal compression produces real byte, memory, latency, or throughput gains | Schemas and a reproducible measurement protocol exist | Planned for experimental artifacts | Reopen the exact export, pass correctness, and collect raw repeated hardware samples |
 | Immutable provenance | Makes models, data, tasks, masks, seeds, outputs, and reports auditable as one chain | Content-addressed manifests and registries exist across many stages; supported completed source/export artifacts can be freshly reopened into a companion record | Partial: saved runtime reports are unauthenticated and downstream claim binders do not yet require/reopen every companion source | Publish prospective commitments externally and complete end-to-end source reopening |
 
-The development allocation lock has semantic SHA-256
+The preserved v1 development allocation has semantic SHA-256
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and canonical config-byte SHA-256
 `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
-It is a scope commitment, not benchmark completion: it grants no fixture,
-review, sealing, execution, scoring, selection, or claim status to the 8
-planned families. The next locked family is `hardlink-deduplicated-mirror`.
+The backward-linked v2 allocation has semantic SHA-256
+`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`
+and promotes only the fully discriminable hardlink family, leaving 24 family
+records unchanged. It is a scope commitment, not benchmark completion: it
+grants no fixture, review, sealing, execution, scoring, selection, or claim
+status to the 7 planned families. The next locked family is
+`compressed-archive-roundtrip-verify`.
 
 The fifth `pipefail-atomic-report` addition contributes 20 tasks and 100
 fixtures with exact complete-stream aggregation, ordered status vectors, and
@@ -182,6 +186,19 @@ boundaries. That canary is not an arbitrary-candidate API, production
 sandbox, score, selection result, or research claim. The assets remain public,
 unsealed, unscored, nonauthorizing, outside first-tranche-only V1 invocation,
 and record `independent_human_review_attested: false`.
+
+The ninth `hardlink-deduplicated-mirror` addition contributes 20 tasks and 100
+fixtures whose correctness includes physical inode sharing. Four equivalence
+keys cross five deterministic owner policies, and dedicated partition/owner
+probes yield 20 distinct fixture-oracle-derived signatures. Separately
+structured dictionary-partition and sorted-stream parsing/grouping paths agree
+before shared final-state assembly. The verifier checks exact bytes, modes,
+mtimes, input preservation, link counts, and portable hardlink-group
+identities; a fixed reviewed Bash program passes all 100 public fixtures with
+the exact seven-tool allowlist. This establishes development feasibility and
+verifier sensitivity, not a production sandbox, model score, model-selection
+result, or research claim. Trusted quiescence, external tool/runtime trust,
+sealed generalization, and independent human review remain open gates.
 
 ## What the architecture-specific gate now establishes
 

@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 340
-integrated public method-development tasks with 1,700 concrete fixtures across
-eight additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 360
+integrated public method-development tasks with 1,800 concrete fixtures across
+nine additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -238,20 +238,33 @@ the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
 `05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
 and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
 
-The full allocation lock contains 17 integrated families/340 tasks and 8
-planned families/160 tasks. Its semantic coverage SHA-256 is
-`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
-and its canonical config-byte SHA-256 is
-`46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
+The ninth addition contributes 20 `hardlink-deduplicated-mirror` tasks/100
+fixtures. Its
+[hash-only manifest](reports/executable-ninth-tranche/manifest.json) binds the
+task-set, added-registry, cumulative-suite, cumulative-catalog,
+fixture-discrimination, and canonical report-byte SHA-256 values
+`0415daa5f9bccfcd75b621ef4ae71c9e79a5b7c19763ceb470e5ef21169706d1`,
+`ff886754b054445a90ad30197d004e4071dba72bf0af17931d05e461c7e90703`,
+`d0647e24f29abd59f8c2d6b2ac2a404aee78b92c780f8be4f9b16d200885843b`,
+`56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`,
+`1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
+and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
+
+The v2 allocation lock contains 18 integrated families/360 tasks and 7
+planned families/140 tasks. Its semantic coverage SHA-256 is
+`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
+It backward-links the immutable v1 coverage/config-byte SHA-256 values
+`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
+and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 The lock fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through eighth manifests and the allocation lock explicitly record
+third through ninth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 160 method-development tasks, beginning with
-`hardlink-deduplicated-mirror`, independent review of the complete development
+**Planned:** the remaining 140 method-development tasks, beginning with
+`compressed-archive-roundtrip-verify`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -283,9 +296,11 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-seventeen integrated fixture/oracle families with independent constructions and
-mutation coverage; namespace, runtime-snapshot, and native PID1 canaries; and
-one exact reviewed Bash case connected through the local boundary.
+eighteen integrated fixture/oracle families with mutation coverage and
+independently structured oracle paths where available; the hardlink family
+independently checks parsing and grouping but shares final-state assembly;
+namespace, runtime-snapshot, and native PID1 canaries; and one exact reviewed
+Bash case connected through the local boundary.
 
 The fourth-family verifier observes final state only. It still requires a
 trusted supervisor to establish quiescence and cannot attest transient

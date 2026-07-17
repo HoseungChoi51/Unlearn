@@ -803,6 +803,17 @@ def _fingerprint(metadata: os.stat_result) -> tuple[int, ...]:
     return (metadata.st_dev, metadata.st_ino, metadata.st_mode, metadata.st_nlink, metadata.st_uid, metadata.st_gid, metadata.st_size, metadata.st_mtime_ns, metadata.st_ctime_ns)
 
 
+def _same_inode(
+    left: os.stat_result,
+    right: os.stat_result,
+) -> bool:
+    return (
+        left.st_dev == right.st_dev
+        and left.st_ino == right.st_ino
+        and stat.S_IFMT(left.st_mode) == stat.S_IFMT(right.st_mode)
+    )
+
+
 def _directory_flags() -> int:
     directory = getattr(os, "O_DIRECTORY", None)
     nofollow = getattr(os, "O_NOFOLLOW", None)
@@ -836,6 +847,40 @@ def _open_parent_directory(path: Path) -> tuple[int, str]:
         raise
 
 
+def _assert_parent_reachable(
+    path: Path,
+    parent_descriptor: int,
+    name: str,
+) -> None:
+    """Require the caller path to still resolve to the pinned parent."""
+
+    reopened: int | None = None
+    try:
+        try:
+            reopened, reopened_name = _open_parent_directory(path)
+        except (
+            ExecutableDevelopmentCoverageError,
+            OSError,
+        ) as exc:
+            raise ExecutableDevelopmentCoverageError(
+                "coverage parent is no longer reachable at the caller path"
+            ) from exc
+        try:
+            pinned = os.fstat(parent_descriptor)
+            observed = os.fstat(reopened)
+        except OSError as exc:
+            raise ExecutableDevelopmentCoverageError(
+                "coverage parent identity cannot be revalidated"
+            ) from exc
+        if reopened_name != name or not _same_inode(pinned, observed):
+            raise ExecutableDevelopmentCoverageError(
+                "coverage parent is no longer reachable at the caller path"
+            )
+    finally:
+        if reopened is not None:
+            os.close(reopened)
+
+
 def _read_stable_regular(path: Path) -> bytes:
     parent, name = _open_parent_directory(path)
     nofollow = getattr(os, "O_NOFOLLOW", None)
@@ -844,6 +889,7 @@ def _read_stable_regular(path: Path) -> bytes:
         raise ExecutableDevelopmentCoverageError("platform lacks O_NOFOLLOW")
     flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NONBLOCK", 0) | nofollow
     try:
+        _assert_parent_reachable(path, parent, name)
         try:
             named_before = os.stat(name, dir_fd=parent, follow_symlinks=False)
             descriptor = os.open(name, flags, dir_fd=parent)
@@ -874,6 +920,7 @@ def _read_stable_regular(path: Path) -> bytes:
             raise ExecutableDevelopmentCoverageError("coverage config path changed while being read") from exc
         if _fingerprint(before) != _fingerprint(after) or _fingerprint(after) != _fingerprint(named_after):
             raise ExecutableDevelopmentCoverageError("coverage config changed while being read")
+        _assert_parent_reachable(path, parent, name)
         return bytes(payload)
     finally:
         os.close(parent)

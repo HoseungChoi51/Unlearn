@@ -145,7 +145,7 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The eight executable tranches are pinned by
+secret. The nine executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
@@ -153,8 +153,9 @@ the [additive fourth manifest](reports/executable-fourth-tranche/manifest.json),
 the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
 [the additive sixth manifest](reports/executable-sixth-tranche/manifest.json),
 [the additive seventh manifest](reports/executable-seventh-tranche/manifest.json),
-and [the additive eighth manifest](reports/executable-eighth-tranche/manifest.json).
-They currently contain 340 public method-development specifications with five
+[the additive eighth manifest](reports/executable-eighth-tranche/manifest.json),
+and [the additive ninth manifest](reports/executable-ninth-tranche/manifest.json).
+They currently contain 360 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -204,23 +205,35 @@ respectively `6c563074579359d666faaae2aebf69019c74521e8946cea6a2fe19a756c744cd`,
 `b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
 `05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
 and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
-The eighth manifest records `independent_human_review_attested: false`, and
-all eight tranches remain public, unsealed, unscored, and nonauthorizing. V1
+The ninth addition contributes 20 `hardlink-deduplicated-mirror` tasks and 100
+fixtures. Its task-set, added-registry, cumulative-suite, cumulative-catalog,
+discrimination, and canonical 56,392-byte report SHA-256 values are
+`0415daa5f9bccfcd75b621ef4ae71c9e79a5b7c19763ceb470e5ef21169706d1`,
+`ff886754b054445a90ad30197d004e4071dba72bf0af17931d05e461c7e90703`,
+`d0647e24f29abd59f8c2d6b2ac2a404aee78b92c780f8be4f9b16d200885843b`,
+`56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`,
+`1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
+and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
+The ninth manifest records `independent_human_review_attested: false`, and
+all nine tranches remain public, unsealed, unscored, and nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
-The separate
-[executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
+The current
+[executable-method-development-coverage-v2.json](configs/executable-method-development-coverage-v2.json)
 locks the 25-family/500-task allocation before the remaining implementations
-are written. It binds 17 integrated families/340 tasks to the eight source
-registries and reserves 8 named families/160 tasks with exact parameter axes,
+are written. It binds 18 integrated families/360 tasks to the nine source
+registries and reserves 7 named families/140 tasks with exact parameter axes,
 solution tracks, allowed tools, filesystem schemas, output contracts, and
-capability tags. Its semantic coverage and config-byte SHA-256 values are
+capability tags. Its semantic coverage SHA-256 is
+`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
+It backward-links the preserved v1 semantic/config-byte identities
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
-and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
+and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
+the migration record proves that only the implemented hardlink grid changed.
 This is an allocation lock only: planned entries have no implied fixture,
 oracle, verifier, review, sealing, score, or execution status. The next family
-in canonical order is `hardlink-deduplicated-mirror`.
+in canonical order is `compressed-archive-roundtrip-verify`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -310,6 +323,18 @@ rename or inode identity, collision-decision or read-scope history, allowed-
 tool use, staging or atomic publication, crash rollback, transient input
 preservation, global quiescence, or candidate exit status; explicit directory-
 permission and live effective-access failures also remain outside the fixtures.
+
+The ninth `hardlink-deduplicated-mirror` family requires real inode sharing,
+not merely equal bytes. Four equivalence keys cross five deterministic owner
+policies, with explicit probes that make all 20 cells observably different.
+Input fixtures include pre-existing aliases and committed mtimes. Two
+separately structured parsing and grouping paths must agree before shared
+final-state assembly, and the verifier checks exact bytes, modes, mtimes,
+input preservation, link counts, portable hardlink-group digests, and the
+complete ledger. It requires trusted quiescence and cannot establish creation,
+tool, transient-path, global-quiescence, or exit-status history. Its fixed
+reviewed Bash canary proves only public-development feasibility for the
+declared tool set.
 
 ## 6. Parser, decoding, and deterministic outcomes
 
@@ -609,12 +634,14 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 340 frozen public-development executable tasks and 1,700 concrete fixture
-  bundles across seventeen integrated families and eight additive tranches;
-- a locked 25-family/500-task allocation with 8 families/160 tasks still
+- 360 frozen public-development executable tasks and 1,800 concrete fixture
+  bundles across eighteen integrated families and nine additive tranches;
+- a locked 25-family/500-task allocation with 7 families/140 tasks still
   explicitly planned rather than represented as implemented;
-- trusted-oracle, independent-reference, materialization, no-follow, and
-  mutation tests for the integrated families;
+- trusted-oracle, materialization, no-follow, and mutation tests for the
+  integrated families, with independently structured reference paths where
+  available and shared final-state assembly explicitly recorded for the
+  hardlink family;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
@@ -638,7 +665,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through eighth additions have no
+is method-development data, its third through ninth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -673,10 +700,16 @@ staging history, atomic publication, crash rollback, transient input history,
 global quiescence, or candidate exit status. Its fixed Bash canary does not
 widen that boundary or authorize arbitrary candidates.
 
+The hardlink family verifies a prescribed final physical topology under
+trusted quiescence. It does not observe the candidate's link-creation history,
+tool use, transient paths, global quiescence, or exit status. Its all-fixture
+reviewed Bash canary does not widen that boundary or authorize arbitrary
+candidates.
+
 The critical path is now:
 
-1. implement the remaining 160 method-development specifications, beginning
-   with `hardlink-deduplicated-mirror`, with concrete fixtures, independent
+1. implement the remaining 140 method-development specifications, beginning
+   with `compressed-archive-roundtrip-verify`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed

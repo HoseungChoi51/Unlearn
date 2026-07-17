@@ -155,11 +155,16 @@ require portable hardware measurements from the exact exported artifact.
 The repository has not produced a model-quality result. It currently provides
 contracts, data and training canaries, model/runtime inspection, and public
 method-development benchmark infrastructure. The benchmark allocation is
-locked at 25 families and 500 tasks; 17 families/340 tasks and 1,700 fixture
-bundles are implemented across eight additive tranches. Eight families/160
-tasks remain, beginning with `hardlink-deduplicated-mirror`.
+locked at 25 families and 500 tasks; 18 families/360 tasks and 1,800 fixture
+bundles are implemented across nine additive tranches. Seven families/140
+tasks remain, beginning with `compressed-archive-roundtrip-verify`. Coverage
+v2 preserves an exact backward link to the superseded v1 planning record and
+changes only the implemented hardlink family.
 
 These public assets are unsealed, unscored, and not authorized for candidate
 execution, model selection, or scientific claims. They reduce implementation
 risk and make later evidence interpretable; they do not demonstrate that a
 specialization or compression method works.
+
+The ninth tranche and its v1-to-v2 coverage correction are explained in
+[HARDLINK_EXPERIMENT_INFRASTRUCTURE.md](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md).

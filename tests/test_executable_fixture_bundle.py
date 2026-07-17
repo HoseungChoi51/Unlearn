@@ -29,8 +29,10 @@ from cbds.executable_fixture_bundle import (  # noqa: E402
 from cbds.executable_static_types import OpaqueFixtureDescriptor  # noqa: E402
 from cbds.executable_workspace import (  # noqa: E402
     ExpectedFile,
+    ExpectedSymlink,
     FixtureDefinition,
     InputFile,
+    InputHardlink,
     InputSymlink,
 )
 
@@ -155,6 +157,62 @@ class BindingIdentityTests(unittest.TestCase):
             relabeled.fixture_definition_sha256,
         )
         self.assertEqual(first.descriptor, relabeled.descriptor)
+
+    def test_input_hardlinks_bind_but_generic_output_topology_fails_closed(
+        self,
+    ) -> None:
+        hardlinked = FixtureDefinition(
+            "fixture.generic-hardlink-input",
+            (
+                InputFile("input/0-source", b"shared", 0o640),
+                InputHardlink("input/alias", "input/0-source"),
+            ),
+            sample_definition().expected_files,
+        )
+        bundle = sample_bundle(definition=hardlinked)
+        self.assertTrue(verify_executable_fixture_bundle(bundle))
+        self.assertEqual(
+            bundle.fixture_definition_sha256,
+            compute_fixture_definition_semantic_sha256(hardlinked),
+        )
+
+        for required_link_count in (None, 2):
+            with self.subTest(
+                required_link_count=required_link_count
+            ), self.assertRaisesRegex(
+                ExecutableFixtureBundleError,
+                "link count one",
+            ):
+                sample_bundle(
+                    definition=FixtureDefinition(
+                        "fixture.unsupported-output-topology",
+                        sample_definition().inputs,
+                        (
+                            ExpectedFile(
+                                "output/report.txt",
+                                maximum_bytes=64,
+                                mode=0o640,
+                                required_link_count=required_link_count,
+                            ),
+                            ExpectedFile("summary.json", maximum_bytes=128),
+                        ),
+                    )
+                )
+
+        with self.assertRaisesRegex(
+            ExecutableFixtureBundleError,
+            "expected symlinks",
+        ):
+            sample_bundle(
+                definition=FixtureDefinition(
+                    "fixture.unsupported-output-symlink",
+                    sample_definition().inputs,
+                    sample_definition().expected_files,
+                    expected_symlinks=(
+                        ExpectedSymlink("output/link"),
+                    ),
+                )
+            )
 
     def test_every_semantic_commitment_changes_the_public_identity(self) -> None:
         baseline = sample_bundle()

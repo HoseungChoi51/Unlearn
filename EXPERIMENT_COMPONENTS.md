@@ -159,16 +159,22 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Seventeen families/340 tasks have concrete oracles and 1,700 fixture
-bundles across eight additive tranches; eight families/160 tasks remain
-planned, beginning with `hardlink-deduplicated-mirror`. The
-[coverage record](configs/executable-method-development-coverage-v1.json) fixes
+500 tasks. Eighteen families/360 tasks have concrete oracles and 1,800 fixture
+bundles across nine additive tranches; seven families/140 tasks remain
+planned, beginning with `compressed-archive-roundtrip-verify`. The
+[v2 coverage record](configs/executable-method-development-coverage-v2.json) fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
 candidate-execution authority, scoring, or model-selection evidence. All
 current development assets remain public, unsealed, unscored, and
 nonauthorizing; independent human review remains unattested, and V1 invocation
 still admits only the frozen first tranche.
+
+Coverage v1 is retained byte-for-byte as historical evidence. Its exploratory
+hardlink grid contained redundant, nondeterministic, and nonorthogonal cells.
+The [migration record](configs/executable-method-development-coverage-v1-to-v2-migration.json)
+binds the replacement grid, the 20-signature discrimination evidence, and the
+fact that all other 24 family records are unchanged.
 
 The [sixth-tranche manifest](reports/executable-sixth-tranche/manifest.json)
 binds the `bounded-retry-state-machine` task set, added registry, cumulative
@@ -195,9 +201,21 @@ with SHA-256 values
 `b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
 `05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
 and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
-The updated coverage and config-byte identities are
+The [ninth-tranche manifest](reports/executable-ninth-tranche/manifest.json)
+binds the `hardlink-deduplicated-mirror` task set, added registry, cumulative
+suite, cumulative catalog, discrimination evidence, and canonical 56,392-byte
+report. The corresponding SHA-256 values are
+`0415daa5f9bccfcd75b621ef4ae71c9e79a5b7c19763ceb470e5ef21169706d1`,
+`ff886754b054445a90ad30197d004e4071dba72bf0af17931d05e461c7e90703`,
+`d0647e24f29abd59f8c2d6b2ac2a404aee78b92c780f8be4f9b16d200885843b`,
+`56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`,
+`1a0c0d23bb262c1d94250a92574c89af6c6333da08d58be715e1b5d1f4940435`,
+and `8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
+The preserved v1 coverage and config-byte identities are
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
-and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
+and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
+the backward-linked v2 coverage identity is
+`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
 
 The fifth `pipefail-atomic-report` family makes an important evaluator
 distinction concrete. Its exact semantics model complete logical streams, the
@@ -258,6 +276,20 @@ it does not authorize generated programs or prove rename, collision-decision,
 staging, atomic-publication, crash, inode, read-scope, tool, exit-status, or
 global-quiescence history. The final-state verifier therefore still requires a
 trusted supervisor to establish quiescence.
+
+The ninth `hardlink-deduplicated-mirror` family makes physical topology part
+of correctness. Four content/metadata equivalence keys cross five
+deterministic owner policies. Partition and owner probes make every one of the
+20 cells distinguishable before registry admission. Fixtures include
+pre-existing input aliases, source mtimes, binary and empty files, hostile
+names, modes, and symlink distractors. Separately structured parsing and
+grouping paths agree before shared owner and final-state assembly, after which
+the verifier checks exact output bytes, modes, mtimes, link counts, portable
+hardlink groups, the complete ledger, and input preservation. A fixed reviewed
+Bash program passes all 100 public fixtures under the exact seven-tool `PATH`.
+This is development feasibility and verifier evidence only; it cannot prove
+creation history, tool history, transient state, global quiescence, exit
+status, sealed generalization, or model performance.
 
 Lifecycle roles prevent feedback leakage:
 
@@ -366,7 +398,7 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 8-family/160-task remainder and independently review
+1. implement the locked 7-family/140-task remainder and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

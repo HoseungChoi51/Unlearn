@@ -4,7 +4,7 @@ from dataclasses import FrozenInstanceError, replace
 from hashlib import sha256
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import stat
 import subprocess
 import sys
@@ -21,19 +21,25 @@ from cbds.executable_workspace import (  # noqa: E402
     INITIAL_OUTPUT_POLICY,
     MAX_ENTRIES,
     MAX_FILE_BYTES,
+    MAX_INPUT_MTIME_SECONDS,
     MAX_PATH_COMPONENT_UTF8_BYTES,
+    MAX_PATH_UTF8_BYTES,
     MAX_TOTAL_BYTES,
     ExpectedFile,
+    ExpectedSymlink,
     FixtureDefinition,
     InputFile,
+    InputHardlink,
     InputSymlink,
     WorkspaceBaseline,
     WorkspaceClosedError,
     WorkspaceDefinitionError,
+    WorkspaceEntry,
     WorkspaceMaterializationError,
     WorkspaceOutputPolicyError,
     WorkspaceOutputReadError,
     WorkspaceScanError,
+    compute_workspace_hardlink_group_sha256,
     materialize_fixture,
     validate_expected_output_policy,
 )
@@ -61,6 +67,36 @@ def by_path(entries: tuple[object, ...]) -> dict[str, object]:
 
 
 class FrozenDefinitionTests(unittest.TestCase):
+    def test_legacy_sample_fixture_digest_is_byte_stable(self) -> None:
+        self.assertEqual(
+            sample_definition().fixture_sha256,
+            "71ffe6ae1702c60c8070b08e62f64bdc856b594cdf7c26020a634ccfce0f9774",
+        )
+        self.assertNotIn(
+            "expected_symlinks",
+            sample_definition().commitment_record(),
+        )
+        self.assertNotIn(
+            "mtime_seconds",
+            InputFile("input/file", b"content").to_record(),
+        )
+        timed = FixtureDefinition(
+            "fixture.timed-input",
+            (InputFile("input/file", b"content", mtime_seconds=123),),
+            (),
+        )
+        retimed = replace(
+            timed,
+            inputs=(
+                InputFile(
+                    "input/file",
+                    b"content",
+                    mtime_seconds=124,
+                ),
+            ),
+        )
+        self.assertNotEqual(timed.fixture_sha256, retimed.fixture_sha256)
+
     def test_public_definition_types_are_frozen_and_answer_free(self) -> None:
         regular = InputFile("input/data.txt", b"private fixture bytes", 0o600)
         symlink = InputSymlink("input/data-link", "data.txt")
@@ -110,6 +146,186 @@ class FrozenDefinitionTests(unittest.TestCase):
         self.assertNotEqual(first.fixture_sha256, changed.fixture_sha256)
         self.assertRegex(first.fixture_sha256, r"^[0-9a-f]{64}$")
 
+    def test_hardlink_definition_is_explicit_order_independent_and_bounded(
+        self,
+    ) -> None:
+        source = InputFile("input/0-source.bin", b"shared\x00bytes", 0o400)
+        alias = InputHardlink("input/nested/alias.bin", "input/0-source.bin")
+        first = FixtureDefinition(
+            "fixture.hardlink-definition",
+            (source, alias),
+            (ExpectedFile("mirror/source.bin", required_link_count=None),),
+        )
+        reordered = FixtureDefinition(
+            "fixture.hardlink-definition",
+            (alias, source),
+            first.expected_files,
+        )
+        changed = FixtureDefinition(
+            "fixture.hardlink-definition",
+            (
+                source,
+                InputHardlink("input/other.bin", "input/0-source.bin"),
+            ),
+            first.expected_files,
+        )
+        self.assertEqual(first.fixture_sha256, reordered.fixture_sha256)
+        self.assertNotEqual(first.fixture_sha256, changed.fixture_sha256)
+        self.assertEqual(
+            alias.to_record(),
+            {
+                "kind": "hardlink",
+                "path": "input/nested/alias.bin",
+                "target": "input/0-source.bin",
+            },
+        )
+        self.assertIsNone(
+            first.expected_files[0].to_record()["required_link_count"]
+        )
+        # The default record remains byte-for-byte compatible with the
+        # pre-topology contract.
+        self.assertEqual(
+            ExpectedFile("answer", 7, 0o640).to_record(),
+            {
+                "path": "answer",
+                "maximum_bytes": 7,
+                "mode": 0o640,
+                "required_kind": "regular",
+                "required_link_count": 1,
+            },
+        )
+        self.assertNotIn("expected_symlinks", first.commitment_record())
+
+    def test_expected_symlink_boundary_is_exact_order_independent_and_additive(
+        self,
+    ) -> None:
+        link = ExpectedSymlink("mirror/link", 32)
+        first = FixtureDefinition(
+            "fixture.expected-symlink",
+            (),
+            (ExpectedFile("mirror/target.bin", 16),),
+            expected_symlinks=(
+                ExpectedSymlink("mirror/z-link", 64),
+                link,
+            ),
+        )
+        reordered = FixtureDefinition(
+            "fixture.expected-symlink",
+            (),
+            first.expected_files,
+            expected_symlinks=tuple(reversed(first.expected_symlinks)),
+        )
+        changed = replace(
+            first,
+            expected_symlinks=(
+                ExpectedSymlink("mirror/z-link", 64),
+                ExpectedSymlink("mirror/link", 31),
+            ),
+        )
+        self.assertEqual(first.fixture_sha256, reordered.fixture_sha256)
+        self.assertNotEqual(first.fixture_sha256, changed.fixture_sha256)
+        self.assertEqual(
+            link.to_record(),
+            {
+                "path": "mirror/link",
+                "maximum_target_utf8_bytes": 32,
+                "required_kind": "symlink",
+                "required_link_count": 1,
+                "target_policy": "canonical-safe-relative-no-parent-v1",
+            },
+        )
+        self.assertEqual(
+            [
+                item["path"]
+                for item in first.commitment_record()["expected_symlinks"]
+            ],
+            ["mirror/link", "mirror/z-link"],
+        )
+
+    def test_hardlink_targets_and_output_link_bounds_fail_closed(self) -> None:
+        for path, target in (
+            ("input/a", "input/a"),
+            ("input/a", "outside/a"),
+            ("outside/a", "input/a"),
+        ):
+            with self.subTest(path=path, target=target), self.assertRaises(
+                WorkspaceDefinitionError
+            ):
+                InputHardlink(path, target)
+        with self.assertRaisesRegex(
+            WorkspaceDefinitionError, "exact InputFile"
+        ):
+            FixtureDefinition(
+                "fixture.missing-hardlink-target",
+                (InputHardlink("input/alias", "input/missing"),),
+                (),
+            )
+        with self.assertRaisesRegex(
+            WorkspaceDefinitionError,
+            "byte-smallest",
+        ):
+            FixtureDefinition(
+                "fixture.noncanonical-hardlink-anchor",
+                (
+                    InputHardlink("input/a", "input/b"),
+                    InputFile("input/b", b"same"),
+                ),
+                (),
+            )
+        with self.assertRaisesRegex(
+            WorkspaceDefinitionError, "exact InputFile"
+        ):
+            FixtureDefinition(
+                "fixture.hardlink-target-is-symlink",
+                (
+                    InputSymlink("input/target", "elsewhere"),
+                    InputHardlink("input/alias", "input/target"),
+                ),
+                (),
+            )
+        for required in (0, -1, True, MAX_ENTRIES + 1):
+            with self.subTest(required=required), self.assertRaises(
+                WorkspaceDefinitionError
+            ):
+                ExpectedFile(  # type: ignore[arg-type]
+                    "answer",
+                    required_link_count=required,
+                )
+        valid = compute_workspace_hardlink_group_sha256(
+            ("input/a", "input/b"),
+            2,
+        )
+        self.assertRegex(valid, r"^[0-9a-f]{64}$")
+        for paths, link_count in (
+            ((), 2),
+            (("input/b", "input/a"), 2),
+            (("input/a", "input/a"), 2),
+            (("input/a",), 1),
+            (("input/a", "input/b"), 1),
+        ):
+            with self.subTest(
+                paths=paths,
+                link_count=link_count,
+            ), self.assertRaises(WorkspaceDefinitionError):
+                compute_workspace_hardlink_group_sha256(  # type: ignore[arg-type]
+                    paths,
+                    link_count,
+                )
+
+    def test_legacy_multiply_linked_scan_record_remains_revalidatable(self) -> None:
+        legacy = WorkspaceEntry(
+            path="output.bin",
+            kind="file",
+            mode=0o640,
+            size=3,
+            mtime_ns=10,
+            link_count=2,
+            content_sha256=sha256(b"abc").hexdigest(),
+        )
+        record = legacy.to_record()
+        self.assertNotIn("hardlink_group_sha256", record)
+        self.assertEqual(record["link_count"], 2)
+
     def test_relative_paths_are_canonical_bounded_and_partitioned(self) -> None:
         bad_inputs = (
             "input",
@@ -134,12 +350,24 @@ class FrozenDefinitionTests(unittest.TestCase):
                 WorkspaceDefinitionError
             ):
                 ExpectedFile(value)
+            with self.subTest(output_symlink=value), self.assertRaises(
+                WorkspaceDefinitionError
+            ):
+                ExpectedSymlink(value)
 
         for target in ("", "/outside", "../outside", "dir/../outside", "a//b"):
             with self.subTest(target=target), self.assertRaises(
                 WorkspaceDefinitionError
             ):
                 InputSymlink("input/link", target)
+        for maximum in (0, -1, True, MAX_PATH_UTF8_BYTES + 1):
+            with self.subTest(maximum=maximum), self.assertRaises(
+                WorkspaceDefinitionError
+            ):
+                ExpectedSymlink(  # type: ignore[arg-type]
+                    "mirror/link",
+                    maximum,
+                )
 
     def test_file_modes_sizes_and_container_shapes_are_bounded(self) -> None:
         for mode in (-1, 0o1000, True):
@@ -151,6 +379,19 @@ class FrozenDefinitionTests(unittest.TestCase):
             InputFile("input/a", bytearray(b"not immutable"))  # type: ignore[arg-type]
         with self.assertRaises(WorkspaceDefinitionError):
             InputFile("input/a", b"x" * (MAX_FILE_BYTES + 1))
+        for mtime_seconds in (
+            -1,
+            True,
+            MAX_INPUT_MTIME_SECONDS + 1,
+        ):
+            with self.subTest(
+                mtime_seconds=mtime_seconds
+            ), self.assertRaises(WorkspaceDefinitionError):
+                InputFile(  # type: ignore[arg-type]
+                    "input/a",
+                    b"",
+                    mtime_seconds=mtime_seconds,
+                )
 
         for size in (-1, MAX_FILE_BYTES + 1, True):
             with self.subTest(size=size), self.assertRaises(
@@ -163,6 +404,13 @@ class FrozenDefinitionTests(unittest.TestCase):
             FixtureDefinition("fixture.lists", [], ())  # type: ignore[arg-type]
         with self.assertRaises(WorkspaceDefinitionError):
             FixtureDefinition("fixture.lists", (), [])  # type: ignore[arg-type]
+        with self.assertRaises(WorkspaceDefinitionError):
+            FixtureDefinition(
+                "fixture.symlink-lists",
+                (),
+                (),
+                expected_symlinks=[],  # type: ignore[arg-type]
+            )
 
     def test_materialization_revalidates_low_level_mutated_definitions(self) -> None:
         definition = sample_definition()
@@ -191,6 +439,13 @@ class FrozenDefinitionTests(unittest.TestCase):
                 (),
                 (ExpectedFile("out"), ExpectedFile("out/nested")),
             )
+        with self.assertRaisesRegex(WorkspaceDefinitionError, "duplicate"):
+            FixtureDefinition(
+                "fixture.cross-kind-output-duplicate",
+                (),
+                (ExpectedFile("out"),),
+                expected_symlinks=(ExpectedSymlink("out"),),
+            )
 
         too_many = tuple(ExpectedFile(f"out-{index:04d}", 0) for index in range(MAX_ENTRIES))
         with self.assertRaisesRegex(WorkspaceDefinitionError, "entry limit"):
@@ -209,6 +464,77 @@ class FrozenDefinitionTests(unittest.TestCase):
 
 
 class MaterializationAndScanTests(unittest.TestCase):
+    @unittest.skipUnless(
+        Path("/proc/self/fd").is_dir(),
+        "descriptor leak assertion requires procfs",
+    )
+    def test_hardlink_parent_open_failure_closes_the_first_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "workspace"
+            (root / "input/source").mkdir(parents=True)
+            (root / "input/destination").mkdir()
+            (root / "input/source/file").write_bytes(b"payload")
+            root_descriptor = os.open(
+                root,
+                os.O_RDONLY | os.O_DIRECTORY,
+            )
+            real_open = static_slice._open_relative_directory
+            call_count = 0
+
+            def fail_second_parent(
+                descriptor: int,
+                path: PurePosixPath,
+            ) -> int:
+                nonlocal call_count
+                call_count += 1
+                if call_count == 2:
+                    raise OSError("injected destination-parent failure")
+                return real_open(descriptor, path)
+
+            try:
+                before = len(os.listdir("/proc/self/fd"))
+                with mock.patch.object(
+                    static_slice,
+                    "_open_relative_directory",
+                    side_effect=fail_second_parent,
+                ), self.assertRaises(OSError):
+                    workspace_module._create_input_hardlink(
+                        root_descriptor,
+                        PurePosixPath("input/source/file"),
+                        PurePosixPath("input/destination/alias"),
+                    )
+                after = len(os.listdir("/proc/self/fd"))
+                self.assertEqual(after, before)
+            finally:
+                os.close(root_descriptor)
+
+    @unittest.skipUnless(
+        Path("/proc/self/fd").is_dir(),
+        "descriptor leak assertion requires procfs",
+    )
+    def test_alias_descriptor_setup_failure_closes_the_duplicate(self) -> None:
+        definition = FixtureDefinition(
+            "fixture.alias-descriptor-failure",
+            (
+                InputFile("input/0-source", b"payload", 0o000),
+                InputHardlink("input/alias", "input/0-source"),
+            ),
+            (),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            before = len(os.listdir("/proc/self/fd"))
+            with mock.patch.object(
+                workspace_module.os,
+                "set_inheritable",
+                side_effect=OSError("injected inheritable failure"),
+            ), self.assertRaises(WorkspaceMaterializationError):
+                materialize_fixture(
+                    definition,
+                    Path(temporary) / "workspace",
+                )
+            after = len(os.listdir("/proc/self/fd"))
+            self.assertEqual(after, before)
+
     def test_materializes_exact_projection_and_binds_repeatable_scans(self) -> None:
         definition = sample_definition()
         with tempfile.TemporaryDirectory() as temporary:
@@ -222,6 +548,10 @@ class MaterializationAndScanTests(unittest.TestCase):
                     INITIAL_OUTPUT_POLICY,
                 )
                 self.assertEqual(handle.expected_files, definition.expected_files)
+                self.assertEqual(
+                    handle.expected_symlinks,
+                    definition.expected_symlinks,
+                )
                 self.assertIsInstance(handle.baseline, WorkspaceBaseline)
 
                 readable = workspace / "input" / "readable.txt"
@@ -525,6 +855,145 @@ class MaterializationAndScanTests(unittest.TestCase):
                     inputs["input/readable.txt"], baseline["input/readable.txt"]
                 )
 
+    def test_materialized_input_hardlinks_bind_topology_and_unreadable_bytes(
+        self,
+    ) -> None:
+        payload = b"\x00shared\xff\n"
+        definition = FixtureDefinition(
+            "fixture.bound-input-hardlinks",
+            (
+                InputHardlink(
+                    "input/z-last/alias.bin",
+                    "input/0-source.bin",
+                ),
+                InputFile(
+                    "input/0-source.bin",
+                    payload,
+                    0o000,
+                    mtime_seconds=123_456_789,
+                ),
+                InputHardlink(
+                    "input/a-first/alias.bin",
+                    "input/0-source.bin",
+                ),
+            ),
+            (),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            with materialize_fixture(
+                definition, Path(temporary) / "workspace"
+            ) as handle:
+                baseline = by_path(handle.baseline.input_entries)
+                scanned = by_path(handle.scan_inputs().entries)
+                paths = (
+                    "input/a-first/alias.bin",
+                    "input/0-source.bin",
+                    "input/z-last/alias.bin",
+                )
+                groups = {
+                    scanned[path].hardlink_group_sha256 for path in paths
+                }
+                self.assertEqual(len(groups), 1)
+                self.assertNotIn(None, groups)
+                for path in paths:
+                    self.assertEqual(scanned[path], baseline[path])
+                    self.assertEqual(scanned[path].kind, "file")
+                    self.assertEqual(scanned[path].mode, 0o000)
+                    self.assertEqual(scanned[path].size, len(payload))
+                    self.assertEqual(scanned[path].link_count, 3)
+                    self.assertEqual(
+                        scanned[path].mtime_ns,
+                        123_456_789_000_000_000,
+                    )
+                    self.assertEqual(
+                        scanned[path].content_sha256,
+                        sha256(payload).hexdigest(),
+                    )
+                    self.assertEqual(
+                        (
+                            handle.workspace / path
+                        ).lstat().st_ino,
+                        (
+                            handle.workspace / "input/0-source.bin"
+                        ).lstat().st_ino,
+                    )
+
+                outside_name = handle.workspace / "outside-hardlink"
+                os.link(
+                    handle.workspace / "input/0-source.bin",
+                    outside_name,
+                )
+                changed = by_path(handle.scan_inputs().entries)
+                self.assertEqual(changed["input/0-source.bin"].link_count, 4)
+                self.assertNotEqual(
+                    changed["input/0-source.bin"].hardlink_group_sha256,
+                    baseline["input/0-source.bin"].hardlink_group_sha256,
+                )
+
+    def test_process_local_identity_check_rejects_identical_inode_replacement(
+        self,
+    ) -> None:
+        definition = FixtureDefinition(
+            "fixture.input-object-identity",
+            (
+                InputFile(
+                    "input/group/a.bin",
+                    b"same-bytes\n",
+                    0o640,
+                    mtime_seconds=12_345,
+                ),
+                InputHardlink(
+                    "input/group/b.bin",
+                    "input/group/a.bin",
+                ),
+            ),
+            (),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            with materialize_fixture(
+                definition, Path(temporary) / "workspace"
+            ) as handle:
+                original_scan = handle.scan_inputs()
+                handle.validate_input_object_identities(original_scan)
+                original_inode = (
+                    handle.workspace / "input/group/a.bin"
+                ).lstat().st_ino
+                parent = handle.workspace / "input/group"
+                parent_metadata = parent.stat()
+
+                first = parent / "a.bin"
+                second = parent / "b.bin"
+                first.unlink()
+                second.unlink()
+                replacement = handle.workspace / "replacement.bin"
+                replacement.write_bytes(b"same-bytes\n")
+                replacement.chmod(0o640)
+                os.utime(
+                    replacement,
+                    ns=(
+                        12_345_000_000_000,
+                        12_345_000_000_000,
+                    ),
+                )
+                os.link(replacement, first)
+                os.link(replacement, second)
+                replacement.unlink()
+                os.utime(
+                    parent,
+                    ns=(
+                        parent_metadata.st_atime_ns,
+                        parent_metadata.st_mtime_ns,
+                    ),
+                )
+
+                replacement_scan = handle.scan_inputs()
+                self.assertEqual(replacement_scan, original_scan)
+                self.assertNotEqual(first.lstat().st_ino, original_inode)
+                with self.assertRaises(WorkspaceScanError):
+                    handle.validate_input_object_identities(
+                        replacement_scan
+                    )
+
     def test_unreadable_input_is_hashed_without_chmod_and_mutation_is_visible(self) -> None:
         definition = sample_definition()
         with tempfile.TemporaryDirectory() as temporary:
@@ -674,6 +1143,231 @@ class ExpectedOutputPolicyTests(unittest.TestCase):
                 self.assertTrue(
                     all(entry.content_sha256 is not None for entry in validated)
                 )
+
+    def test_topology_opt_in_accepts_and_reads_bound_hardlinked_outputs(
+        self,
+    ) -> None:
+        definition = FixtureDefinition(
+            "fixture.hardlinked-outputs",
+            (),
+            (
+                ExpectedFile(
+                    "mirror/a.bin",
+                    maximum_bytes=32,
+                    mode=0o640,
+                    required_link_count=None,
+                ),
+                ExpectedFile(
+                    "mirror/b.bin",
+                    maximum_bytes=32,
+                    mode=0o640,
+                    required_link_count=None,
+                ),
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "workspace"
+            with materialize_fixture(definition, workspace) as handle:
+                (workspace / "mirror").mkdir(mode=0o755)
+                first = workspace / "mirror/a.bin"
+                first.write_bytes(b"shared output\x00\n")
+                first.chmod(0o640)
+                os.link(first, workspace / "mirror/b.bin")
+                scan = handle.scan_outputs()
+                validated = validate_expected_output_policy(definition, scan)
+                by_name = by_path(validated)
+                self.assertEqual(by_name["mirror/a.bin"].link_count, 2)
+                self.assertEqual(by_name["mirror/b.bin"].link_count, 2)
+                self.assertEqual(
+                    by_name["mirror/a.bin"].hardlink_group_sha256,
+                    by_name["mirror/b.bin"].hardlink_group_sha256,
+                )
+                self.assertIsNotNone(
+                    by_name["mirror/a.bin"].hardlink_group_sha256
+                )
+                self.assertEqual(
+                    handle.read_output_bytes(scan, "mirror/a.bin"),
+                    b"shared output\x00\n",
+                )
+                self.assertEqual(
+                    handle.read_output_bytes(scan, "mirror/b.bin"),
+                    b"shared output\x00\n",
+                )
+
+    def test_exact_live_and_dangling_output_symlinks_validate_without_egress(
+        self,
+    ) -> None:
+        definition = FixtureDefinition(
+            "fixture.exact-output-symlinks",
+            (),
+            (ExpectedFile("mirror/target.bin", maximum_bytes=16),),
+            expected_symlinks=(
+                ExpectedSymlink("mirror/live"),
+                ExpectedSymlink("mirror/dangling"),
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "workspace"
+            with materialize_fixture(definition, workspace) as handle:
+                (workspace / "mirror").mkdir(mode=0o755)
+                (workspace / "mirror/target.bin").write_bytes(b"target")
+                (workspace / "mirror/live").symlink_to("target.bin")
+                (workspace / "mirror/dangling").symlink_to("missing.bin")
+                scan = handle.scan_outputs()
+                validated = validate_expected_output_policy(definition, scan)
+                by_name = by_path(validated)
+                self.assertEqual(
+                    tuple(by_name),
+                    (
+                        "mirror/dangling",
+                        "mirror/live",
+                        "mirror/target.bin",
+                    ),
+                )
+                self.assertEqual(
+                    by_name["mirror/live"].symlink_target,
+                    "target.bin",
+                )
+                self.assertEqual(
+                    by_name["mirror/dangling"].symlink_target,
+                    "missing.bin",
+                )
+                with self.assertRaisesRegex(
+                    WorkspaceOutputReadError,
+                    "not declared",
+                ):
+                    handle.read_output_bytes(scan, "mirror/live")
+                self.assertEqual(
+                    handle.read_output_symlink_target(scan, "mirror/live"),
+                    "target.bin",
+                )
+                self.assertEqual(
+                    handle.read_output_symlink_target(
+                        scan,
+                        "mirror/dangling",
+                    ),
+                    "missing.bin",
+                )
+
+    def test_expected_output_symlink_mutations_fail_closed(self) -> None:
+        definition = FixtureDefinition(
+            "fixture.output-symlink-mutations",
+            (),
+            (),
+            expected_symlinks=(ExpectedSymlink("mirror/link"),),
+        )
+        for case in ("missing", "regular", "unsafe-target", "extra"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                workspace = Path(temporary) / "workspace"
+                with materialize_fixture(definition, workspace) as handle:
+                    (workspace / "mirror").mkdir(mode=0o755)
+                    if case == "regular":
+                        (workspace / "mirror/link").write_bytes(b"target")
+                    elif case == "unsafe-target":
+                        (workspace / "mirror/link").symlink_to("../outside")
+                    elif case == "extra":
+                        (workspace / "mirror/link").symlink_to("target")
+                        (workspace / "extra").symlink_to("target")
+                    with self.assertRaises(WorkspaceOutputPolicyError):
+                        validate_expected_output_policy(
+                            definition,
+                            handle.scan_outputs(),
+                        )
+
+    def test_symlink_target_egress_rejects_stale_cross_workspace_and_races(
+        self,
+    ) -> None:
+        definition = FixtureDefinition(
+            "fixture.symlink-egress-races",
+            (),
+            (),
+            expected_symlinks=(ExpectedSymlink("mirror/link", 32),),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            first_root = Path(temporary) / "first"
+            second_root = Path(temporary) / "second"
+            with materialize_fixture(
+                definition,
+                first_root,
+            ) as first, materialize_fixture(
+                definition,
+                second_root,
+            ) as second:
+                for root in (first_root, second_root):
+                    (root / "mirror").mkdir(mode=0o755)
+                    (root / "mirror/link").symlink_to("target")
+                first_scan = first.scan_outputs()
+                second_scan = second.scan_outputs()
+                with self.assertRaisesRegex(
+                    WorkspaceOutputReadError,
+                    "not bound|stale",
+                ):
+                    second.read_output_symlink_target(
+                        first_scan,
+                        "mirror/link",
+                    )
+
+                (first_root / "mirror/link").unlink()
+                (first_root / "mirror/link").symlink_to("changed")
+                with self.assertRaisesRegex(
+                    WorkspaceOutputReadError,
+                    "stale",
+                ):
+                    first.read_output_symlink_target(
+                        first_scan,
+                        "mirror/link",
+                    )
+
+                real_readlink = workspace_module.os.readlink
+                calls = 0
+
+                def racing_readlink(
+                    path: object,
+                    *,
+                    dir_fd: int | None = None,
+                ) -> str:
+                    nonlocal calls
+                    result = real_readlink(path, dir_fd=dir_fd)
+                    calls += 1
+                    # Two calls establish current_before; mutate immediately
+                    # after the descriptor-relative egress read.
+                    if calls == 3:
+                        assert dir_fd is not None
+                        os.unlink(path, dir_fd=dir_fd)
+                        os.symlink("raced", path, dir_fd=dir_fd)
+                    return result
+
+                with mock.patch.object(
+                    workspace_module.os,
+                    "readlink",
+                    side_effect=racing_readlink,
+                ), self.assertRaises(WorkspaceOutputReadError):
+                    second.read_output_symlink_target(
+                        second_scan,
+                        "mirror/link",
+                    )
+
+    def test_unrepresentable_output_symlink_target_fails_as_scan_error(
+        self,
+    ) -> None:
+        definition = FixtureDefinition(
+            "fixture.invalid-utf8-symlink",
+            (),
+            (),
+            expected_symlinks=(ExpectedSymlink("link"),),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary) / "workspace"
+            with materialize_fixture(definition, workspace) as handle:
+                os.symlink(
+                    b"\xff",
+                    os.fsencode(workspace / "link"),
+                )
+                with self.assertRaisesRegex(
+                    WorkspaceScanError,
+                    "unrepresentable",
+                ):
+                    handle.scan_outputs()
 
     def test_empty_exact_policy_accepts_only_an_empty_output_scan(self) -> None:
         definition = FixtureDefinition("fixture.empty-outputs", (), ())

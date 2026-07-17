@@ -16,6 +16,7 @@ improves.
 - [Experiment evidence chain and component rationale](EXPERIMENT_EVIDENCE_CHAIN.md)
 - [Experiment setup and research readiness](RESEARCH_READINESS.md)
 - [Experiment infrastructure guide](EXPERIMENT_INFRASTRUCTURE.md)
+- [Hardlink experiment infrastructure](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md)
 - [Implementation status](IMPLEMENTATION.md)
 - [Portable hardware benchmarking guide](HARDWARE.md)
 - [Hardware result JSON Schema](hardware-result.schema.json)
@@ -37,7 +38,10 @@ improves.
 - [Executable additive sixth-tranche hash manifest](reports/executable-sixth-tranche/manifest.json)
 - [Executable additive seventh-tranche hash manifest](reports/executable-seventh-tranche/manifest.json)
 - [Executable additive eighth-tranche hash manifest](reports/executable-eighth-tranche/manifest.json)
-- [Executable method-development coverage lock](configs/executable-method-development-coverage-v1.json)
+- [Executable additive ninth-tranche hash manifest](reports/executable-ninth-tranche/manifest.json)
+- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v2.json)
+- [Coverage v1-to-v2 migration evidence](configs/executable-method-development-coverage-v1-to-v2-migration.json)
+- [Superseded executable coverage v1 record](configs/executable-method-development-coverage-v1.json)
 
 ## Quick start
 
@@ -356,15 +360,16 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and seventeen cataloged public-development
-static fixture/verifier families are implemented across eight additive
+fail-closed claim-policy evaluation, and eighteen cataloged public-development
+static fixture/verifier families are implemented across nine additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
 bundle types; and the fifth adds `pipefail-atomic-report` under the same
 additive rule. The sixth adds `bounded-retry-state-machine`, and the seventh
 adds `case-routed-batch-transform`. The eighth adds
-`collision-safe-batch-rename`. These additions remain outside the
+`collision-safe-batch-rename`; the ninth adds the topology-sensitive
+`hardlink-deduplicated-mirror`. These additions remain outside the
 first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
@@ -556,11 +561,34 @@ The canonical
 `56,369`-byte report has SHA-256
 `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
 
-Together the eight tranches provide 340 of the 500 required
-method-development specifications and 1,700 concrete fixture bundles across
-17 integrated families. They remain public, unsealed, unscored, and
+The additive ninth tranche contributes 20
+`hardlink-deduplicated-mirror` tasks and 100 topology-aware fixtures. Its
+4-by-5 grid separates content equivalence from deterministic metadata-owner
+selection; dedicated probes make all 20 cells oracle-distinct, and separate
+materialization tests exercise real filesystem states.
+Separately structured parsing and grouping paths must agree before shared
+final-state assembly, and the final-state verifier checks exact bytes, modes,
+mtimes, input preservation, link counts, and portable visible hardlink-group
+identities. The added-registry SHA-256 is
+`ff886754b054445a90ad30197d004e4071dba72bf0af17931d05e461c7e90703`,
+the cumulative-suite SHA-256 is
+`d0647e24f29abd59f8c2d6b2ac2a404aee78b92c780f8be4f9b16d200885843b`,
+and the cumulative catalog SHA-256 is
+`56932666f2641b5947e1801378b233dd5f37f568e4f2b4c6aa171bad115b09d8`.
+The fixed reviewed Bash canary solves all 100 public fixtures with only the
+declared external tools. The
+[56,392-byte hash-only manifest](reports/executable-ninth-tranche/manifest.json)
+has SHA-256
+`8bb43dfa235261ab5e237b26a5384d767a02ad351a8b3311fc909ad860b70b6b`.
+See
+[the component guide](HARDLINK_EXPERIMENT_INFRASTRUCTURE.md) for the
+observation and authority limits.
+
+Together the nine tranches provide 360 of the 500 required
+method-development specifications and 1,800 concrete fixture bundles across
+18 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-160 specifications and the trusted sandbox/supervisor still block general
+140 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -570,7 +598,7 @@ benchmark scaffold continues to carry only semantic graphs and fixture
 descriptors; it does not materialize the complete sealed evaluation fixtures,
 independent checkers, or execution traces.
 
-The checked-in
+The preserved, now-superseded
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
 freezes the complete 25-family/500-task allocation: 17 integrated families
 and 340 tasks plus 8 planned families and 160 tasks. It fixes each family's
@@ -579,9 +607,20 @@ contract, and capability tags. Its semantic coverage SHA-256 is
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
 and the canonical config bytes have SHA-256
 `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
-This is an allocation lock, not implementation, sealing, review, scoring, or
-execution authority. The next planned family is
-`hardlink-deduplicated-mirror`.
+It remains immutable historical planning evidence. Implementation review found
+that its planned hardlink grid contained redundant, nondeterministic, and
+nonorthogonal cells. The backward-linked
+[v2 coverage lock](configs/executable-method-development-coverage-v2.json)
+promotes the fully discriminable hardlink grid and now binds 18 integrated
+families/360 tasks plus 7 planned families/140 tasks. Its semantic coverage
+SHA-256 is
+`7406480a1dc06bc99d1e36fde1a328a490d6cc8d6b96ee38c924a902acbf9abd`.
+The separate
+[migration record](configs/executable-method-development-coverage-v1-to-v2-migration.json)
+proves that exactly one family declaration changed. Neither record grants
+implementation sealing, review, scoring, execution, model-selection, or claim
+authority. The next planned family is
+`compressed-archive-roundtrip-verify`.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two

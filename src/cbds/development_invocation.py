@@ -667,6 +667,10 @@ def _validate_extracted_program_bytes(value: object) -> str:
 def _input_protocol_record(entry: InputFile | InputSymlink) -> dict[str, object]:
     if type(entry) is InputFile:
         entry.__post_init__()
+        if entry.mtime_seconds is not None:
+            raise DevelopmentInvocationError(
+                "invocation protocol v1 does not carry committed input mtimes"
+            )
         return {
             "kind": "file",
             "path": entry.path,

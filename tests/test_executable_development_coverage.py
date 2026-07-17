@@ -687,6 +687,49 @@ class CoverageLoaderAdversarialTests(unittest.TestCase):
                 ):
                     load_executable_development_coverage(path)
 
+    def test_parent_displacement_during_read_is_rejected(self) -> None:
+        if os.name != "posix":
+            self.skipTest("descriptor-relative parent races require POSIX")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            parent = root / "parent"
+            parent.mkdir()
+            parked = root / "parked"
+            path = parent / "coverage.json"
+            path.write_bytes(self.canonical)
+            real_read = coverage_module.os.read
+            displaced = False
+
+            def read_then_displace(
+                descriptor: int,
+                size: int,
+            ) -> bytes:
+                nonlocal displaced
+                result = real_read(descriptor, size)
+                if not displaced:
+                    parent.rename(parked)
+                    parent.mkdir()
+                    path.write_bytes(b"different\n")
+                    displaced = True
+                return result
+
+            with mock.patch.object(
+                coverage_module.os,
+                "read",
+                side_effect=read_then_displace,
+            ), self.assertRaisesRegex(
+                ExecutableDevelopmentCoverageError,
+                "no longer reachable",
+            ):
+                load_executable_development_coverage(path)
+
+            self.assertTrue(displaced)
+            self.assertEqual(
+                (parked / path.name).read_bytes(),
+                self.canonical,
+            )
+            self.assertEqual(path.read_bytes(), b"different\n")
+
     def test_platform_without_no_follow_support_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "coverage.json"
