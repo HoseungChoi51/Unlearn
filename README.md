@@ -9,6 +9,7 @@ ability loss as a result unless target performance or deployed footprint
 improves.
 
 - [Research plan](PLAN.md)
+- [Short experiment setup overview](EXPERIMENT_SETUP_OVERVIEW.md)
 - [Why the experiment setup is built this way](EXPERIMENT_SETUP_RATIONALE.md)
 - [Experiment logic and claim dependencies](EXPERIMENT_LOGIC.md)
 - [Experiment components and their roles](EXPERIMENT_COMPONENTS.md)
@@ -35,6 +36,7 @@ improves.
 - [Executable additive fifth-tranche hash manifest](reports/executable-fifth-tranche/manifest.json)
 - [Executable additive sixth-tranche hash manifest](reports/executable-sixth-tranche/manifest.json)
 - [Executable additive seventh-tranche hash manifest](reports/executable-seventh-tranche/manifest.json)
+- [Executable additive eighth-tranche hash manifest](reports/executable-eighth-tranche/manifest.json)
 - [Executable method-development coverage lock](configs/executable-method-development-coverage-v1.json)
 
 ## Quick start
@@ -354,14 +356,15 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and sixteen cataloged public-development
-static fixture/verifier families are implemented across seven additive
+fail-closed claim-policy evaluation, and seventeen cataloged public-development
+static fixture/verifier families are implemented across eight additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
 bundle types; and the fifth adds `pipefail-atomic-report` under the same
 additive rule. The sixth adds `bounded-retry-state-machine`, and the seventh
-adds `case-routed-batch-transform`. These additions remain outside the
+adds `case-routed-batch-transform`. The eighth adds
+`collision-safe-batch-rename`. These additions remain outside the
 first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
@@ -532,11 +535,32 @@ and additive-catalog SHA-256
 The canonical 56,368-byte report has SHA-256
 `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
 
-Together the seven tranches provide 320 of the 500 required
-method-development specifications and 1,600 concrete fixture bundles across
-16 integrated families. They remain public, unsealed, unscored, and
+An additive eighth tranche contributes 20 semantic specifications and 100
+bundles for collision-safe batch rename planning and mutation-aware final-state
+verification. `collision-safe-batch-rename` crosses ASCII-lowercase,
+per-parent numbered-prefix, suffix-rewrite, and manifest-mapping rules with
+reject-all, skip, stable-first, stable-last, and exact-byte-coalescing
+policies. Two independently structured engines must agree on the source-action
+plan, flat output tree, ledger, and representative metadata before fixture
+admission. The checked-in hash-only report is
+[reports/executable-eighth-tranche/manifest.json](reports/executable-eighth-tranche/manifest.json),
+with family task-set SHA-256
+`6c563074579359d666faaae2aebf69019c74521e8946cea6a2fe19a756c744cd`,
+added-registry SHA-256
+`8ef6879c5b6f4198c1b0ff2acfcffe89b6cbdd418a9aa2af2eefedfb12994736`,
+cumulative-suite SHA-256
+`b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
+and additive-catalog SHA-256
+`05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`.
+The canonical
+`56,369`-byte report has SHA-256
+`822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
+
+Together the eight tranches provide 340 of the 500 required
+method-development specifications and 1,700 concrete fixture bundles across
+17 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-180 specifications and the trusted sandbox/supervisor still block general
+160 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -548,16 +572,16 @@ independent checkers, or execution traces.
 
 The checked-in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
-freezes the complete 25-family/500-task allocation: 16 integrated families
-and 320 tasks plus 9 planned families and 180 tasks. It fixes each family's
+freezes the complete 25-family/500-task allocation: 17 integrated families
+and 340 tasks plus 8 planned families and 160 tasks. It fixes each family's
 two-axis 4-by-5 task grid, solution track, tool set, filesystem schema, output
 contract, and capability tags. Its semantic coverage SHA-256 is
-`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
+`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
 and the canonical config bytes have SHA-256
-`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
+`46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 This is an allocation lock, not implementation, sealing, review, scoring, or
 execution authority. The next planned family is
-`collision-safe-batch-rename`.
+`hardlink-deduplicated-mirror`.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two
@@ -643,6 +667,27 @@ That canary runs one hand-authored program: it is not a caller-selected
 candidate API, production sandbox, scored evaluation, model-selection result,
 or research claim. The family remains public, unsealed, unscored,
 nonauthorizing, outside V1 invocation, and without independent human review.
+
+`src/cbds/executable_collision_safe_batch_rename.py` supplies the 20 eighth-
+tranche tasks and five deterministic profiles per task. It flattens recursively
+discovered regular candidates under four rename rules, then applies one of five
+collision policies. The oracle commits an immutable per-source action plan as
+well as the exact ledger and output files. Its mutation-aware verifier requires
+removed sources to be absent, retained leaves to match their authenticated
+baseline, original directories to retain kind/mode/link topology, and each
+published file to preserve the selected representative's bytes, mode, size,
+and modification time. Independent dictionary/group and sorted-stream engines
+must agree before admission. A fixed source-reviewed Bash canary realizes all
+20 rule/policy cells on the binary profile under a restricted `PATH`; a
+separate equality probe covers every byte value plus leading, consecutive, and
+trailing NUL boundaries. These are engineering-feasibility checks, not a
+caller-selected candidate API, production sandbox, scored evaluation,
+model-selection result, or research claim. Final-state scans cannot prove
+actual rename or inode identity, collision-decision or read scope, allowed-tool
+use, staging or atomic-publication history, crash rollback, transient input
+preservation, global quiescence, or candidate exit status. The family remains
+public, unsealed, unscored, nonauthorizing, outside first-tranche-only V1
+invocation, and without independent human review.
 
 `src/cbds/development_invocation.py` admits the frozen first-tranche catalog
 through its registry, suite, and catalog digests, then binds each request to

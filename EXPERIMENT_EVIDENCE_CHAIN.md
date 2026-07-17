@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 320
-integrated public method-development tasks with 1,600 concrete fixtures across
-seven additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 340
+integrated public method-development tasks with 1,700 concrete fixtures across
+eight additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -227,20 +227,31 @@ the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
 `99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
 and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
 
-The full allocation lock contains 16 integrated families/320 tasks and 9
-planned families/180 tasks. Its semantic coverage SHA-256 is
-`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
+The eighth addition contributes 20 `collision-safe-batch-rename` tasks/100
+fixtures. Its checked hash-only report is
+[reports/executable-eighth-tranche/manifest.json](reports/executable-eighth-tranche/manifest.json);
+the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
+`56,369`-byte report SHA-256 values are
+`6c563074579359d666faaae2aebf69019c74521e8946cea6a2fe19a756c744cd`,
+`8ef6879c5b6f4198c1b0ff2acfcffe89b6cbdd418a9aa2af2eefedfb12994736`,
+`b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
+`05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
+and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
+
+The full allocation lock contains 17 integrated families/340 tasks and 8
+planned families/160 tasks. Its semantic coverage SHA-256 is
+`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
 and its canonical config-byte SHA-256 is
-`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
+`46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 The lock fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through seventh manifests and the allocation lock explicitly record
+third through eighth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 180 method-development tasks, beginning with
-`collision-safe-batch-rename`, independent review of the complete development
+**Planned:** the remaining 160 method-development tasks, beginning with
+`hardlink-deduplicated-mirror`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -272,7 +283,7 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-sixteen integrated fixture/oracle families with independent constructions and
+seventeen integrated fixture/oracle families with independent constructions and
 mutation coverage; namespace, runtime-snapshot, and native PID1 canaries; and
 one exact reviewed Bash case connected through the local boundary.
 
@@ -314,6 +325,22 @@ input, global-quiescence, or candidate-exit history. A fixed source-reviewed
 Bash program passes all 100 public fixtures under a restricted tool `PATH`, but
 this feasibility canary is not an arbitrary-candidate interface, production
 sandbox, score, selection result, or research claim.
+
+The eighth-family semantics flatten recursively discovered regular files under
+one of four rename rules, then apply reject-all, skip, stable-first,
+stable-last, or exact-byte-coalescing policy. Independent dictionary/group and
+sorted-stream engines agree on an immutable source-action plan, exact ledger,
+and output tree. The mutation-aware verifier checks that moved/coalesced
+sources are absent, retained leaves remain exact, original directories retain
+kind/mode/link topology, and each output preserves its representative's
+bytes, size, mode, and modification time. It requires trusted quiescence and
+does not attest actual rename or inode identity, collision-decision or read
+scope, tool use, staging or atomic publication, crash rollback, transient input
+preservation, global quiescence, or candidate exit status. A fixed reviewed
+Bash program realizes all 20 grid cells on the binary profile under a
+restricted tool `PATH`; its all-byte/NUL equality probe is engineering
+feasibility, not an arbitrary-candidate API, production sandbox, score,
+selection result, or research claim.
 
 **Planned:** a production, independently reviewed arbitrary-candidate service
 with a trusted Bash runtime closure, exact-tool enforcement, tmpfs/workspace

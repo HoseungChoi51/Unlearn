@@ -145,15 +145,16 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The seven executable tranches are pinned by
+secret. The eight executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
 the [additive fourth manifest](reports/executable-fourth-tranche/manifest.json),
 the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
 [the additive sixth manifest](reports/executable-sixth-tranche/manifest.json),
-and [the additive seventh manifest](reports/executable-seventh-tranche/manifest.json).
-They currently contain 320 public method-development specifications with five
+[the additive seventh manifest](reports/executable-seventh-tranche/manifest.json),
+and [the additive eighth manifest](reports/executable-eighth-tranche/manifest.json).
+They currently contain 340 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -195,23 +196,31 @@ and canonical 56,368-byte report SHA-256 values are respectively
 `341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
 `99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
 and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
-The seventh manifest records `independent_human_review_attested: false`, and
-all seven tranches remain public, unsealed, unscored, and nonauthorizing. V1
+The eighth addition contributes 20 `collision-safe-batch-rename` tasks and
+100 fixtures. Its task-set, added-registry, cumulative-suite, additive-catalog,
+and canonical `56,369`-byte report SHA-256 values are
+respectively `6c563074579359d666faaae2aebf69019c74521e8946cea6a2fe19a756c744cd`,
+`8ef6879c5b6f4198c1b0ff2acfcffe89b6cbdd418a9aa2af2eefedfb12994736`,
+`b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
+`05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
+and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
+The eighth manifest records `independent_human_review_attested: false`, and
+all eight tranches remain public, unsealed, unscored, and nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
 The separate
 [executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
 locks the 25-family/500-task allocation before the remaining implementations
-are written. It binds 16 integrated families/320 tasks to the seven source
-registries and reserves 9 named families/180 tasks with exact parameter axes,
+are written. It binds 17 integrated families/340 tasks to the eight source
+registries and reserves 8 named families/160 tasks with exact parameter axes,
 solution tracks, allowed tools, filesystem schemas, output contracts, and
 capability tags. Its semantic coverage and config-byte SHA-256 values are
-`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`
-and `93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
+`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
+and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 This is an allocation lock only: planned entries have no implied fixture,
 oracle, verifier, review, sealing, score, or execution status. The next family
-in canonical order is `collision-safe-batch-rename`.
+in canonical order is `hardlink-deduplicated-mirror`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -282,6 +291,23 @@ agree on status/error records and the route-partitioned output tree. The
 workspace verifier authenticates inputs and the complete final state only
 after trusted quiescence. It cannot attest actual route choice, transform
 execution, read scope, allowed-tool use, atomic publication, transient input
+preservation, global quiescence, or candidate exit status; explicit directory-
+permission and live effective-access failures also remain outside the fixtures.
+
+The eighth `collision-safe-batch-rename` family recursively discovers regular
+candidates without following symlinks, derives a flat destination under one of
+four rename rules, and applies one of five collision policies. Two separately
+structured parsers, destination functions, grouping/planning engines, and
+ledger serializers must agree on the immutable per-source action plan and
+exact outputs. Unlike input-preserving families, its mutation-aware verifier
+expects moved and coalesced sources to be absent while retained leaves must
+equal their authenticated baseline. Original input directories must preserve
+kind, mode, and link topology; their size and modification time are correctly
+nonsemantic after child removal. Every output file must match the selected
+representative's bytes, size, mode, and authenticated-baseline modification
+time. These checks require trusted quiescence. They cannot establish actual
+rename or inode identity, collision-decision or read-scope history, allowed-
+tool use, staging or atomic publication, crash rollback, transient input
 preservation, global quiescence, or candidate exit status; explicit directory-
 permission and live effective-access failures also remain outside the fixtures.
 
@@ -553,6 +579,9 @@ Canaries answer narrow questions cheaply before the expensive campaign:
   specific process and mount boundaries under bounded control.
 - the case-routed Bash canary asks whether one fixed, source-reviewed program
   can realize all 100 public fixture contracts with a restricted tool `PATH`.
+- the collision-safe rename Bash canary asks whether one fixed, source-reviewed
+  program can realize all 20 rule/policy cells on the binary profile under a
+  restricted tool `PATH`, including exact arbitrary-byte equality.
 
 Their reports are in
 [`reports/engineering-pilot/`](reports/engineering-pilot/),
@@ -566,6 +595,10 @@ does not authorize synthesized-candidate launch even when its transport and
 parser behave as designed. Likewise, the case-routed canary is not a caller-
 selected candidate API, production sandbox, observation of tool or routing
 history, scored evaluation, model-selection result, or research claim.
+The rename canary has the same boundary: its all-byte/NUL probes and successful
+final states do not establish rename, inode, collision-decision, read-scope,
+tool, staging, atomic-publication, crash, or quiescence history and confer no
+execution, scoring, selection, or claim authority.
 
 Keeping this boundary explicit lets us use canaries aggressively for
 engineering without accidentally upgrading feasibility evidence into a
@@ -576,9 +609,9 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 320 frozen public-development executable tasks and 1,600 concrete fixture
-  bundles across sixteen integrated families and seven additive tranches;
-- a locked 25-family/500-task allocation with 9 families/180 tasks still
+- 340 frozen public-development executable tasks and 1,700 concrete fixture
+  bundles across seventeen integrated families and eight additive tranches;
+- a locked 25-family/500-task allocation with 8 families/160 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, independent-reference, materialization, no-follow, and
   mutation tests for the integrated families;
@@ -605,7 +638,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through seventh additions have no
+is method-development data, its third through eighth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -632,10 +665,18 @@ observing actual route, transform, read-scope, tool, publication, transient-
 input, quiescence, or exit-status history. Its fixed Bash canary does not widen
 that observation boundary or authorize arbitrary candidates.
 
+The collision-safe rename family verifies a prescribed final mutation, not
+its mechanism. It observes source absence/retention, representative metadata,
+the exact ledger/tree, and stable rescans under trusted quiescence, but not
+actual rename or inode identity, collision decisions, read scope, tool or
+staging history, atomic publication, crash rollback, transient input history,
+global quiescence, or candidate exit status. Its fixed Bash canary does not
+widen that boundary or authorize arbitrary candidates.
+
 The critical path is now:
 
-1. implement the remaining 180 method-development specifications, beginning
-   with `collision-safe-batch-rename`, with concrete fixtures, independent
+1. implement the remaining 160 method-development specifications, beginning
+   with `hardlink-deduplicated-mirror`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed

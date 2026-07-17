@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Sixteen families/320 tasks currently have concrete oracles
-  and 1,600 authenticated fixture bundles across seven additive tranches.
+  and 500 tasks. Seventeen families/340 tasks currently have concrete oracles
+  and 1,700 authenticated fixture bundles across eight additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 9 families/180 tasks, beginning with
-  `collision-safe-batch-rename`, still need implementation and review.
+- The remaining 8 families/160 tasks, beginning with
+  `hardlink-deduplicated-mirror`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -173,9 +173,9 @@ The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.m
 The current public allocation and its exact content identity are in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
 Its semantic coverage SHA-256 is
-`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
+`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`,
 and the canonical config-byte SHA-256 is
-`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
+`46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 
 The sixth
 [`bounded-retry-state-machine` manifest](reports/executable-sixth-tranche/manifest.json)
@@ -217,6 +217,32 @@ a feasibility canary, not a caller-selected candidate API, production sandbox,
 scored result, model-selection result, or research claim. The family remains
 public, unsealed, unscored, nonauthorizing, outside first-tranche-only V1
 invocation, and records `independent_human_review_attested: false`.
+
+The eighth
+[`collision-safe-batch-rename` manifest](reports/executable-eighth-tranche/manifest.json)
+binds 20 tasks and 100 fixtures. Four rename rules cross five collision
+policies, and independently structured engines agree on the per-source action
+plan, flat output tree, exact ledger, and representative metadata. Its task-
+set, registry, cumulative-suite, catalog, and
+`56,369`-byte report SHA-256 values are
+`6c563074579359d666faaae2aebf69019c74521e8946cea6a2fe19a756c744cd`,
+`8ef6879c5b6f4198c1b0ff2acfcffe89b6cbdd418a9aa2af2eefedfb12994736`,
+`b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
+`05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
+and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
+The mutation-aware verifier checks expected source removal/retention, exact
+retained leaves, directory kind/mode/link topology, exact output bytes, and
+representative size/mode/mtime under trusted quiescence. It cannot establish
+actual rename or inode identity, collision decisions, read scope, tool use,
+staging or atomic-publication history, crash rollback, transient input
+preservation, global quiescence, or candidate exit status. One fixed source-
+reviewed Bash program realizes all 20 rule/policy cells on the binary profile
+under a restricted tool `PATH`, with a separate all-byte/NUL equality probe.
+This is engineering feasibility, not a caller-selected candidate API,
+production sandbox, scored result, model-selection result, or research claim.
+The family remains public, unsealed, unscored, nonauthorizing, outside first-
+tranche-only V1 invocation, and records
+`independent_human_review_attested: false`.
 
 ## Where the detailed answers live
 

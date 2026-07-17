@@ -159,9 +159,9 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Sixteen families/320 tasks have concrete oracles and 1,600 fixture
-bundles across seven additive tranches; nine families/180 tasks remain
-planned, beginning with `collision-safe-batch-rename`. The
+500 tasks. Seventeen families/340 tasks have concrete oracles and 1,700 fixture
+bundles across eight additive tranches; eight families/160 tasks remain
+planned, beginning with `hardlink-deduplicated-mirror`. The
 [coverage record](configs/executable-method-development-coverage-v1.json) fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
@@ -186,9 +186,18 @@ suite, additive catalog, and canonical 56,368-byte report with SHA-256 values
 `341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
 `99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
 and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
+The [eighth-tranche manifest](reports/executable-eighth-tranche/manifest.json)
+binds the `collision-safe-batch-rename` task set, added registry, cumulative
+suite, additive catalog, and canonical `56,369`-byte report
+with SHA-256 values
+`6c563074579359d666faaae2aebf69019c74521e8946cea6a2fe19a756c744cd`,
+`8ef6879c5b6f4198c1b0ff2acfcffe89b6cbdd418a9aa2af2eefedfb12994736`,
+`b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0`,
+`05e4b90408a0970dfded597e5ee7813386bfdaed50a1cea301148eaabd83c297`,
+and `822f2e20e5f73d638dff810c12aec0985145b642801975f6148b034ecf155d0e`.
 The updated coverage and config-byte identities are
-`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`
-and `93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
+`6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
+and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 
 The fifth `pipefail-atomic-report` family makes an important evaluator
 distinction concrete. Its exact semantics model complete logical streams, the
@@ -229,6 +238,26 @@ under a restricted tool `PATH`, including a separate binary-stream case. That
 canary establishes feasibility for one hand-authored program, not a caller-
 selected candidate API, production sandbox, scored result, model-selection
 result, or scientific claim.
+
+The eighth `collision-safe-batch-rename` family adds genuine source-tree
+mutation. Four destination rules cross five collision policies, including
+whole-batch rejection, collision skipping, stable winners, and byte-identical
+coalescing. The oracle records every source disposition, and the workspace
+verifier checks both sides of the mutation: moved and coalesced sources must be
+absent; rejected sources, collision losers, the mapping, symlink distractors,
+and other input leaves must remain exact. Original directories preserve kind,
+mode, and link topology, while child-removal changes to their size and
+modification time are nonsemantic. Published representatives must preserve
+bytes, permission mode, modification time, and link count one. A fixed
+source-reviewed Bash canary passes all 20 rule/policy cells on a binary profile,
+and its Bash-only byte comparator distinguishes a single-byte mutation at every
+position of the 0–255 byte corpus plus empty, NUL, newline, and invalid-UTF-8
+boundary cases. This demonstrates that the contract is implementable with the
+locked tool set;
+it does not authorize generated programs or prove rename, collision-decision,
+staging, atomic-publication, crash, inode, read-scope, tool, exit-status, or
+global-quiescence history. The final-state verifier therefore still requires a
+trusted supervisor to establish quiescence.
 
 Lifecycle roles prevent feedback leakage:
 
@@ -337,7 +366,7 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 9-family/180-task remainder and independently review
+1. implement the locked 8-family/160-task remainder and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

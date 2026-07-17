@@ -33,10 +33,10 @@ MAXIMUM_COVERAGE_CONFIG_BYTES: Final[int] = 256 * 1024
 FAMILY_COUNT: Final[int] = 25
 TASKS_PER_FAMILY: Final[int] = 20
 TOTAL_TASK_COUNT: Final[int] = 500
-INTEGRATED_FAMILY_COUNT: Final[int] = 16
-INTEGRATED_TASK_COUNT: Final[int] = 320
-PLANNED_FAMILY_COUNT: Final[int] = 9
-PLANNED_TASK_COUNT: Final[int] = 180
+INTEGRATED_FAMILY_COUNT: Final[int] = 17
+INTEGRATED_TASK_COUNT: Final[int] = 340
+PLANNED_FAMILY_COUNT: Final[int] = 8
+PLANNED_TASK_COUNT: Final[int] = 160
 
 CANONICAL_FAMILY_ORDER: Final[tuple[str, ...]] = (
     "active-jsonl-labels",
@@ -107,6 +107,12 @@ _SEVENTH_REGISTRY_SHA256: Final[str] = (
 )
 _SEVENTH_SUITE_SHA256: Final[str] = (
     "341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131"
+)
+_EIGHTH_REGISTRY_SHA256: Final[str] = (
+    "8ef6879c5b6f4198c1b0ff2acfcffe89b6cbdd418a9aa2af2eefedfb12994736"
+)
+_EIGHTH_SUITE_SHA256: Final[str] = (
+    "b22742179e3ce3b7331469de9db0a75ddbae81a3340e2b814c8a7ab34233f0f0"
 )
 
 _SHA256_RE: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{64}\Z")
@@ -318,7 +324,7 @@ _FAMILY_SPECS: Final[tuple[_FamilySpec, ...]] = (
     _spec("pipefail-atomic-report", "integrated", _axis("pipeline_shape", ("linear-two-stage", "linear-four-stage", "fan-in-merge", "tee-and-reduce")), _axis("failure_commit_policy", ("commit-success-only", "write-status-always", "rollback-on-any-failure", "preserve-first-failure", "preserve-last-failure")), "bash-native", ("awk", "grep", "mkdir", "mv", "sed", "sort"), "pipeline-record-streams", "atomic-pipeline-status-json", ("atomic-output", "error-handling", "pipeline-status", "text-processing")),
     _spec("bounded-retry-state-machine", "integrated", _axis("transition_model", ("linear", "branching", "cyclic-bounded", "compensating")), _axis("retry_policy", ("never", "fixed-two", "fixed-four", "until-terminal", "retry-transient-only")), "bash-native", ("awk", "mkdir", "sort"), "workflow-event-ledger", "terminal-state-and-attempt-report", ("control-flow", "error-handling", "loops", "state-machines")),
     _spec("case-routed-batch-transform", "integrated", _axis("route_key", ("suffix", "record-kind", "leading-byte", "declared-action")), _axis("fallback_policy", ("skip", "copy-verbatim", "reject-batch", "route-default", "emit-error-record")), "bash-native", ("awk", "mkdir", "sed", "sort", "tr"), "routed-text-batch", "route-partitioned-transform-tree", ("branching", "control-flow", "loops", "text-transformation")),
-    _spec("collision-safe-batch-rename", "planned", _axis("rename_rule", ("lowercase-basename", "numbered-prefix", "suffix-rewrite", "manifest-mapping")), _axis("collision_policy", ("reject-all", "skip-collisions", "stable-first", "stable-last", "identical-files-coalesce")), "bash-native", ("find", "mkdir", "mv", "sort", "stat"), "rename-candidate-tree", "atomic-renamed-tree-and-ledger", ("atomic-output", "collision-resolution", "filesystem-mutation", "rename")),
+    _spec("collision-safe-batch-rename", "integrated", _axis("rename_rule", ("lowercase-basename", "numbered-prefix", "suffix-rewrite", "manifest-mapping")), _axis("collision_policy", ("reject-all", "skip-collisions", "stable-first", "stable-last", "identical-files-coalesce")), "bash-native", ("find", "mkdir", "mv", "sort", "stat"), "rename-candidate-tree", "atomic-renamed-tree-and-ledger", ("atomic-output", "collision-resolution", "filesystem-mutation", "rename")),
     _spec("hardlink-deduplicated-mirror", "planned", _axis("equivalence_key", ("sha256", "size-and-sha256", "mode-and-sha256", "declared-content-id")), _axis("link_policy", ("smallest-path-owner", "first-discovered-owner", "preserve-existing-groups", "regular-files-only", "reject-cross-mode-group")), "bash-native", ("cp", "find", "ln", "mkdir", "sha256sum", "sort", "stat"), "duplicate-content-source-tree", "hardlink-topology-preserving-mirror", ("content-deduplication", "filesystem-mutation", "hard-links", "tree-mirroring")),
     _spec("compressed-archive-roundtrip-verify", "planned", _axis("compression_format", ("gzip", "bzip2", "xz", "none")), _axis("verification_policy", ("archive-digest", "member-digests", "roundtrip-bytes", "roundtrip-bytes-and-modes", "strict-all")), "bash-native", ("bzip2", "gzip", "mkdir", "sha256sum", "sort", "tar", "xz"), "archive-roundtrip-source-tree", "compressed-archive-with-verification-report", ("archive-creation", "checksums", "compression", "roundtrip-verification")),
     _spec("checksum-repair-plan", "planned", _axis("manifest_layout", ("sha256sum-text", "jsonl", "csv", "nul-pairs")), _axis("repair_policy", ("report-only", "replace-digest", "drop-missing", "quarantine-mismatch", "strict-reject")), "bash-native", ("awk", "jq", "mkdir", "sha256sum", "sort"), "damaged-checksum-assets", "ordered-checksum-repair-plan", ("checksums", "error-classification", "repair-planning", "structured-output")),
@@ -354,6 +360,7 @@ _EXPECTED_SOURCES: Final[tuple[SourceRegistryCommitment, ...]] = (
     _unchecked_source("fifth-tranche", 20, 280, _FIFTH_REGISTRY_SHA256, _FIFTH_SUITE_SHA256),
     _unchecked_source("sixth-tranche", 20, 300, _SIXTH_REGISTRY_SHA256, _SIXTH_SUITE_SHA256),
     _unchecked_source("seventh-tranche", 20, 320, _SEVENTH_REGISTRY_SHA256, _SEVENTH_SUITE_SHA256),
+    _unchecked_source("eighth-tranche", 20, 340, _EIGHTH_REGISTRY_SHA256, _EIGHTH_SUITE_SHA256),
 )
 
 
@@ -479,6 +486,7 @@ def _live_integrated_evidence() -> tuple[tuple[SourceRegistryCommitment, ...], t
     from .executable_static_fifth_registry import build_fifth_tranche_task_registry
     from .executable_static_sixth_registry import build_sixth_tranche_task_registry
     from .executable_static_seventh_registry import build_seventh_tranche_task_registry
+    from .executable_static_eighth_registry import build_eighth_tranche_task_registry
 
     first = build_public_method_development_registry()
     second = build_second_tranche_task_registry()
@@ -487,6 +495,7 @@ def _live_integrated_evidence() -> tuple[tuple[SourceRegistryCommitment, ...], t
     fifth = build_fifth_tranche_task_registry()
     sixth = build_sixth_tranche_task_registry()
     seventh = build_seventh_tranche_task_registry()
+    eighth = build_eighth_tranche_task_registry()
     sources = (
         SourceRegistryCommitment("first-tranche", len(first.tasks), len(first.tasks), first.registry_sha256, first.suite_sha256),
         SourceRegistryCommitment("second-tranche", len(second.added_tasks), 200, second.registry_sha256, second.cumulative_suite_sha256),
@@ -495,6 +504,7 @@ def _live_integrated_evidence() -> tuple[tuple[SourceRegistryCommitment, ...], t
         SourceRegistryCommitment("fifth-tranche", len(fifth.added_tasks), 280, fifth.registry_sha256, fifth.cumulative_suite_sha256),
         SourceRegistryCommitment("sixth-tranche", len(sixth.added_tasks), 300, sixth.registry_sha256, sixth.cumulative_suite_sha256),
         SourceRegistryCommitment("seventh-tranche", len(seventh.added_tasks), 320, seventh.registry_sha256, seventh.cumulative_suite_sha256),
+        SourceRegistryCommitment("eighth-tranche", len(eighth.added_tasks), 340, eighth.registry_sha256, eighth.cumulative_suite_sha256),
     )
     if sources != _EXPECTED_SOURCES:
         raise ExecutableDevelopmentCoverageError("live integrated registries differ from the coverage base")
@@ -506,6 +516,7 @@ def _live_integrated_evidence() -> tuple[tuple[SourceRegistryCommitment, ...], t
         *fifth.added_tasks,
         *sixth.added_tasks,
         *seventh.added_tasks,
+        *eighth.added_tasks,
     )
     integrated_specs = _FAMILY_SPECS[:INTEGRATED_FAMILY_COUNT]
     evidence: list[tuple[str, str]] = []
