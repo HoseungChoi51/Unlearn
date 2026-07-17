@@ -34,6 +34,7 @@ improves.
 - [Executable additive fourth-tranche hash manifest](reports/executable-fourth-tranche/manifest.json)
 - [Executable additive fifth-tranche hash manifest](reports/executable-fifth-tranche/manifest.json)
 - [Executable additive sixth-tranche hash manifest](reports/executable-sixth-tranche/manifest.json)
+- [Executable additive seventh-tranche hash manifest](reports/executable-seventh-tranche/manifest.json)
 - [Executable method-development coverage lock](configs/executable-method-development-coverage-v1.json)
 
 ## Quick start
@@ -353,14 +354,15 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and fifteen cataloged public-development
-static fixture/verifier families are implemented across six additive
+fail-closed claim-policy evaluation, and sixteen cataloged public-development
+static fixture/verifier families are implemented across seven additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
 bundle types; and the fifth adds `pipefail-atomic-report` under the same
-additive rule. The sixth adds `bounded-retry-state-machine`. These additions
-remain outside the first-tranche-only V1
+additive rule. The sixth adds `bounded-retry-state-machine`, and the seventh
+adds `case-routed-batch-transform`. These additions remain outside the
+first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
 payload snapshot, fixed-protocol descriptor-handoff canary, and candidate-input-free
@@ -511,11 +513,30 @@ and additive-catalog SHA-256
 The canonical report bytes have SHA-256
 `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
 
-Together the six tranches provide 300 of the 500 required
-method-development specifications and 1,500 concrete fixture bundles across
-15 integrated families. They remain public, unsealed, unscored, and
+An additive seventh tranche contributes 20 semantic specifications and 100
+bundles for manifest-driven case routing and byte-exact batch transforms.
+`case-routed-batch-transform` crosses source-suffix, record-kind, leading-byte,
+and declared-action routing with skip, verbatim-copy, reject-batch,
+default-route, and error-record fallback policies. Two separately structured
+semantic constructions must agree before fixture admission. The checked-in
+hash-only report is
+[reports/executable-seventh-tranche/manifest.json](reports/executable-seventh-tranche/manifest.json),
+with family task-set SHA-256
+`e68a7e4614424e76fa35d4c0650e500469b971f1a5010d309115b0c225b7b2e6`,
+added-registry SHA-256
+`14aa05939c2ac2f4954196968003254dee39175f1d1d94e32213b8a74cfff19e`,
+cumulative-suite SHA-256
+`341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
+and additive-catalog SHA-256
+`99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`.
+The canonical 56,368-byte report has SHA-256
+`49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
+
+Together the seven tranches provide 320 of the 500 required
+method-development specifications and 1,600 concrete fixture bundles across
+16 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-200 specifications and the trusted sandbox/supervisor still block general
+180 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -527,16 +548,16 @@ independent checkers, or execution traces.
 
 The checked-in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
-freezes the complete 25-family/500-task allocation: 15 integrated families
-and 300 tasks plus 10 planned families and 200 tasks. It fixes each family's
+freezes the complete 25-family/500-task allocation: 16 integrated families
+and 320 tasks plus 9 planned families and 180 tasks. It fixes each family's
 two-axis 4-by-5 task grid, solution track, tool set, filesystem schema, output
 contract, and capability tags. Its semantic coverage SHA-256 is
-`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
+`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
 and the canonical config bytes have SHA-256
-`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
 This is an allocation lock, not implementation, sealing, review, scoring, or
 execution authority. The next planned family is
-`case-routed-batch-transform`.
+`collision-safe-batch-rename`.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two
@@ -604,6 +625,24 @@ preservation, or candidate exit status. A trusted supervisor must establish
 quiescence. Directory-permission and live effective-access failures remain
 uncovered. The family is public, unsealed, unscored, nonauthorizing, outside V1
 invocation, and has no independent human-review attestation.
+
+`src/cbds/executable_case_routed_batch_transform.py` supplies the 20 seventh-
+tranche tasks and five deterministic profiles per task. It reads a manifest,
+classifies each logical record by exactly one configured signal, applies the
+corresponding byte transform, and resolves unmatched records under one of five
+batch-level fallback policies. Independent parsers, routers, transforms, and
+serializers must agree. The descriptor-relative verifier checks authenticated
+inputs, exact output bytes, modes, links, and the complete final tree. It
+requires supervisor-established quiescence and cannot observe route,
+transform, read-scope, tool, or atomic-publication history, candidate exit
+status, directory-permission failures, live effective-access failures, or
+global quiescence. A fixed, source-reviewed Bash canary passes all 100 public
+fixtures with `PATH` limited to `awk`, `mkdir`, `sed`, `sort`, and `tr`, and a
+separate binary case covers NULs, invalid UTF-8, and missing final newlines.
+That canary runs one hand-authored program: it is not a caller-selected
+candidate API, production sandbox, scored evaluation, model-selection result,
+or research claim. The family remains public, unsealed, unscored,
+nonauthorizing, outside V1 invocation, and without independent human review.
 
 `src/cbds/development_invocation.py` admits the frozen first-tranche catalog
 through its registry, suite, and catalog digests, then binds each request to

@@ -145,14 +145,15 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The six executable tranches are pinned by
+secret. The seven executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
 the [additive fourth manifest](reports/executable-fourth-tranche/manifest.json),
 the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
-and [the additive sixth manifest](reports/executable-sixth-tranche/manifest.json).
-They currently contain 300 public method-development specifications with five
+[the additive sixth manifest](reports/executable-sixth-tranche/manifest.json),
+and [the additive seventh manifest](reports/executable-seventh-tranche/manifest.json).
+They currently contain 320 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -186,23 +187,31 @@ canonical-report-byte SHA-256 values are respectively
 `db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
 `9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
 and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
-The sixth manifest records `independent_human_review_attested: false`, and all
-six tranches remain public, unsealed, unscored, and nonauthorizing. V1
+The seventh addition contributes 20 `case-routed-batch-transform` tasks and
+100 fixtures. Its task-set, added-registry, cumulative-suite, additive-catalog,
+and canonical 56,368-byte report SHA-256 values are respectively
+`e68a7e4614424e76fa35d4c0650e500469b971f1a5010d309115b0c225b7b2e6`,
+`14aa05939c2ac2f4954196968003254dee39175f1d1d94e32213b8a74cfff19e`,
+`341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
+`99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
+and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
+The seventh manifest records `independent_human_review_attested: false`, and
+all seven tranches remain public, unsealed, unscored, and nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
 The separate
 [executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json)
 locks the 25-family/500-task allocation before the remaining implementations
-are written. It binds 15 integrated families/300 tasks to the six source
-registries and reserves 10 named families/200 tasks with exact parameter axes,
+are written. It binds 16 integrated families/320 tasks to the seven source
+registries and reserves 9 named families/180 tasks with exact parameter axes,
 solution tracks, allowed tools, filesystem schemas, output contracts, and
 capability tags. Its semantic coverage and config-byte SHA-256 values are
-`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`
-and `b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`
+and `93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
 This is an allocation lock only: planned entries have no implied fixture,
 oracle, verifier, review, sealing, score, or execution status. The next family
-in canonical order is `case-routed-batch-transform`.
+in canonical order is `collision-safe-batch-rename`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -264,6 +273,17 @@ actual retry, waiting, state traversal, compensation, allowed-tool use, atomic
 publication, transient input preservation, global quiescence, or candidate
 exit status; explicit directory-permission and live effective-access failures
 also remain outside the fixtures.
+
+The seventh `case-routed-batch-transform` family combines a manifest loop,
+exclusive case routing, byte-exact transforms, and batch-level fallback
+behavior. Four route keys cross five fallback policies. Two separately
+structured parsers, routers, transform implementations, and serializers must
+agree on status/error records and the route-partitioned output tree. The
+workspace verifier authenticates inputs and the complete final state only
+after trusted quiescence. It cannot attest actual route choice, transform
+execution, read scope, allowed-tool use, atomic publication, transient input
+preservation, global quiescence, or candidate exit status; explicit directory-
+permission and live effective-access failures also remain outside the fixtures.
 
 ## 6. Parser, decoding, and deterministic outcomes
 
@@ -531,6 +551,8 @@ Canaries answer narrow questions cheaply before the expensive campaign:
   export, and reopening work end to end;
 - descriptor and namespace canaries ask whether sealed runtime bytes can cross
   specific process and mount boundaries under bounded control.
+- the case-routed Bash canary asks whether one fixed, source-reviewed program
+  can realize all 100 public fixture contracts with a restricted tool `PATH`.
 
 Their reports are in
 [`reports/engineering-pilot/`](reports/engineering-pilot/),
@@ -541,7 +563,9 @@ or model-selection result. Locally hashed executables are not automatically
 externally trusted, and a fixed probe reporting that isolation worked is not
 independent attestation of its own environment. The namespace canary therefore
 does not authorize synthesized-candidate launch even when its transport and
-parser behave as designed.
+parser behave as designed. Likewise, the case-routed canary is not a caller-
+selected candidate API, production sandbox, observation of tool or routing
+history, scored evaluation, model-selection result, or research claim.
 
 Keeping this boundary explicit lets us use canaries aggressively for
 engineering without accidentally upgrading feasibility evidence into a
@@ -552,9 +576,9 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 300 frozen public-development executable tasks and 1,500 concrete fixture
-  bundles across fifteen integrated families and six additive tranches;
-- a locked 25-family/500-task allocation with 10 families/200 tasks still
+- 320 frozen public-development executable tasks and 1,600 concrete fixture
+  bundles across sixteen integrated families and seven additive tranches;
+- a locked 25-family/500-task allocation with 9 families/180 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, independent-reference, materialization, no-follow, and
   mutation tests for the integrated families;
@@ -581,7 +605,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through sixth additions have no
+is method-development data, its third through seventh additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -603,10 +627,15 @@ does not observe actual retries, waits, transitions, compensation, tool use,
 publication history, transient input history, global quiescence, or candidate
 exit status.
 
+The case-routed family likewise verifies an exact final transform tree without
+observing actual route, transform, read-scope, tool, publication, transient-
+input, quiescence, or exit-status history. Its fixed Bash canary does not widen
+that observation boundary or authorize arbitrary candidates.
+
 The critical path is now:
 
-1. implement the remaining 200 method-development specifications, beginning
-   with `case-routed-batch-transform`, with concrete fixtures, independent
+1. implement the remaining 180 method-development specifications, beginning
+   with `collision-safe-batch-rename`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed

@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Fifteen families/300 tasks currently have concrete oracles
-  and 1,500 authenticated fixture bundles across six additive tranches.
+  and 500 tasks. Sixteen families/320 tasks currently have concrete oracles
+  and 1,600 authenticated fixture bundles across seven additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 10 families/200 tasks, beginning with
-  `case-routed-batch-transform`, still need implementation and review.
+- The remaining 9 families/180 tasks, beginning with
+  `collision-safe-batch-rename`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -173,9 +173,9 @@ The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.m
 The current public allocation and its exact content identity are in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
 Its semantic coverage SHA-256 is
-`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
+`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
 and the canonical config-byte SHA-256 is
-`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
 
 The sixth
 [`bounded-retry-state-machine` manifest](reports/executable-sixth-tranche/manifest.json)
@@ -195,6 +195,27 @@ final-state semantics only: the verifier does not observe actual retries,
 waits, state traversal, compensation, tool use, atomic publication, transient
 input preservation, global quiescence, or candidate exit status. The manifest
 is public, unsealed, unscored, nonauthorizing, outside first-tranche-only V1
+invocation, and records `independent_human_review_attested: false`.
+
+The seventh
+[`case-routed-batch-transform` manifest](reports/executable-seventh-tranche/manifest.json)
+binds 20 tasks and 100 fixtures. Four exclusive route keys cross five fallback
+policies, and separately structured parsers, routers, byte transforms, and
+serializers must agree on the status/error records and exact final output tree.
+Its task-set, registry, cumulative-suite, catalog, and 56,368-byte report
+SHA-256 values are
+`e68a7e4614424e76fa35d4c0650e500469b971f1a5010d309115b0c225b7b2e6`,
+`14aa05939c2ac2f4954196968003254dee39175f1d1d94e32213b8a74cfff19e`,
+`341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
+`99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
+and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
+The verifier checks authenticated final state but not actual routing,
+transformation, read scope, tool use, atomic publication, transient input
+preservation, global quiescence, or exit status. One fixed source-reviewed Bash
+program passes all 100 public fixtures under a restricted tool `PATH`; this is
+a feasibility canary, not a caller-selected candidate API, production sandbox,
+scored result, model-selection result, or research claim. The family remains
+public, unsealed, unscored, nonauthorizing, outside first-tranche-only V1
 invocation, and records `independent_human_review_attested: false`.
 
 ## Where the detailed answers live

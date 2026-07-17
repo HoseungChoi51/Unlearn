@@ -161,9 +161,9 @@ evidence that a model or research hypothesis has succeeded.
   families, 20 tasks per family, and 500 tasks total. The canonical 4-by-5
   parameter grids bind each family's lifecycle state, Bash-native or
   Python-permitted solution track, allowed tools, filesystem schema, output
-  contract, and capability tags. It reconciles 15 integrated families/300
-  tasks to all six live cumulative registry identities and reserves 10
-  concrete families/200 tasks without pretending that planned entries have
+  contract, and capability tags. It reconciles 16 integrated families/320
+  tasks to all seven live cumulative registry identities and reserves 9
+  concrete families/180 tasks without pretending that planned entries have
   fixtures or verifiers. The config is public, unsealed, unscored,
   nonauthorizing, and records no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
@@ -212,6 +212,23 @@ evidence that a model or research hypothesis has succeeded.
   wait, transition, compensation, tool-use, atomic-publication, transient-input,
   global-quiescence, or candidate-exit history; directory-permission and live
   effective-access failures remain uncovered.
+- [x] Additive seventh-tranche `case-routed-batch-transform` family with 20
+  task contracts and five deterministic profiles per task (100 fixtures). It
+  crosses four mutually exclusive routing signals with five unmatched-record
+  fallback policies and binds exact status, error, route-partitioned payload,
+  input-preservation, and final-tree semantics. Two separately structured
+  parsing, routing, transform, and serialization paths must agree. Exact-type,
+  deterministic-regeneration, materialization, no-follow, mutation, and full-
+  catalog tests exercise the family without candidate execution. One fixed,
+  source-reviewed Bash program also passes all 100 public fixtures under a
+  restricted tool `PATH`, with an additional binary-stream case. That canary
+  is not a caller-selected candidate API, production sandbox, scored result,
+  model-selection result, or research claim. Final-state verification cannot
+  attest route, transform, read-scope, tool, atomic-publication, exit-status,
+  transient-input, or global-quiescence history; directory-permission and live
+  effective-access failures remain uncovered. Exact local types preserve all
+  predecessor identities, and the family remains public, unsealed, unscored,
+  nonauthorizing, outside V1 invocation, and without independent human review.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -497,24 +514,38 @@ its additive-catalog SHA-256 is
 and its canonical report-byte SHA-256 is
 `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
 
-The cumulative 300 specifications and 1,500 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the sixth manifest
+The additive seventh tranche is bound by
+[reports/executable-seventh-tranche/manifest.json](reports/executable-seventh-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `case-routed-batch-transform` through
+exact local types. Its family task-set SHA-256 is
+`e68a7e4614424e76fa35d4c0650e500469b971f1a5010d309115b0c225b7b2e6`,
+its added-registry SHA-256 is
+`14aa05939c2ac2f4954196968003254dee39175f1d1d94e32213b8a74cfff19e`,
+its cumulative-suite SHA-256 is
+`341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
+its additive-catalog SHA-256 is
+`99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
+and its canonical 56,368-byte report SHA-256 is
+`49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
+
+The cumulative 320 specifications and 1,600 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the seventh manifest
 explicitly records `independent_human_review_attested: false`. The remaining
-200 specifications, independent human review, and a separately reviewed
+180 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
 
 The complete allocation is frozen separately in
 [configs/executable-method-development-coverage-v1.json](configs/executable-method-development-coverage-v1.json).
-It binds 15 integrated families/300 tasks and 10 planned families/200 tasks to
+It binds 16 integrated families/320 tasks and 9 planned families/180 tasks to
 the 25-family/500-task target. The semantic coverage SHA-256 is
-`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
+`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
 and the canonical config byte SHA-256 is
-`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
 This lock fixes allocation metadata only; a planned family is not implemented,
 reviewed, sealed, scored, or executable because it appears in the record. The
-next planned implementation is `case-routed-batch-transform`.
+next planned implementation is `collision-safe-batch-rename`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -527,7 +558,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-fourteen concrete cataloged families above, these generated records do not yet
+sixteen concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -599,10 +630,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 200 method-development specifications not yet implemented and
+- [ ] Add the 180 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 300-
+  development inventory before sealing. The frozen cumulative 320-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -620,7 +651,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the fifteen implemented families
+- [ ] Extend verifier mutation tests beyond the sixteen implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

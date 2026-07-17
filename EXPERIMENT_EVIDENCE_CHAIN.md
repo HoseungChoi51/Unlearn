@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 300
-integrated public method-development tasks with 1,500 concrete fixtures across
-six additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 320
+integrated public method-development tasks with 1,600 concrete fixtures across
+seven additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -216,20 +216,31 @@ report-byte SHA-256 values are
 `9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
 and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
 
-The full allocation lock contains 15 integrated families/300 tasks and 10
-planned families/200 tasks. Its semantic coverage SHA-256 is
-`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`,
+The seventh addition contributes 20 `case-routed-batch-transform` tasks/100
+fixtures. Its checked hash-only report is
+[reports/executable-seventh-tranche/manifest.json](reports/executable-seventh-tranche/manifest.json);
+the task-set, added-registry, cumulative-suite, additive-catalog, and canonical
+56,368-byte report SHA-256 values are
+`e68a7e4614424e76fa35d4c0650e500469b971f1a5010d309115b0c225b7b2e6`,
+`14aa05939c2ac2f4954196968003254dee39175f1d1d94e32213b8a74cfff19e`,
+`341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
+`99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
+and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
+
+The full allocation lock contains 16 integrated families/320 tasks and 9
+planned families/180 tasks. Its semantic coverage SHA-256 is
+`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`,
 and its canonical config-byte SHA-256 is
-`b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+`93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
 The lock fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through sixth manifests and the allocation lock explicitly record
+third through seventh manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 200 method-development tasks, beginning with
-`case-routed-batch-transform`, independent review of the complete development
+**Planned:** the remaining 180 method-development tasks, beginning with
+`collision-safe-batch-rename`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -261,7 +272,7 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-fifteen integrated fixture/oracle families with independent constructions and
+sixteen integrated fixture/oracle families with independent constructions and
 mutation coverage; namespace, runtime-snapshot, and native PID1 canaries; and
 one exact reviewed Bash case connected through the local boundary.
 
@@ -292,6 +303,17 @@ compensating models. The final-state verifier does not attest actual retry,
 waiting, transition, compensation, tool-use, atomic-publication, transient-input,
 global-quiescence, or candidate-exit history. Directory-permission and live
 effective-access behavior also remain outside the fixtures.
+
+The seventh-family manifest loop classifies each record using one of four
+exclusive signals, applies a byte-exact transform, and resolves unmatched
+records under one of five fallback policies. Separately structured parsing,
+routing, transform, and serialization paths agree on status/error records and
+the complete route-partitioned tree. The final-state verifier does not attest
+actual route, transform, read-scope, tool-use, atomic-publication, transient-
+input, global-quiescence, or candidate-exit history. A fixed source-reviewed
+Bash program passes all 100 public fixtures under a restricted tool `PATH`, but
+this feasibility canary is not an arbitrary-candidate interface, production
+sandbox, score, selection result, or research claim.
 
 **Planned:** a production, independently reviewed arbitrary-candidate service
 with a trusted Bash runtime closure, exact-tool enforcement, tmpfs/workspace

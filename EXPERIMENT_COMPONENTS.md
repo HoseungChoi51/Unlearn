@@ -159,9 +159,9 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Fifteen families/300 tasks have concrete oracles and 1,500 fixture
-bundles across six additive tranches; ten families/200 tasks remain
-planned, beginning with `case-routed-batch-transform`. The
+500 tasks. Sixteen families/320 tasks have concrete oracles and 1,600 fixture
+bundles across seven additive tranches; nine families/180 tasks remain
+planned, beginning with `collision-safe-batch-rename`. The
 [coverage record](configs/executable-method-development-coverage-v1.json) fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
@@ -178,9 +178,17 @@ suite, additive catalog, and canonical report bytes with SHA-256 values
 `db6d00278664f5a72834ebf0297411564da8b98a75d08eb2c2e9cf706dc985b1`,
 `9042968ead33dd098870d21582bc3114706d3af3841bdb3ab7a0d40c5727d990`,
 and `3661d9fe60d78de51bf518fff32282b437b770515c7bbb9a1263072dfb0d13ac`.
+The [seventh-tranche manifest](reports/executable-seventh-tranche/manifest.json)
+binds the `case-routed-batch-transform` task set, added registry, cumulative
+suite, additive catalog, and canonical 56,368-byte report with SHA-256 values
+`e68a7e4614424e76fa35d4c0650e500469b971f1a5010d309115b0c225b7b2e6`,
+`14aa05939c2ac2f4954196968003254dee39175f1d1d94e32213b8a74cfff19e`,
+`341b50a83305a9e0c64ada387eee461209ca75d1083e34fe2887a608179de131`,
+`99dcf8918151a5a87bdeea8f51bde8ad6e10063b46419a334d7d8b211310e6d8`,
+and `49c17168813721bc9f66213f4e5b6dd873d97aadd0afd0839a3533a77f7251d9`.
 The updated coverage and config-byte identities are
-`732186b4ddec708f067127ab1b1b8caeb42d84316fcc13f3a748f7e018ae7c4b`
-and `b96f416ef118c013c7edc909131a452189022630601bcc7d312b9641adb1f5cf`.
+`cc3e2d4a3bdd9048a6f96cbcaa0b4b823ce5f27430ed020862fca6e731a7fbce`
+and `93e31b2e6f314369866c72be65ba2f2530951ec5e20e0fa1336faf717baee121`.
 
 The fifth `pipefail-atomic-report` family makes an important evaluator
 distinction concrete. Its exact semantics model complete logical streams, the
@@ -207,6 +215,20 @@ compensated, used only allowed tools, published atomically, preserved inputs
 throughout execution, exited as claimed, or was globally quiescent. A trusted
 supervisor is required, and directory-permission/live-access failures remain
 uncovered.
+
+The seventh `case-routed-batch-transform` family makes multi-record shell
+branching concrete. A manifest loop classifies each logical record using one
+of four exclusive signals, applies a byte-exact transform, and handles
+unmatched records under one of five batch policies. Independent parsing,
+routing, transformation, and serialization paths must agree; the verifier
+then authenticates the inputs and exact complete final tree. This remains
+extensional evidence: it cannot prove route, transform, read-scope, tool,
+atomic-publication, exit-status, transient-input, or global-quiescence history.
+A fixed source-reviewed Bash implementation passes all 100 public fixtures
+under a restricted tool `PATH`, including a separate binary-stream case. That
+canary establishes feasibility for one hand-authored program, not a caller-
+selected candidate API, production sandbox, scored result, model-selection
+result, or scientific claim.
 
 Lifecycle roles prevent feedback leakage:
 
@@ -315,7 +337,7 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 10-family/200-task remainder and independently review
+1. implement the locked 9-family/180-task remainder and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;
