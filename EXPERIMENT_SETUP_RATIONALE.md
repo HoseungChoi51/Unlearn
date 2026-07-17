@@ -156,21 +156,23 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Twenty-two families/440 tasks currently have concrete oracles
-  and 2,200 authenticated fixture bundles across thirteen additive tranches.
+  and 500 tasks. Twenty-three families/460 tasks currently have concrete
+  oracles and 2,300 authenticated fixture bundles across fourteen additive
+  tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 3 families/60 tasks, beginning with
-  `dependency-dag-execution-plan`, still need implementation and review.
+- The remaining 2 families/40 tasks, beginning with
+  `process-lifecycle-delta`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
   not yet complete.
 
 The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.md).
-The current public allocation and its exact content identity are in
+The historical thirteenth-tranche allocation and its exact content identity
+are in
 [coverage v6](configs/executable-method-development-coverage-v6.json). Its
 [v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
 preserves exact v5 bytes and proves that only the
@@ -182,6 +184,18 @@ are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
 for 5,423 canonical bytes.
+The current public allocation is
+[coverage v7](configs/executable-method-development-coverage-v7.json). Its
+[v6-to-v7 migration](configs/executable-method-development-coverage-v6-to-v7-migration.json)
+preserves exact v6 bytes and proves that only the fourteenth family was
+promoted. The v7 semantic/config-byte SHA-256 values are
+`177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569`
+and `3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc`
+for 26,558 canonical bytes. The migration semantic/config-byte SHA-256 values
+are
+`7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
+and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
+for 5,744 canonical bytes.
 The original [v1 record](configs/executable-method-development-coverage-v1.json)
 and [v2 record](configs/executable-method-development-coverage-v2.json) are
 preserved byte-for-byte. The
@@ -318,6 +332,9 @@ and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 - [NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md):
   the thirteenth tranche's strict nested JSON, migration policies, verifier,
   Python-permitted canary, and v5-to-v6 promotion.
+- [DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md):
+  the fourteenth tranche's strict graph encodings, deterministic Kahn
+  policies, exact cycle classification, and v6-to-v7 promotion.
 - [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md): how component
   outputs compose into claim-eligible evidence.
 - [RESEARCH_READINESS.md](RESEARCH_READINESS.md): compact build-state versus

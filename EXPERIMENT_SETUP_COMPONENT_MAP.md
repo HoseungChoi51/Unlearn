@@ -307,8 +307,8 @@ required to establish when a prospective commitment existed.
 The repository currently contains scientific contracts, model/data/training
 canaries, public method-development task families, semantic verifiers,
 content-addressed registries, and bounded execution foundations. The current
-allocation has 22 integrated families and 440 public method-development tasks;
-the next locked family is `dependency-dag-execution-plan`.
+allocation has 23 integrated families and 460 public method-development tasks;
+the next locked family is `process-lifecycle-delta`.
 
 These assets are deliberately public, unsealed, unscored, and
 nonauthorizing. A passing fixed source-reviewed Bash canary demonstrates

@@ -186,6 +186,12 @@ evidence that a model or research hypothesis has succeeded.
   to thirteen live cumulative registry identities, and reserves 3 concrete
   families/60 tasks. Its v5-to-v6 migration record proves the other 24 family
   values unchanged and preserves the first three promotion records exactly.
+  V7 preserves exact v6 bytes, promotes only
+  `dependency-dag-execution-plan`, reconciles 23 integrated families/460
+  tasks to fourteen live cumulative registry identities, and reserves 2
+  concrete families/40 tasks. Its v6-to-v7 migration record proves the other
+  24 family values unchanged and preserves the first four promotion records
+  exactly.
   All configs are public, unsealed, unscored,
   nonauthorizing, and record no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
@@ -366,6 +372,23 @@ evidence that a model or research hypothesis has succeeded.
   first-tranche-only V1 invocation, and without independent human review. Its
   final-state verifier cannot attest Python module/syscall use, tool/read
   history, atomicity, transient state, global quiescence, or exit status.
+- [x] Additive fourteenth-tranche `dependency-dag-execution-plan` family with
+  20 task contracts and five deterministic profiles per task (100 fixtures).
+  Four strict graph encodings cross five exact Kahn ready-node policies.
+  Primary and independently rescanning reference planners consume the same
+  strictly validated graph and agree on complete topological order, final Kahn
+  residual, and true cyclic membership. Boundary, workspace, independence,
+  and discrimination tests cover all 100 bundles, codec and graph limits,
+  cycle/downstream distinctions, semantic-output mutations, and input
+  preservation in normal and optimized modes. A fixed Bash wrapper separately
+  parses the source with isolated standard-library Python and solves all
+  bundles using exactly `mkdir` and `python3`.
+  Through-thirteenth predecessor evidence reconstructs every predecessor
+  identity once before the fourteenth registry/catalog append. The family
+  remains public, unsealed, unscored, nonauthorizing, outside
+  first-tranche-only V1 invocation, and without independent human review. Its
+  final-state verifier cannot attest algorithm, Python module/syscall,
+  tool/read, atomicity, transient-state, quiescence, or exit-status history.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -748,10 +771,25 @@ and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
 They are frozen by the checked-in manifest and summarized in
 [the family infrastructure guide](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md).
 
-The cumulative 440 specifications and 2,200 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the thirteenth
+The additive fourteenth tranche is bound by
+[reports/executable-fourteenth-tranche/manifest.json](reports/executable-fourteenth-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `dependency-dag-execution-plan`
+through exact local types and one shared through-thirteenth predecessor
+snapshot. Its task-set, added-registry, cumulative-suite, cumulative-catalog,
+discrimination, and canonical 56,419-byte report SHA-256 values are
+`57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279`,
+`c79de716570fe600f2dd7b1e3569456e6f42774d70143a309809410ad8097709`,
+`497aac2c69daf2ff05e28b1f132090f3a380ce8ce215b63869a846d576616cf9`,
+`11b25fb47af89945a80080b6c42d2fe315076384f3929555c1909cd7c318534b`,
+`25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c`,
+and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
+They are summarized in
+[the family infrastructure guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md).
+
+The cumulative 460 specifications and 2,300 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the fourteenth
 manifest explicitly records `independent_human_review_attested: false`. The
-remaining 60 specifications, independent human review, and a separately reviewed
+remaining 40 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
@@ -808,7 +846,7 @@ for 25,241 canonical bytes. The v4-to-v5 migration semantic/config-byte
 SHA-256 values are
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
 and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
-for 5,052 canonical bytes. The current
+for 5,052 canonical bytes. The historical
 [v6 lock](configs/executable-method-development-coverage-v6.json) preserves
 exact v5 bytes,
 promotes only `nested-json-schema-migration`, binds 22 integrated
@@ -821,8 +859,22 @@ for 25,899 canonical bytes. The
 semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
-for 5,423 canonical bytes. The next planned implementation is
-`dependency-dag-execution-plan`.
+for 5,423 canonical bytes.
+The current
+[v7 lock](configs/executable-method-development-coverage-v7.json) preserves
+exact v6 bytes, promotes only `dependency-dag-execution-plan`, binds 23
+integrated families/460 tasks plus 2 planned families/40 tasks, and preserves
+the first four promotion records. Its semantic/config-byte SHA-256 values are
+`177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569`
+and `3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc`
+for 26,558 canonical bytes. The
+[v6-to-v7 migration](configs/executable-method-development-coverage-v6-to-v7-migration.json)
+proves the other 24 family records unchanged. Its semantic/config-byte
+SHA-256 values are
+`7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
+and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
+for 5,744 canonical bytes. The next planned implementation is
+`process-lifecycle-delta`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -835,7 +887,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-twenty-two concrete cataloged families above, these generated records do not yet
+twenty-three concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -907,10 +959,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 60 method-development specifications not yet implemented and
+- [ ] Add the 40 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 440-
+  development inventory before sealing. The frozen cumulative 460-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -928,7 +980,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the twenty-two implemented families
+- [ ] Extend verifier mutation tests beyond the twenty-three implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

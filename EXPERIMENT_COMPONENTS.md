@@ -159,9 +159,9 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Twenty-two families/440 tasks have concrete oracles and 2,200
-fixture bundles across thirteen additive tranches; three families/60 tasks
-remain planned, beginning with `dependency-dag-execution-plan`. The
+500 tasks. Twenty-three families/460 tasks have concrete oracles and 2,300
+fixture bundles across fourteen additive tranches; two families/40 tasks
+remain planned, beginning with `process-lifecycle-delta`. The
 coverage ledger fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
@@ -209,7 +209,7 @@ The
 [v5-to-v6 migration](configs/executable-method-development-coverage-v5-to-v6-migration.json)
 promotes only `nested-json-schema-migration`, binds
 the thirteenth integration evidence, preserves the first three promotion
-records, and proves the other 24 family records unchanged. The current
+records, and proves the other 24 family records unchanged. The historical
 [v6 lock](configs/executable-method-development-coverage-v6.json)
 semantic/config-byte SHA-256 values are
 `044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
@@ -219,6 +219,20 @@ SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
 for 5,423 canonical bytes.
+The current
+[v7 lock](configs/executable-method-development-coverage-v7.json) promotes
+only `dependency-dag-execution-plan`, binds the fourteenth integration
+evidence, preserves the first four promotion records, and proves the other 24
+family records unchanged through its
+[v6-to-v7 migration](configs/executable-method-development-coverage-v6-to-v7-migration.json).
+The v7 semantic/config-byte SHA-256 values are
+`177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569`
+and `3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc`
+for 26,558 canonical bytes. The migration semantic/config-byte SHA-256 values
+are
+`7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
+and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
+for 5,744 canonical bytes.
 
 The [sixth-tranche manifest](reports/executable-sixth-tranche/manifest.json)
 binds the `bounded-retry-state-machine` task set, added registry, cumulative
@@ -298,6 +312,17 @@ suite, cumulative catalog, behavioral-discrimination evidence, and canonical
 `25142ebdc014f4d4a53bba34bb9ffeaffa6f87789169180fe0caab69b02fcb9f`,
 `416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
 and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
+The
+[fourteenth-tranche manifest](reports/executable-fourteenth-tranche/manifest.json)
+binds the `dependency-dag-execution-plan` task set, added registry, cumulative
+suite, cumulative catalog, label-free behavioral discrimination, and canonical
+56,419-byte report. The corresponding frozen SHA-256 values are
+`57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279`,
+`c79de716570fe600f2dd7b1e3569456e6f42774d70143a309809410ad8097709`,
+`497aac2c69daf2ff05e28b1f132090f3a380ce8ce215b63869a846d576616cf9`,
+`11b25fb47af89945a80080b6c42d2fe315076384f3929555c1909cd7c318534b`,
+`25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c`,
+and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
 The preserved v1 coverage and config-byte identities are
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
@@ -507,8 +532,8 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 3-family/60-task remainder, beginning with
-   `dependency-dag-execution-plan`, and independently review
+1. implement the locked 2-family/40-task remainder, beginning with
+   `process-lifecycle-delta`, and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

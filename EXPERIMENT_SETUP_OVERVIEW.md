@@ -155,9 +155,9 @@ require portable hardware measurements from the exact exported artifact.
 The repository has not produced a model-quality result. It currently provides
 contracts, data and training canaries, model/runtime inspection, and public
 method-development benchmark infrastructure. The benchmark allocation is
-locked at 25 families and 500 tasks; 22 families/440 tasks and 2,200 fixture
-bundles are implemented across thirteen additive tranches. Three families/60
-tasks remain, beginning with `dependency-dag-execution-plan`. The current
+locked at 25 families and 500 tasks; 23 families/460 tasks and 2,300 fixture
+bundles are implemented across fourteen additive tranches. Two families/40
+tasks remain, beginning with `process-lifecycle-delta`. The current
 coverage lineage promotes only one frozen family per version and proves the
 other 24 family records unchanged. Earlier coverage versions remain immutable
 historical records.
@@ -182,3 +182,7 @@ explained in
 The thirteenth tranche, strict versioned nested JSON, exact migration policies,
 source-reviewed Python-permitted canary, and append-only evidence are explained in
 [NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md).
+The fourteenth tranche, strict dependency-graph codecs, deterministic Kahn
+policies, exact cycle classification, and append-only evidence are explained
+in
+[DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md).

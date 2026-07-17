@@ -1,0 +1,239 @@
+{
+  "$comment": "This schema checks the public migration shape and frozen principal identities. Exact admission additionally requires cbds.executable_development_coverage_v6_to_v7_migration.load_executable_development_coverage_v6_to_v7_migration, which compares canonical bytes with live v6/v7 evidence.",
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://cbds.invalid/schemas/executable-method-development-coverage-v6-to-v7-migration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_execution_authorized": {
+      "const": false
+    },
+    "changed_family_count": {
+      "const": 1
+    },
+    "changed_family_id": {
+      "const": "dependency-dag-execution-plan"
+    },
+    "claim_authorized": {
+      "const": false
+    },
+    "from": {
+      "const": {
+        "config_byte_count": 25899,
+        "config_bytes_sha256": "e526485ba7b34c0325ff6809dcee428c251cd25dd34e907ca3b2eff56c174d68",
+        "config_relative_path": "configs/executable-method-development-coverage-v6.json",
+        "coverage_sha256": "044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf",
+        "coverage_version": "6.0.0",
+        "git_commit": "ddcbd2ed73277b06b73bd199544c3b444dbcb80e"
+      }
+    },
+    "migration_sha256": {
+      "const": "7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8"
+    },
+    "migration_version": {
+      "const": "1.0.0"
+    },
+    "model_selection_eligible": {
+      "const": false
+    },
+    "new_family_sha256": {
+      "const": "142c53602d616c44de495a65d71797d08752d874d0243bec1f75b4e436286ae5"
+    },
+    "new_lifecycle_state": {
+      "const": "integrated"
+    },
+    "new_source_registry_commitment": {
+      "const": {
+        "added_task_count": 20,
+        "cumulative_suite_sha256": "497aac2c69daf2ff05e28b1f132090f3a380ce8ce215b63869a846d576616cf9",
+        "cumulative_task_count": 460,
+        "registry_sha256": "c79de716570fe600f2dd7b1e3569456e6f42774d70143a309809410ad8097709",
+        "tranche_id": "fourteenth-tranche"
+      }
+    },
+    "old_family_sha256": {
+      "const": "4711a638d7d4f674701a9e90c7266d1d8a8c00c00c149757820314dd85beec7b"
+    },
+    "old_lifecycle_state": {
+      "const": "planned"
+    },
+    "preserved_allowed_tools": {
+      "const": [
+        "mkdir",
+        "python3"
+      ]
+    },
+    "preserved_capability_tags": {
+      "const": [
+        "algorithms",
+        "cycle-detection",
+        "graph-processing",
+        "python-permitted"
+      ]
+    },
+    "preserved_filesystem_schema": {
+      "const": "dependency-graph-documents"
+    },
+    "preserved_output_contract": {
+      "const": "validated-topological-execution-plan"
+    },
+    "preserved_parameter_axes": {
+      "const": [
+        {
+          "axis_name": "graph_encoding",
+          "values": [
+            "json-adjacency",
+            "json-edge-list",
+            "csv-edges",
+            "line-oriented-dependencies"
+          ]
+        },
+        {
+          "axis_name": "tie_break_policy",
+          "values": [
+            "utf8-smallest",
+            "declared-priority",
+            "shortest-depth",
+            "largest-fanout",
+            "stable-input-order"
+          ]
+        }
+      ]
+    },
+    "preserved_promotion_history": {
+      "const": [
+        {
+          "discrimination_sha256": "ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21",
+          "family_id": "compressed-archive-roundtrip-verify",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "tenth-tranche",
+          "task_set_sha256": "450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a"
+        },
+        {
+          "discrimination_sha256": "f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa",
+          "family_id": "checksum-repair-plan",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "eleventh-tranche",
+          "task_set_sha256": "e52fb74ece2a94baa9bd1b2f6da25ca103839e1e9666361fe5406c34a36b9bb0"
+        },
+        {
+          "discrimination_sha256": "732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94",
+          "family_id": "jsonl-csv-enrichment-compose",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "twelfth-tranche",
+          "task_set_sha256": "60a8ab6770bae6de43d430db9e3edf136f28f0a0ad2dacfd09b627ce19cf75c3"
+        },
+        {
+          "discrimination_sha256": "416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42",
+          "family_id": "nested-json-schema-migration",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "thirteenth-tranche",
+          "task_set_sha256": "2ab692e66a3090b5d05a204b18f4fdb99ddc822cdbaa5b7912b7ac2166680e0b"
+        }
+      ]
+    },
+    "preserved_solution_track": {
+      "const": "python-permitted"
+    },
+    "promotion_evidence": {
+      "const": {
+        "discrimination_sha256": "25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c",
+        "family_id": "dependency-dag-execution-plan",
+        "new_lifecycle_state": "integrated",
+        "old_lifecycle_state": "planned",
+        "source_tranche_id": "fourteenth-tranche",
+        "task_set_sha256": "57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279"
+      }
+    },
+    "public_method_development": {
+      "const": true
+    },
+    "reason_codes": {
+      "const": [
+        "planned-contract-preserved",
+        "canonical-grid-integration",
+        "dependency-dag-execution-plan-discrimination",
+        "fourteenth-tranche-integration",
+        "prior-promotion-history-preserved"
+      ]
+    },
+    "record_type": {
+      "const": "cbds.executable-method-development-coverage-v6-to-v7-migration"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scored": {
+      "const": false
+    },
+    "scored_evaluation_authorized": {
+      "const": false
+    },
+    "sealed": {
+      "const": false
+    },
+    "to": {
+      "const": {
+        "config_relative_path": "configs/executable-method-development-coverage-v7.json",
+        "coverage_sha256": "177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569",
+        "coverage_version": "7.0.0"
+      }
+    },
+    "unchanged_family_count": {
+      "const": 24
+    },
+    "unchanged_family_sha256": {
+      "items": {
+        "$ref": "#/$defs/sha256"
+      },
+      "maxItems": 24,
+      "minItems": 24,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "migration_version",
+    "record_type",
+    "from",
+    "to",
+    "changed_family_count",
+    "unchanged_family_count",
+    "changed_family_id",
+    "old_lifecycle_state",
+    "new_lifecycle_state",
+    "old_family_sha256",
+    "new_family_sha256",
+    "preserved_parameter_axes",
+    "preserved_solution_track",
+    "preserved_allowed_tools",
+    "preserved_filesystem_schema",
+    "preserved_output_contract",
+    "preserved_capability_tags",
+    "preserved_promotion_history",
+    "promotion_evidence",
+    "new_source_registry_commitment",
+    "reason_codes",
+    "unchanged_family_sha256",
+    "migration_sha256",
+    "public_method_development",
+    "sealed",
+    "scored",
+    "candidate_execution_authorized",
+    "scored_evaluation_authorized",
+    "model_selection_eligible",
+    "claim_authorized"
+  ],
+  "title": "CBDS executable development coverage v6-to-v7 migration",
+  "type": "object"
+}

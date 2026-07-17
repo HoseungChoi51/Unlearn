@@ -48,8 +48,12 @@ improves.
 - [Executable additive eleventh-tranche hash manifest](reports/executable-eleventh-tranche/manifest.json)
 - [Executable additive twelfth-tranche hash manifest](reports/executable-twelfth-tranche/manifest.json)
 - [Executable additive thirteenth-tranche hash manifest](reports/executable-thirteenth-tranche/manifest.json)
+- [Executable additive fourteenth-tranche hash manifest](reports/executable-fourteenth-tranche/manifest.json)
 - [Nested JSON migration component guide](NESTED_JSON_SCHEMA_MIGRATION_EXPERIMENT_INFRASTRUCTURE.md)
-- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v6.json)
+- [Dependency-DAG execution-plan component guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md)
+- [Current executable method-development coverage lock](configs/executable-method-development-coverage-v7.json)
+- [Coverage v6-to-v7 migration evidence](configs/executable-method-development-coverage-v6-to-v7-migration.json)
+- [Historical executable coverage v6 record](configs/executable-method-development-coverage-v6.json)
 - [Coverage v5-to-v6 migration evidence](configs/executable-method-development-coverage-v5-to-v6-migration.json)
 - [Historical executable coverage v5 record](configs/executable-method-development-coverage-v5.json)
 - [Coverage v4-to-v5 migration evidence](configs/executable-method-development-coverage-v4-to-v5-migration.json)
@@ -378,8 +382,8 @@ fresh floating-dense source/export completion reconciliation with passive
 saved-runtime report validation,
 cross-document task-result binding, campaign-wide replicate/evaluation
 binding, paired confirmatory statistics, collection-derived outcome binding,
-fail-closed claim-policy evaluation, and twenty-two cataloged public-development
-static fixture/verifier families are implemented across thirteen additive
+fail-closed claim-policy evaluation, and twenty-three cataloged public-development
+static fixture/verifier families are implemented across fourteen additive
 tranches. The third tranche adds `compound-path-query` and
 `regex-log-group-aggregation`; the fourth adds `reproducible-ustar-pack` while
 preserving all predecessor identities through exact family-local task and
@@ -391,7 +395,8 @@ adds `case-routed-batch-transform`. The eighth adds
 `compressed-archive-roundtrip-verify`. The eleventh adds
 `checksum-repair-plan`; the twelfth adds
 `jsonl-csv-enrichment-compose`; and the thirteenth adds
-`nested-json-schema-migration`. These additions remain outside the
+`nested-json-schema-migration`. The fourteenth adds
+`dependency-dag-execution-plan`. These additions remain outside the
 first-tranche-only V1
 invocation protocol. A catalog-admitted
 development invocation protocol, bounded runtime-bundle materializer, sealed regular-
@@ -689,11 +694,34 @@ SHA-256 values are
 `416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
 and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
 
-Together the thirteen tranches provide 440 of the 500 required
-method-development specifications and 2,200 concrete fixture bundles across
-22 integrated families. They remain public, unsealed, unscored, and
+The additive fourteenth tranche contributes 20
+`dependency-dag-execution-plan` tasks and 100 fixtures. Four strict graph
+encodings cross five exact Kahn ready-node tie-break policies. Two planner
+derivations start from the same strictly validated graph and must agree on the
+complete topological order, final Kahn residual, and true cyclic membership. A
+fixed source-reviewed Bash wrapper separately parses the source with
+`python3 -I -S` and solves all 100 public fixtures with `PATH` limited to
+`mkdir` and `python3`. See
+[the fourteenth-tranche component guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md)
+for the contract and assurance limits. The task-set, added-registry,
+cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,419-byte report SHA-256 values are
+`57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279`,
+`c79de716570fe600f2dd7b1e3569456e6f42774d70143a309809410ad8097709`,
+`497aac2c69daf2ff05e28b1f132090f3a380ce8ce215b63869a846d576616cf9`,
+`11b25fb47af89945a80080b6c42d2fe315076384f3929555c1909cd7c318534b`,
+`25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c`,
+and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
+Its checked-in
+[hash-only manifest](reports/executable-fourteenth-tranche/manifest.json)
+retains explicitly false candidate-execution, model-selection, claim, and
+independent-human-review fields.
+
+Together the fourteen tranches provide 460 of the 500 required
+method-development specifications and 2,300 concrete fixture bundles across
+23 integrated families. They remain public, unsealed, unscored, and
 nonauthorizing, and independent human review remains unattested. The remaining
-60 specifications and the trusted sandbox/supervisor still block general
+40 specifications and the trusted sandbox/supervisor still block general
 synthesized-candidate execution. The V1 `DevelopmentInvocation` below
 deliberately admits only the
 frozen first tranche; a cumulative invocation protocol has not been
@@ -765,7 +793,7 @@ records unchanged. Its semantic SHA-256 is
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`;
 its 5,052 canonical bytes have SHA-256
 `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`.
-The current backward-linked
+The historical backward-linked
 [v6 coverage lock](configs/executable-method-development-coverage-v6.json)
 preserves exact v5 bytes, promotes only `nested-json-schema-migration`, and
 binds 22 integrated families/440 tasks plus 3 planned families/60 tasks. Its
@@ -779,8 +807,22 @@ preserves the first three promotion records and proves the other 24 family
 records unchanged. Its semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
-for 5,423 canonical bytes. The next planned family is
-`dependency-dag-execution-plan`.
+for 5,423 canonical bytes.
+The current backward-linked
+[v7 coverage lock](configs/executable-method-development-coverage-v7.json)
+preserves exact v6 bytes, promotes only `dependency-dag-execution-plan`, and
+binds 23 integrated families/460 tasks plus 2 planned families/40 tasks. Its
+semantic/config-byte SHA-256 values are
+`177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569`
+and `3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc`
+for 26,558 canonical bytes. The
+[v6-to-v7 migration record](configs/executable-method-development-coverage-v6-to-v7-migration.json)
+preserves the first four promotion records and proves the other 24 family
+records unchanged. Its semantic/config-byte SHA-256 values are
+`7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
+and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
+for 5,744 canonical bytes. The next planned family is
+`process-lifecycle-delta`.
 
 `src/cbds/executable_compound_path_query.py` supplies 20 of the additive third-
 tranche tasks and five deterministic profiles per task (100 fixtures). Two

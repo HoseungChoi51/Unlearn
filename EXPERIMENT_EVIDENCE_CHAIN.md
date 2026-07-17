@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 440
-integrated public method-development tasks with 2,200 concrete fixtures across
-thirteen additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 460
+integrated public method-development tasks with 2,300 concrete fixtures across
+fourteen additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -314,6 +314,21 @@ canonical 56,396-byte report SHA-256 values are
 `416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
 and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
 
+The fourteenth addition contributes 20 `dependency-dag-execution-plan`
+tasks/100 fixtures. Its
+[hash-only manifest](reports/executable-fourteenth-tranche/manifest.json)
+binds the task set, added registry, cumulative suite, cumulative catalog, and
+label-free behavioral discrimination. Its canonical report is 56,419 bytes.
+Four strict encodings cross five Kahn
+ready-node policies with exact residual-versus-cycle semantics. The
+corresponding frozen SHA-256 values are
+`57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279`,
+`c79de716570fe600f2dd7b1e3569456e6f42774d70143a309809410ad8097709`,
+`497aac2c69daf2ff05e28b1f132090f3a380ce8ce215b63869a846d576616cf9`,
+`11b25fb47af89945a80080b6c42d2fe315076384f3929555c1909cd7c318534b`,
+`25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c`,
+and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
+
 The historical
 [v4 allocation lock](configs/executable-method-development-coverage-v4.json)
 contains 20 integrated families/400 tasks and 5 planned families/100 tasks.
@@ -351,7 +366,7 @@ for 25,241 canonical bytes. Its v4-to-v5 migration proves the other 24 family
 records unchanged; the migration semantic/config-byte SHA-256 values are
 `7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
 and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
-for 5,052 canonical bytes. The current
+for 5,052 canonical bytes. The historical
 [v6 lock](configs/executable-method-development-coverage-v6.json) promotes only
 `nested-json-schema-migration`, contains 22 integrated families/440 tasks and
 3 planned families/60 tasks, appends the thirteenth source commitment, and
@@ -365,16 +380,30 @@ proves the other 24 family records unchanged; the migration
 semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
-for 5,423 canonical bytes. The lock
-fixes scope only; it does not implement or seal its planned entries.
+for 5,423 canonical bytes. The current
+[v7 lock](configs/executable-method-development-coverage-v7.json) promotes
+only `dependency-dag-execution-plan`, contains 23 integrated families/460
+tasks and 2 planned families/40 tasks, appends the fourteenth source
+commitment, and preserves the first four promotion records. Its
+semantic/config-byte SHA-256 values are
+`177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569`
+and `3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc`
+for 26,558 canonical bytes. Its
+[v6-to-v7 migration](configs/executable-method-development-coverage-v6-to-v7-migration.json)
+proves the other 24 family records unchanged; the migration
+semantic/config-byte SHA-256 values are
+`7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
+and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
+for 5,744 canonical bytes. The locks fix scope only; they do not implement or
+seal their planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through thirteenth manifests and the allocation lock explicitly record
+third through fourteenth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 60 method-development tasks, beginning with
-`dependency-dag-execution-plan`, independent review of the complete development
+**Planned:** the remaining 40 method-development tasks, beginning with
+`process-lifecycle-delta`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -406,7 +435,7 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-twenty-two integrated fixture/oracle families with mutation coverage and
+twenty-three integrated fixture/oracle families with mutation coverage and
 independently structured oracle paths where available; the hardlink family
 independently checks parsing and grouping but shares final-state assembly;
 the archive family checks bounded single-stream decoding, strict ustar
@@ -417,7 +446,9 @@ the enrichment-composition family checks strict mixed-codec parsing,
 duplicate-key Cartesian multiplicity, missing-field policy behavior, and
 ordered semantic JSONL; the nested-migration family checks bounded versioned
 JSON, exact policy transforms, deterministic document-set publication, and a
-Python-permitted feasibility path;
+Python-permitted feasibility path; the dependency-DAG family checks strict
+multi-codec graph parsing, five deterministic Kahn policies, and exact
+blocked-versus-cyclic classification;
 namespace, runtime-snapshot, and native PID1 canaries; and one exact reviewed
 Bash case connected through the local boundary.
 

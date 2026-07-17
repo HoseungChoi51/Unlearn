@@ -145,7 +145,7 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The thirteen executable tranches are pinned by
+secret. The fourteen executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
@@ -158,9 +158,10 @@ the [additive ninth manifest](reports/executable-ninth-tranche/manifest.json),
 the [additive tenth manifest](reports/executable-tenth-tranche/manifest.json),
 the [additive eleventh manifest](reports/executable-eleventh-tranche/manifest.json),
 [the additive twelfth manifest](reports/executable-twelfth-tranche/manifest.json),
+[the additive thirteenth manifest](reports/executable-thirteenth-tranche/manifest.json),
 and
-[the additive thirteenth manifest](reports/executable-thirteenth-tranche/manifest.json).
-They currently contain 440 public method-development specifications with five
+[the additive fourteenth manifest](reports/executable-fourteenth-tranche/manifest.json).
+They currently contain 460 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -285,8 +286,25 @@ discrimination, and canonical 56,396-byte report SHA-256 values are
 `416907543c373f36e55098c514fbe17aeef0192d9e5dc43cd025bed809a0ad42`,
 and `0250c1e3134d342c57378f0fb8a3b6c4c06ae84ca4fdee4dcda743eefcff8fb7`.
 
-The thirteenth manifest records `independent_human_review_attested: false`,
-and all thirteen tranches remain public, unsealed, unscored, and
+The fourteenth addition contributes 20 `dependency-dag-execution-plan` tasks
+and 100 fixtures. Four strict graph encodings cross five deterministic Kahn
+ready-node policies. Independent planner derivations start from a shared
+strictly parsed graph and agree on topological order, final residual, and true
+cycle membership; a fixed source-reviewed Bash/Python canary separately parses
+the source and solves all 100 public fixtures. The
+task-set, added-registry, cumulative-suite, cumulative-catalog, label-free
+discrimination, and canonical 56,419-byte report SHA-256 values are
+`57860e84d15ba33575b12b365f1f541b2537051a12e45f3ca470f1d14819c279`,
+`c79de716570fe600f2dd7b1e3569456e6f42774d70143a309809410ad8097709`,
+`497aac2c69daf2ff05e28b1f132090f3a380ce8ce215b63869a846d576616cf9`,
+`11b25fb47af89945a80080b6c42d2fe315076384f3929555c1909cd7c318534b`,
+`25c9f68985ed918a6e8fe9d36b4b6d8a9bd34bb2cd9b039dff82a9276658c82c`,
+and `731f3ff9d03befb25ee72a5ed7ea13a17cd30aedfe60cd0d84df9aed5276a490`.
+The exact contract and observation limits are in the
+[family infrastructure guide](DEPENDENCY_DAG_EXECUTION_PLAN_EXPERIMENT_INFRASTRUCTURE.md).
+
+The fourteenth manifest records `independent_human_review_attested: false`,
+and all fourteen tranches remain public, unsealed, unscored, and
 nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
@@ -338,9 +356,9 @@ for 5,052 canonical bytes. This is an
 allocation lock only: planned entries
 have no implied fixture, oracle, verifier, review, sealing, score, or
 execution status.
-[Coverage v6](configs/executable-method-development-coverage-v6.json)
+[Historical coverage v6](configs/executable-method-development-coverage-v6.json)
 promotes only
-`nested-json-schema-migration`; its exact migration proof and current
+`nested-json-schema-migration`; its exact migration proof and frozen
 identities are generated from the thirteenth task evidence. Its
 semantic/config-byte SHA-256 values are
 `044f026b67a531613b1034b27056f1b6f91e1d95ae8902108428e67a6a9c31cf`
@@ -350,8 +368,20 @@ for 25,899 canonical bytes. The
 semantic/config-byte SHA-256 values are
 `5c345bc6860f5c9ff70dba656d3cc1204acb705a0d2c4526b4031364313d7e90`
 and `31f99bd95165b44cdd5aa4d9bc668b1fcf559a1d621a56c14c80a8d1c5521a8e`
-for 5,423 canonical bytes. The next family in canonical order is
-`dependency-dag-execution-plan`.
+for 5,423 canonical bytes.
+[Current coverage v7](configs/executable-method-development-coverage-v7.json)
+promotes only `dependency-dag-execution-plan`, binds 23 integrated
+families/460 tasks and 2 planned families/40 tasks, and preserves the first
+four promotion records. Its semantic/config-byte SHA-256 values are
+`177a97767a528db74951a191282f6d719a34c8a136a21086940dfbd92e5bb569`
+and `3742f632c7b5b18f8851d8ce198fe6eebd6ae6dbb1e3cf68a37633d67452f7bc`
+for 26,558 canonical bytes. Its
+[v6-to-v7 migration](configs/executable-method-development-coverage-v6-to-v7-migration.json)
+proves the other 24 family records unchanged and has semantic/config-byte
+SHA-256 values
+`7b1822b390fae8c78bf991d0b348b7033a6d0e33e6fa2318ecdf5a0ae060bee8`
+and `ee03276d08386a52a1220bba8de4b6d25a245ab550d4c278c29cef0a1bcf2adc`
+for 5,744 canonical bytes.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -770,10 +800,10 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 440 frozen public-development executable tasks and 2,200 concrete fixture
-  bundles across twenty-two integrated families and thirteen additive
+- 460 frozen public-development executable tasks and 2,300 concrete fixture
+  bundles across twenty-three integrated families and fourteen additive
   tranches;
-- a locked 25-family/500-task allocation with 3 families/60 tasks still
+- a locked 25-family/500-task allocation with 2 families/40 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, materialization, no-follow, and mutation tests for the
   integrated families, with independently structured reference paths where
@@ -781,8 +811,9 @@ The repository currently has a substantial validation foundation:
   hardlink family, bounded single-stream/strict-ustar/relational-report
   checks for the archive family, strict multi-format/batch-policy checks for
   checksum repair, strict mixed-codec/multiplicity/policy checks for
-  enrichment composition, and strict nested-schema/migration/order checks for
-  nested JSON migration;
+  enrichment composition, strict nested-schema/migration/order checks for
+  nested JSON migration, and strict multi-codec/Kahn/residual checks for
+  dependency-DAG planning;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
@@ -806,7 +837,7 @@ The repository currently has a substantial validation foundation:
   candidate API.
 
 None of this is a completed scored experiment. The public benchmark inventory
-is method-development data, its third through thirteenth additions have no
+is method-development data, its third through fourteenth additions have no
 independent human-review attestation or V1 invocation support, the large
 generated suite remains semantic scaffolding, sealed assets are unfinished,
 raw training rows
@@ -875,10 +906,18 @@ or syscall use, read history, atomicity, transient state, global quiescence,
 or candidate exit status. Its fixed Bash/Python canary does not widen that
 boundary or authorize arbitrary candidates.
 
+The dependency-DAG family verifies strict graph decoding, the selected
+deterministic Kahn plan or exact cycle report, the complete final output tree,
+and stable inputs under trusted quiescence. It does not observe algorithm
+history, Python module or syscall use, read or tool history, atomicity,
+transient state, global quiescence, or candidate exit status. Its fixed
+Bash/Python canary does not widen that boundary or authorize arbitrary
+candidates.
+
 The critical path is now:
 
-1. implement the remaining 60 method-development specifications, beginning
-   with `dependency-dag-execution-plan`, with concrete fixtures, independent
+1. implement the remaining 40 method-development specifications, beginning
+   with `process-lifecycle-delta`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed
