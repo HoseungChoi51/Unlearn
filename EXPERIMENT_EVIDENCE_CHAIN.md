@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 380
-integrated public method-development tasks with 1,900 concrete fixtures across
-ten additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 400
+integrated public method-development tasks with 2,000 concrete fixtures across
+eleven additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -266,14 +266,30 @@ cumulative-suite, cumulative-catalog, discrimination, and canonical
 `ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
 and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 
-The [v3 allocation lock](configs/executable-method-development-coverage-v3.json)
-contains 19 integrated families/380 tasks and 6 planned families/120 tasks.
-Its semantic SHA-256 is
+The eleventh addition contributes 20 `checksum-repair-plan` tasks/100
+fixtures. Its
+[hash-only manifest](reports/executable-eleventh-tranche/manifest.json) binds
+the task set, added registry, cumulative suite, cumulative catalog,
+fixture-discrimination evidence, and report bytes. Four strict manifest
+layouts cross five declarative policies, with duplicate-preserving ordered
+records, no-follow status classification, and whole-batch strict rejection.
+The task-set, registry, cumulative-suite, cumulative-catalog, discrimination,
+and canonical 56,202-byte report SHA-256 values are
+`e52fb74ece2a94baa9bd1b2f6da25ca103839e1e9666361fe5406c34a36b9bb0`,
+`bd0c14880eb25fa80100c317fa41086c45c59147407a67f03981831bcfdfc100`,
+`f62ba1c1214fc48f194a5dea9c69c04962cc14dbdccfc38640cf4eee833018cb`,
+`cd4221870ba4bfd5ade5098bddccc15af47865930bf173f05141194f3e0b8177`,
+`f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa`,
+and `d6916730cd81170f067b0669812063fd4071102494fd56174b01672b5cad0d59`.
+
+The [v4 allocation lock](configs/executable-method-development-coverage-v4.json)
+contains 20 integrated families/400 tasks and 5 planned families/100 tasks.
+It preserves the complete immutable v3 artifact, whose semantic SHA-256 is
 `b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`;
-its 23,943 canonical bytes have SHA-256
+the predecessor's 23,943 canonical bytes have SHA-256
 `de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`.
-It preserves the complete immutable v2 artifact,
-which in turn backward-links the immutable v1 coverage/config-byte SHA-256 values
+V3 preserves v2, which in turn backward-links the immutable v1
+coverage/config-byte SHA-256 values
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`.
 The
@@ -282,15 +298,25 @@ semantic/config-byte SHA-256 values are
 `8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
 and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
 for 4,358 canonical bytes.
+The current v4 semantic/config-byte SHA-256 values are
+`1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c`
+and `d003a5748da855257aa93e0c6e1b7a4be2de393ec5faa0dcb32d74156f40b3d7`
+for 24,590 canonical bytes. Its
+[v3-to-v4 migration](configs/executable-method-development-coverage-v3-to-v4-migration.json)
+proves only the checksum family changed and has semantic/config-byte SHA-256
+values
+`667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
+and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
+for 4,701 canonical bytes.
 The lock fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through tenth manifests and the allocation lock explicitly record
+third through eleventh manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 120 method-development tasks, beginning with
-`checksum-repair-plan`, independent review of the complete development
+**Planned:** the remaining 100 method-development tasks, beginning with
+`jsonl-csv-enrichment-compose`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -322,11 +348,13 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-nineteen integrated fixture/oracle families with mutation coverage and
+twenty integrated fixture/oracle families with mutation coverage and
 independently structured oracle paths where available; the hardlink family
 independently checks parsing and grouping but shares final-state assembly;
 the archive family checks bounded single-stream decoding, strict ustar
-semantics, relational reports, and complete reconstructed state;
+semantics, relational reports, and complete reconstructed state; the checksum
+family checks strict multi-format parsing, no-follow classification,
+duplicate-preserving ordering, and whole-batch policy semantics;
 namespace, runtime-snapshot, and native PID1 canaries; and one exact reviewed
 Bash case connected through the local boundary.
 

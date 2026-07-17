@@ -172,9 +172,12 @@ evidence that a model or research hypothesis has succeeded.
   `compressed-archive-roundtrip-verify`, reconciles 19 integrated
   families/380 tasks to ten live cumulative registry identities, and reserves
   6 concrete families/120 tasks. Its v2-to-v3 migration record proves the
-  other 24 family values are unchanged. All configs are public, unsealed,
-  unscored, nonauthorizing, and record no independent human-review
-  attestation.
+  other 24 family values are unchanged. V4 preserves exact v3 bytes, promotes
+  only `checksum-repair-plan`, reconciles 20 integrated families/400 tasks to
+  eleven live cumulative registry identities, and reserves 5 concrete
+  families/100 tasks. Its v3-to-v4 migration record again proves the other 24
+  family values unchanged. All configs are public, unsealed, unscored,
+  nonauthorizing, and record no independent human-review attestation.
 - [x] Additive fourth-tranche `reproducible-ustar-pack` family with 20 task
   contracts and five deterministic profiles per task (100 fixtures). It
   crosses four mode-readable selectors with five archive-mode policies,
@@ -299,6 +302,25 @@ evidence that a model or research hypothesis has succeeded.
   invocation, and without independent human review. Its final-state verifier
   assumes trusted quiescence and cannot attest verification order, tool use,
   transient state, causal reconstruction, global quiescence, or exit status.
+- [x] Additive eleventh-tranche `checksum-repair-plan` family with 20 task
+  contracts and five deterministic profiles per task (100 fixtures). Four
+  strict manifest encodings cross five declarative repair policies. Primary
+  and reference engines must agree on multiplicity-preserving parsing,
+  no-follow asset status, whole-batch strict rejection, proposed actions,
+  counts, state, and ordered JSONL meaning. Parser and workspace tests reject
+  malformed framing, deep or oversized JSON, duplicate keys, path and digest
+  errors, policy/count/action mutations, changed inputs, output substitutions,
+  and hardlink/topology changes in normal and optimized modes. A fixed
+  source-reviewed Bash canary solves all 100 bundles using exactly `awk`,
+  `jq`, `mkdir`, `sha256sum`, and `sort`. Through-tenth predecessor evidence
+  reconstructs every predecessor identity once before the eleventh
+  registry/catalog append. The family remains public, unsealed, unscored,
+  nonauthorizing, outside first-tranche-only V1 invocation, and without
+  independent human review. Its final-state verifier observes a declarative
+  plan and preserved inputs under trusted quiescence; it cannot attest repair
+  or quarantine execution, atomicity, tool/read history, transient state,
+  directory-permission or special-file behavior, global quiescence, or exit
+  status.
 - [x] Dependency-free, read-only local Safetensors artifact inspection with
   strict JSON and shard-layout validation, no-follow stable reads, resource
   ceilings, domain-separated bundle/weight/tokenizer identities, stored tensor
@@ -640,10 +662,23 @@ cumulative-suite, cumulative-catalog, discrimination, and canonical
 `ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21`,
 and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 
-The cumulative 380 specifications and 1,900 fixtures remain public,
-development-only, unsealed, unscored, and nonauthorizing; the tenth manifest
+The additive eleventh tranche is bound by
+[reports/executable-eleventh-tranche/manifest.json](reports/executable-eleventh-tranche/manifest.json).
+It admits 20 tasks and 100 bundles from `checksum-repair-plan` through exact
+local types and through-tenth predecessor evidence. Its family task-set,
+added-registry, cumulative-suite, cumulative-catalog, discrimination, and
+canonical 56,202-byte report SHA-256 values are
+`e52fb74ece2a94baa9bd1b2f6da25ca103839e1e9666361fe5406c34a36b9bb0`,
+`bd0c14880eb25fa80100c317fa41086c45c59147407a67f03981831bcfdfc100`,
+`f62ba1c1214fc48f194a5dea9c69c04962cc14dbdccfc38640cf4eee833018cb`,
+`cd4221870ba4bfd5ade5098bddccc15af47865930bf173f05141194f3e0b8177`,
+`f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa`,
+and `d6916730cd81170f067b0669812063fd4071102494fd56174b01672b5cad0d59`.
+
+The cumulative 400 specifications and 2,000 fixtures remain public,
+development-only, unsealed, unscored, and nonauthorizing; the eleventh manifest
 explicitly records `independent_human_review_attested: false`. The remaining
-120 specifications, independent human review, and a separately reviewed
+100 specifications, independent human review, and a separately reviewed
 general-candidate sandbox/supervisor are still required before synthesized-
 candidate execution. The current V1 invocation protocol remains intentionally
 bound to the first tranche only.
@@ -673,9 +708,24 @@ and `de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a`
 for 23,943 bytes. The migration semantic/config-byte SHA-256 values are
 `8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
 and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
-for 4,358 bytes. These locks fix allocation metadata only; a planned family is
+for 4,358 bytes. These historical locks fix allocation metadata only; a planned family is
 not implemented, reviewed, sealed, scored, or executable because it appears
-in a record. The next planned implementation is `checksum-repair-plan`.
+in a record. The current
+[v4 lock](configs/executable-method-development-coverage-v4.json) preserves
+the exact v3 artifact, promotes only `checksum-repair-plan`, and binds 20
+integrated families/400 tasks plus 5 planned families/100 tasks. Its semantic
+SHA-256 is
+`1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c`;
+its 24,590 canonical bytes have SHA-256
+`d003a5748da855257aa93e0c6e1b7a4be2de393ec5faa0dcb32d74156f40b3d7`.
+The
+[v3-to-v4 migration record](configs/executable-method-development-coverage-v3-to-v4-migration.json)
+proves the other 24 family records unchanged. Its semantic/config-byte
+SHA-256 values are
+`667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
+and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
+for 4,701 canonical bytes. The next planned implementation is
+`jsonl-csv-enrichment-compose`.
 
 Both third-tranche families require two production-oracle implementations to
 agree and have pinned-workspace property verifiers with mutation coverage.
@@ -688,7 +738,7 @@ The separate bulk generated benchmark artifacts remain **semantic
 scaffolds**. They contain operator graphs, prompts, split assignments, and
 deterministic fixture descriptors. Those descriptors and their generator are
 public development scaffolding, not sealed evaluation assets. Unlike the
-nineteen concrete cataloged families above, these generated records do not yet
+twenty concrete cataloged families above, these generated records do not yet
 materialize filesystem/process fixtures, reference programs, independent
 property checkers, mutation tests, ASTs, or execution traces. In particular,
 `sealed_ood` is currently only a reserved split label generated by the same
@@ -760,10 +810,10 @@ flag remains false.
 
 ## Remaining gates before model experiments
 
-- [ ] Add the 120 method-development specifications not yet implemented and
+- [ ] Add the 100 method-development specifications not yet implemented and
   extend concrete fixture/oracle/reference/verifier coverage across every
   required semantic operator family. Independently review the complete
-  development inventory before sealing. The frozen cumulative 380-
+  development inventory before sealing. The frozen cumulative 400-
   specification suite is public development data and cannot stand in for a
   sealed or scored suite.
 - [ ] Pin and audit the container image and utility versions; verify runtime
@@ -781,7 +831,7 @@ flag remains false.
   tool policy, and bind every classified outcome into a scored result. The
   current controller has no candidate input API and establishes resource and
   verification behavior only for one source-reviewed program.
-- [ ] Extend verifier mutation tests beyond the nineteen implemented families
+- [ ] Extend verifier mutation tests beyond the twenty implemented families
   across every remaining semantic family, and complete the stratified human
   audit before sealing test specifications.
 - [ ] Requalify any BashBench-derived scored subset through an explicit

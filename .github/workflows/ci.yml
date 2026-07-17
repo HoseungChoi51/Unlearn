@@ -23,7 +23,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install package and validation dependencies
-        run: python -m pip install --upgrade pip -e '.[dev]'
+        run: |
+          python -m pip install --upgrade pip 'setuptools>=69'
+          python -m pip install -e '.[dev]'
 
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
@@ -44,7 +46,7 @@ jobs:
           /tmp/cbds-wheel-venv/bin/cbds inspect-model --help >/dev/null
           /tmp/cbds-wheel-venv/bin/cbds probe-model-runtime --help >/dev/null
           /tmp/cbds-wheel-venv/bin/cbds sandbox-preflight --help >/dev/null
-          /tmp/cbds-wheel-venv/bin/python -c "import json; from importlib.resources import files; root = files('cbds.schemas'); names = ('campaign-policy.schema.json', 'campaign-registry.schema.json', 'evaluation-spec.schema.json', 'executable-method-development-coverage-migration.schema.json', 'executable-method-development-coverage-v2.schema.json', 'executable-method-development-coverage-v2-to-v3-migration.schema.json', 'executable-method-development-coverage-v3.schema.json', 'experiment-manifest.schema.json', 'hardware-result.schema.json', 'run-spec.schema.json', 'task-result.schema.json'); assert all(json.loads(root.joinpath(name).read_bytes()) for name in names)"
+          /tmp/cbds-wheel-venv/bin/python -c "import json; from importlib.resources import files; root = files('cbds.schemas'); names = ('campaign-policy.schema.json', 'campaign-registry.schema.json', 'evaluation-spec.schema.json', 'executable-method-development-coverage-migration.schema.json', 'executable-method-development-coverage-v2.schema.json', 'executable-method-development-coverage-v2-to-v3-migration.schema.json', 'executable-method-development-coverage-v3.schema.json', 'executable-method-development-coverage-v3-to-v4-migration.schema.json', 'executable-method-development-coverage-v4.schema.json', 'experiment-manifest.schema.json', 'hardware-result.schema.json', 'run-spec.schema.json', 'task-result.schema.json'); assert all(json.loads(root.joinpath(name).read_bytes()) for name in names)"
           /tmp/cbds-wheel-venv/bin/python - <<'PY'
           import importlib
           import os
@@ -83,6 +85,8 @@ jobs:
           python -m json.tool executable-method-development-coverage-v2.schema.json >/dev/null
           python -m json.tool executable-method-development-coverage-v2-to-v3-migration.schema.json >/dev/null
           python -m json.tool executable-method-development-coverage-v3.schema.json >/dev/null
+          python -m json.tool executable-method-development-coverage-v3-to-v4-migration.schema.json >/dev/null
+          python -m json.tool executable-method-development-coverage-v4.schema.json >/dev/null
           python -m json.tool run-spec.schema.json >/dev/null
           python -m json.tool task-result.schema.json >/dev/null
           python -m json.tool configs/benchmark-smoke.json >/dev/null
@@ -92,10 +96,12 @@ jobs:
           python -m json.tool configs/executable-method-development-coverage-v2.json >/dev/null
           python -m json.tool configs/executable-method-development-coverage-v2-to-v3-migration.json >/dev/null
           python -m json.tool configs/executable-method-development-coverage-v3.json >/dev/null
+          python -m json.tool configs/executable-method-development-coverage-v3-to-v4-migration.json >/dev/null
+          python -m json.tool configs/executable-method-development-coverage-v4.json >/dev/null
           python -m json.tool examples/campaign-registry.example.json >/dev/null
           python -m json.tool examples/evaluation-spec.example.json >/dev/null
           python -m json.tool examples/experiment-manifest.example.json >/dev/null
           python -m json.tool examples/run-spec.example.json >/dev/null
-          PYTHONPATH=src python -c "from cbds.manifests import load_document; [load_document(name) for name in ('hardware-result.schema.json', 'campaign-policy.schema.json', 'campaign-registry.schema.json', 'experiment-manifest.schema.json', 'evaluation-spec.schema.json', 'executable-method-development-coverage-migration.schema.json', 'executable-method-development-coverage-v2.schema.json', 'executable-method-development-coverage-v2-to-v3-migration.schema.json', 'executable-method-development-coverage-v3.schema.json', 'run-spec.schema.json', 'task-result.schema.json')]"
-          python -c "import json, pathlib; from jsonschema import Draft202012Validator; [Draft202012Validator.check_schema(json.loads(pathlib.Path(name).read_text())) for name in ('hardware-result.schema.json', 'campaign-policy.schema.json', 'campaign-registry.schema.json', 'experiment-manifest.schema.json', 'evaluation-spec.schema.json', 'executable-method-development-coverage-migration.schema.json', 'executable-method-development-coverage-v2.schema.json', 'executable-method-development-coverage-v2-to-v3-migration.schema.json', 'executable-method-development-coverage-v3.schema.json', 'run-spec.schema.json', 'task-result.schema.json')]"
-          PYTHONPATH=src python -c "from cbds.executable_development_coverage_migration import load_executable_development_coverage_migration; from cbds.executable_development_coverage_v2 import load_executable_development_coverage_v2; from cbds.executable_development_coverage_v2_to_v3_migration import load_executable_development_coverage_v2_to_v3_migration; from cbds.executable_development_coverage_v3 import load_executable_development_coverage_v3; load_executable_development_coverage_v2('configs/executable-method-development-coverage-v2.json'); load_executable_development_coverage_migration('configs/executable-method-development-coverage-v1-to-v2-migration.json'); load_executable_development_coverage_v3('configs/executable-method-development-coverage-v3.json'); load_executable_development_coverage_v2_to_v3_migration('configs/executable-method-development-coverage-v2-to-v3-migration.json')"
+          PYTHONPATH=src python -c "from cbds.manifests import load_document; [load_document(name) for name in ('hardware-result.schema.json', 'campaign-policy.schema.json', 'campaign-registry.schema.json', 'experiment-manifest.schema.json', 'evaluation-spec.schema.json', 'executable-method-development-coverage-migration.schema.json', 'executable-method-development-coverage-v2.schema.json', 'executable-method-development-coverage-v2-to-v3-migration.schema.json', 'executable-method-development-coverage-v3.schema.json', 'executable-method-development-coverage-v3-to-v4-migration.schema.json', 'executable-method-development-coverage-v4.schema.json', 'run-spec.schema.json', 'task-result.schema.json')]"
+          python -c "import json, pathlib; from jsonschema import Draft202012Validator; [Draft202012Validator.check_schema(json.loads(pathlib.Path(name).read_text())) for name in ('hardware-result.schema.json', 'campaign-policy.schema.json', 'campaign-registry.schema.json', 'experiment-manifest.schema.json', 'evaluation-spec.schema.json', 'executable-method-development-coverage-migration.schema.json', 'executable-method-development-coverage-v2.schema.json', 'executable-method-development-coverage-v2-to-v3-migration.schema.json', 'executable-method-development-coverage-v3.schema.json', 'executable-method-development-coverage-v3-to-v4-migration.schema.json', 'executable-method-development-coverage-v4.schema.json', 'run-spec.schema.json', 'task-result.schema.json')]"
+          PYTHONPATH=src python -c "from cbds.executable_development_coverage_migration import load_executable_development_coverage_migration; from cbds.executable_development_coverage_v2 import load_executable_development_coverage_v2; from cbds.executable_development_coverage_v2_to_v3_migration import load_executable_development_coverage_v2_to_v3_migration; from cbds.executable_development_coverage_v3 import load_executable_development_coverage_v3; from cbds.executable_development_coverage_v3_to_v4_migration import load_executable_development_coverage_v3_to_v4_migration; from cbds.executable_development_coverage_v4 import load_executable_development_coverage_v4; load_executable_development_coverage_v2('configs/executable-method-development-coverage-v2.json'); load_executable_development_coverage_migration('configs/executable-method-development-coverage-v1-to-v2-migration.json'); load_executable_development_coverage_v3('configs/executable-method-development-coverage-v3.json'); load_executable_development_coverage_v2_to_v3_migration('configs/executable-method-development-coverage-v2-to-v3-migration.json'); load_executable_development_coverage_v4('configs/executable-method-development-coverage-v4.json'); load_executable_development_coverage_v3_to_v4_migration('configs/executable-method-development-coverage-v3-to-v4-migration.json')"

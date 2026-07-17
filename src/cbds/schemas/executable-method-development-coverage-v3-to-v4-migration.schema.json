@@ -1,0 +1,272 @@
+{
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://cbds.invalid/schemas/executable-method-development-coverage-v3-to-v4-migration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "This schema checks the public migration shape and frozen principal identities. Exact admission additionally requires cbds.executable_development_coverage_v3_to_v4_migration.load_executable_development_coverage_v3_to_v4_migration, which compares canonical bytes with live v3/v4 evidence.",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_execution_authorized": {
+      "const": false
+    },
+    "changed_family_count": {
+      "const": 1
+    },
+    "changed_family_id": {
+      "const": "checksum-repair-plan"
+    },
+    "claim_authorized": {
+      "const": false
+    },
+    "from": {
+      "additionalProperties": false,
+      "properties": {
+        "config_byte_count": {
+          "const": 23943
+        },
+        "config_bytes_sha256": {
+          "const": "de241ad1e4536fa595f99acf0ef05a3e423418876298c576abe87249c018bc0a"
+        },
+        "config_relative_path": {
+          "const": "configs/executable-method-development-coverage-v3.json"
+        },
+        "coverage_sha256": {
+          "const": "b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79"
+        },
+        "coverage_version": {
+          "const": "3.0.0"
+        },
+        "git_commit": {
+          "const": "af6885da48d91c52d60c81f2c65440ff60b18712"
+        }
+      },
+      "required": [
+        "coverage_version",
+        "coverage_sha256",
+        "config_relative_path",
+        "config_bytes_sha256",
+        "config_byte_count",
+        "git_commit"
+      ],
+      "type": "object"
+    },
+    "migration_sha256": {
+      "const": "667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b"
+    },
+    "migration_version": {
+      "const": "1.0.0"
+    },
+    "model_selection_eligible": {
+      "const": false
+    },
+    "new_family_sha256": {
+      "const": "3541ee226666eb2fa69182980571ec6d315267d4bb9166bb247d6740050221bb"
+    },
+    "new_lifecycle_state": {
+      "const": "integrated"
+    },
+    "new_source_registry_commitment": {
+      "additionalProperties": false,
+      "properties": {
+        "added_task_count": {
+          "const": 20
+        },
+        "cumulative_suite_sha256": {
+          "const": "f62ba1c1214fc48f194a5dea9c69c04962cc14dbdccfc38640cf4eee833018cb"
+        },
+        "cumulative_task_count": {
+          "const": 400
+        },
+        "registry_sha256": {
+          "const": "bd0c14880eb25fa80100c317fa41086c45c59147407a67f03981831bcfdfc100"
+        },
+        "tranche_id": {
+          "const": "eleventh-tranche"
+        }
+      },
+      "required": [
+        "tranche_id",
+        "added_task_count",
+        "cumulative_task_count",
+        "registry_sha256",
+        "cumulative_suite_sha256"
+      ],
+      "type": "object"
+    },
+    "old_family_sha256": {
+      "const": "8261a719e2afa702509ca16656760eed89f55c121667db0531a94168476f1bf9"
+    },
+    "old_lifecycle_state": {
+      "const": "planned"
+    },
+    "preserved_allowed_tools": {
+      "const": [
+        "awk",
+        "jq",
+        "mkdir",
+        "sha256sum",
+        "sort"
+      ]
+    },
+    "preserved_capability_tags": {
+      "const": [
+        "checksums",
+        "error-classification",
+        "repair-planning",
+        "structured-output"
+      ]
+    },
+    "preserved_filesystem_schema": {
+      "const": "damaged-checksum-assets"
+    },
+    "preserved_output_contract": {
+      "const": "ordered-checksum-repair-plan"
+    },
+    "preserved_parameter_axes": {
+      "const": [
+        {
+          "axis_name": "manifest_layout",
+          "values": [
+            "sha256sum-text",
+            "jsonl",
+            "csv",
+            "nul-pairs"
+          ]
+        },
+        {
+          "axis_name": "repair_policy",
+          "values": [
+            "report-only",
+            "replace-digest",
+            "drop-missing",
+            "quarantine-mismatch",
+            "strict-reject"
+          ]
+        }
+      ]
+    },
+    "preserved_promotion_history": {
+      "const": [
+        {
+          "discrimination_sha256": "ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21",
+          "family_id": "compressed-archive-roundtrip-verify",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "tenth-tranche",
+          "task_set_sha256": "450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a"
+        }
+      ]
+    },
+    "preserved_solution_track": {
+      "const": "bash-native"
+    },
+    "promotion_evidence": {
+      "const": {
+        "discrimination_sha256": "f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa",
+        "family_id": "checksum-repair-plan",
+        "new_lifecycle_state": "integrated",
+        "old_lifecycle_state": "planned",
+        "source_tranche_id": "eleventh-tranche",
+        "task_set_sha256": "e52fb74ece2a94baa9bd1b2f6da25ca103839e1e9666361fe5406c34a36b9bb0"
+      }
+    },
+    "public_method_development": {
+      "const": true
+    },
+    "reason_codes": {
+      "const": [
+        "planned-contract-preserved",
+        "canonical-grid-integration",
+        "checksum-repair-discrimination",
+        "eleventh-tranche-integration",
+        "archive-promotion-history-preserved"
+      ]
+    },
+    "record_type": {
+      "const": "cbds.executable-method-development-coverage-v3-to-v4-migration"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scored": {
+      "const": false
+    },
+    "scored_evaluation_authorized": {
+      "const": false
+    },
+    "sealed": {
+      "const": false
+    },
+    "to": {
+      "additionalProperties": false,
+      "properties": {
+        "config_relative_path": {
+          "const": "configs/executable-method-development-coverage-v4.json"
+        },
+        "coverage_sha256": {
+          "const": "1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c"
+        },
+        "coverage_version": {
+          "const": "4.0.0"
+        }
+      },
+      "required": [
+        "coverage_version",
+        "coverage_sha256",
+        "config_relative_path"
+      ],
+      "type": "object"
+    },
+    "unchanged_family_count": {
+      "const": 24
+    },
+    "unchanged_family_sha256": {
+      "items": {
+        "$ref": "#/$defs/sha256"
+      },
+      "maxItems": 24,
+      "minItems": 24,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "migration_version",
+    "record_type",
+    "from",
+    "to",
+    "changed_family_count",
+    "unchanged_family_count",
+    "changed_family_id",
+    "old_lifecycle_state",
+    "new_lifecycle_state",
+    "old_family_sha256",
+    "new_family_sha256",
+    "preserved_parameter_axes",
+    "preserved_solution_track",
+    "preserved_allowed_tools",
+    "preserved_filesystem_schema",
+    "preserved_output_contract",
+    "preserved_capability_tags",
+    "preserved_promotion_history",
+    "promotion_evidence",
+    "new_source_registry_commitment",
+    "reason_codes",
+    "unchanged_family_sha256",
+    "migration_sha256",
+    "public_method_development",
+    "sealed",
+    "scored",
+    "candidate_execution_authorized",
+    "scored_evaluation_authorized",
+    "model_selection_eligible",
+    "claim_authorized"
+  ],
+  "title": "CBDS executable development coverage v3-to-v4 migration",
+  "type": "object"
+}

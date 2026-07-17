@@ -155,13 +155,13 @@ require portable hardware measurements from the exact exported artifact.
 The repository has not produced a model-quality result. It currently provides
 contracts, data and training canaries, model/runtime inspection, and public
 method-development benchmark infrastructure. The benchmark allocation is
-locked at 25 families and 500 tasks; 19 families/380 tasks and 1,900 fixture
-bundles are implemented across ten additive tranches. Six families/120 tasks
-remain, beginning with `checksum-repair-plan`. Coverage v3 preserves the exact
-v2 artifact, promotes only `compressed-archive-roundtrip-verify`, and binds
-the tenth registry plus its task-set and discrimination evidence. The
-v2-to-v3 migration record proves that the other 24 family records are
-unchanged. V1 and v2 remain immutable historical records.
+locked at 25 families and 500 tasks; 20 families/400 tasks and 2,000 fixture
+bundles are implemented across eleven additive tranches. Five families/100
+tasks remain, beginning with `jsonl-csv-enrichment-compose`. Coverage v4
+preserves the exact v3 artifact, promotes only `checksum-repair-plan`, and
+binds the eleventh registry plus its task-set and discrimination evidence.
+The v3-to-v4 migration record proves that the other 24 family records are
+unchanged. V1 through v3 remain immutable historical records.
 
 These public assets are unsealed, unscored, and not authorized for candidate
 execution, model selection, or scientific claims. They reduce implementation
@@ -173,3 +173,6 @@ The ninth tranche and its v1-to-v2 coverage correction are explained in
 The tenth tranche, its bounded semantic codec/archive verifier, reviewed Bash
 canary, and v2-to-v3 promotion are explained in
 [ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md](ARCHIVE_ROUNDTRIP_EXPERIMENT_INFRASTRUCTURE.md).
+The eleventh tranche, strict manifest parsing, declarative repair-plan
+semantics, reviewed Bash canary, and v3-to-v4 promotion are explained in
+[CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md](CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md).
