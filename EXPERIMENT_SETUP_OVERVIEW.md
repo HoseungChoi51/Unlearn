@@ -155,13 +155,14 @@ require portable hardware measurements from the exact exported artifact.
 The repository has not produced a model-quality result. It currently provides
 contracts, data and training canaries, model/runtime inspection, and public
 method-development benchmark infrastructure. The benchmark allocation is
-locked at 25 families and 500 tasks; 20 families/400 tasks and 2,000 fixture
-bundles are implemented across eleven additive tranches. Five families/100
-tasks remain, beginning with `jsonl-csv-enrichment-compose`. Coverage v4
-preserves the exact v3 artifact, promotes only `checksum-repair-plan`, and
-binds the eleventh registry plus its task-set and discrimination evidence.
-The v3-to-v4 migration record proves that the other 24 family records are
-unchanged. V1 through v3 remain immutable historical records.
+locked at 25 families and 500 tasks; 21 families/420 tasks and 2,100 fixture
+bundles are implemented across twelve additive tranches. Four families/80
+tasks remain, beginning with `nested-json-schema-migration`. Coverage v5
+preserves the exact v4 artifact, promotes only
+`jsonl-csv-enrichment-compose`, and binds the twelfth registry plus its
+task-set and discrimination evidence. The v4-to-v5 migration record proves
+that the other 24 family records are unchanged and preserves the prior two
+promotion events. V1 through v4 remain immutable historical records.
 
 These public assets are unsealed, unscored, and not authorized for candidate
 execution, model selection, or scientific claims. They reduce implementation
@@ -176,3 +177,7 @@ canary, and v2-to-v3 promotion are explained in
 The eleventh tranche, strict manifest parsing, declarative repair-plan
 semantics, reviewed Bash canary, and v3-to-v4 promotion are explained in
 [CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md](CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md).
+The twelfth tranche, strict mixed-codec parsing, multiplicity-preserving join,
+missing-field policies, reviewed Bash canary, and v4-to-v5 promotion are
+explained in
+[JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md](JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md).

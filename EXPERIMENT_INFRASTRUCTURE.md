@@ -145,7 +145,7 @@ Benchmark artifacts have four importantly different states:
 | Sealed evaluation assets | Provide hidden prompts and fixtures after generator, verifier, parser, sandbox, and analysis lock | Nothing yet: the claim-eligible sealed assets have not been completed or opened |
 
 "Frozen" means content-addressed and closed to silent edits; it does not mean
-secret. The eleven executable tranches are pinned by
+secret. The twelve executable tranches are pinned by
 [the first manifest](reports/executable-first-tranche/manifest.json),
 [the additive second manifest](reports/executable-second-tranche/manifest.json),
 [the additive third manifest](reports/executable-third-tranche/manifest.json),
@@ -156,9 +156,10 @@ the [additive fifth manifest](reports/executable-fifth-tranche/manifest.json),
 [the additive eighth manifest](reports/executable-eighth-tranche/manifest.json),
 the [additive ninth manifest](reports/executable-ninth-tranche/manifest.json),
 the [additive tenth manifest](reports/executable-tenth-tranche/manifest.json),
+the [additive eleventh manifest](reports/executable-eleventh-tranche/manifest.json),
 and
-[the additive eleventh manifest](reports/executable-eleventh-tranche/manifest.json).
-They currently contain 400 public method-development specifications with five
+[the additive twelfth manifest](reports/executable-twelfth-tranche/manifest.json).
+They currently contain 420 public method-development specifications with five
 fixtures each. The third addition contributes 40 tasks and 200 fixtures from
 `compound-path-query` and `regex-log-group-aggregation`. Its exact family-local
 task and bundle types preserve the first- and second-tranche identities. The
@@ -249,12 +250,27 @@ cumulative-suite, cumulative-catalog, discrimination, and canonical
 `f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa`,
 and `d6916730cd81170f067b0669812063fd4071102494fd56174b01672b5cad0d59`.
 
-The eleventh manifest records `independent_human_review_attested: false`, and
-all eleven tranches remain public, unsealed, unscored, and nonauthorizing. V1
+The twelfth addition contributes 20 `jsonl-csv-enrichment-compose` tasks and
+100 fixtures. Four strict mixed-codec layouts cross five missing-field
+policies. Independent semantic paths agree on parsing, missing-ID
+nonjoinability, duplicate-key Cartesian multiplicity, row/source rejection,
+and ordered JSONL meaning. The fixed reviewed Bash canary passes all 100
+public fixtures using only the declared four utilities. The task-set,
+added-registry, cumulative-suite, cumulative-catalog, discrimination, and
+canonical 56,394-byte report SHA-256 values are
+`60a8ab6770bae6de43d430db9e3edf136f28f0a0ad2dacfd09b627ce19cf75c3`,
+`a9733f220a7bdfb8435841eff875c9fd7b1dbadbee6de2d2aa0646750164f862`,
+`32ec82cf193f364946def16462e52217176093d0a3f6399d574c9faf66eaa4a1`,
+`98cf6ffa48cbe11ece96195450335e5be9a3d0898d54e91396d0c2756171f169`,
+`732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
+and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
+
+The twelfth manifest records `independent_human_review_attested: false`, and
+all twelve tranches remain public, unsealed, unscored, and nonauthorizing. V1
 invocation remains first-tranche-only. Public development records must never be
 relabeled as sealed evidence.
 
-The current
+The historical
 [executable-method-development-coverage-v4.json](configs/executable-method-development-coverage-v4.json)
 locks the 25-family/500-task allocation before the remaining implementations
 are written. It binds 20 integrated families/400 tasks to the eleven source
@@ -285,10 +301,23 @@ for 24,590 canonical bytes. The v3-to-v4 migration semantic/config-byte
 SHA-256 values are
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
-for 4,701 canonical bytes. This is an allocation lock only: planned entries
+for 4,701 canonical bytes. Coverage v5 preserves those exact v4 bytes,
+promotes only `jsonl-csv-enrichment-compose`, binds 21 integrated
+families/420 tasks to twelve source registries, and reserves 4 named
+families/80 tasks. Its v4-to-v5 migration preserves the first two promotion
+records and proves the other 24 family records unchanged. The v5
+semantic/config-byte SHA-256 values are
+`e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
+and `cfb91bef706fc1c4fd4f95d7891f42e3ec058bbaba28997a22a0f72614d6268f`
+for 25,241 canonical bytes. The v4-to-v5 migration semantic/config-byte
+SHA-256 values are
+`7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
+and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
+for 5,052 canonical bytes. This is an
+allocation lock only: planned entries
 have no implied fixture, oracle, verifier, review, sealing, score, or
 execution status. The next family in canonical order is
-`jsonl-csv-enrichment-compose`.
+`nested-json-schema-migration`.
 
 Each task uses several fixtures because shell programs often succeed on the
 happy path while failing on spaces, leading dashes, empty inputs, glob
@@ -704,16 +733,17 @@ scientific conclusion.
 The repository currently has a substantial validation foundation:
 
 - deterministic semantic scaffolds and lifecycle routing;
-- 400 frozen public-development executable tasks and 2,000 concrete fixture
-  bundles across twenty integrated families and eleven additive tranches;
-- a locked 25-family/500-task allocation with 5 families/100 tasks still
+- 420 frozen public-development executable tasks and 2,100 concrete fixture
+  bundles across twenty-one integrated families and twelve additive tranches;
+- a locked 25-family/500-task allocation with 4 families/80 tasks still
   explicitly planned rather than represented as implemented;
 - trusted-oracle, materialization, no-follow, and mutation tests for the
   integrated families, with independently structured reference paths where
   available and shared final-state assembly explicitly recorded for the
   hardlink family, bounded single-stream/strict-ustar/relational-report
-  checks for the archive family, and strict multi-format/batch-policy checks
-  for checksum repair;
+  checks for the archive family, strict multi-format/batch-policy checks for
+  checksum repair, and strict mixed-codec/multiplicity/policy checks for
+  enrichment composition;
 - prospective run, policy, registry, evaluation, task-result, statistics, and
   fail-closed claim interfaces;
 - generic dense/MoE artifact inspection and bounded local runtime checks;
@@ -791,10 +821,18 @@ atomicity, tool or read history, transient state, global quiescence, or exit
 status. Its all-fixture reviewed Bash canary does not widen that boundary or
 authorize arbitrary candidates.
 
+The enrichment-composition family verifies the exact relation between two
+strict sources, a missing-field policy, a multiplicity-preserving join, an
+ordered semantic JSONL result, and stable inputs under trusted quiescence. It
+does not observe physical intermediate materialization, tool or read history,
+operation order, atomicity, transient state, global quiescence, or exit
+status. Its all-fixture reviewed Bash canary does not widen that boundary or
+authorize arbitrary candidates.
+
 The critical path is now:
 
-1. implement the remaining 100 method-development specifications, beginning
-   with `jsonl-csv-enrichment-compose`, with concrete fixtures, independent
+1. implement the remaining 80 method-development specifications, beginning
+   with `nested-json-schema-migration`, with concrete fixtures, independent
    verifiers, and mutation coverage, then independently review the complete
    development inventory before sealing;
 2. complete the Bash runtime-data/`dlopen` closure, externally audit the fixed

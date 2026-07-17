@@ -159,10 +159,10 @@ permissions, and unstable ordering because those cases reveal much of the
 difference between plausible shell text and robust shell programs.
 
 The current public method-development allocation is locked at 25 families and
-500 tasks. Twenty families/400 tasks have concrete oracles and 2,000 fixture
-bundles across eleven additive tranches; five families/100 tasks remain
-planned, beginning with `jsonl-csv-enrichment-compose`. The
-[v4 coverage record](configs/executable-method-development-coverage-v4.json) fixes
+500 tasks. Twenty-one families/420 tasks have concrete oracles and 2,100
+fixture bundles across twelve additive tranches; four families/80 tasks remain
+planned, beginning with `nested-json-schema-migration`. The
+[v5 coverage record](configs/executable-method-development-coverage-v5.json) fixes
 the remaining semantic grids so implementation cannot silently chase easy
 families, but it is an allocation—not completion, human review, sealing,
 candidate-execution authority, scoring, or model-selection evidence. All
@@ -184,7 +184,11 @@ Coverage v3 is retained byte-for-byte in turn. The
 [v3-to-v4 migration](configs/executable-method-development-coverage-v3-to-v4-migration.json)
 promotes only `checksum-repair-plan`, preserves its locked axes and contract,
 binds the eleventh integration evidence, and again proves that the other 24
-family records are unchanged. The current v4 semantic/config-byte SHA-256
+family records are unchanged. Coverage v4 is likewise retained byte-for-byte.
+The v4-to-v5 migration promotes only `jsonl-csv-enrichment-compose`, binds the
+twelfth integration evidence, preserves the first two promotion records, and
+proves the other 24 family records unchanged. The historical v4
+semantic/config-byte SHA-256
 values are
 `1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c`
 and `d003a5748da855257aa93e0c6e1b7a4be2de393ec5faa0dcb32d74156f40b3d7`
@@ -193,6 +197,14 @@ are
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
 for 4,701 canonical bytes.
+The current v5 semantic/config-byte SHA-256 values are
+`e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
+and `cfb91bef706fc1c4fd4f95d7891f42e3ec058bbaba28997a22a0f72614d6268f`
+for 25,241 canonical bytes. Its v4-to-v5 migration semantic/config-byte
+SHA-256 values are
+`7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
+and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
+for 5,052 canonical bytes.
 
 The [sixth-tranche manifest](reports/executable-sixth-tranche/manifest.json)
 binds the `bounded-retry-state-machine` task set, added registry, cumulative
@@ -250,6 +262,17 @@ report. The corresponding SHA-256 values are
 `cd4221870ba4bfd5ade5098bddccc15af47865930bf173f05141194f3e0b8177`,
 `f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa`,
 and `d6916730cd81170f067b0669812063fd4071102494fd56174b01672b5cad0d59`.
+The
+[twelfth-tranche manifest](reports/executable-twelfth-tranche/manifest.json)
+binds the `jsonl-csv-enrichment-compose` task set, added registry, cumulative
+suite, cumulative catalog, behavioral-discrimination evidence, and canonical
+56,394-byte report. The corresponding SHA-256 values are
+`60a8ab6770bae6de43d430db9e3edf136f28f0a0ad2dacfd09b627ce19cf75c3`,
+`a9733f220a7bdfb8435841eff875c9fd7b1dbadbee6de2d2aa0646750164f862`,
+`32ec82cf193f364946def16462e52217176093d0a3f6399d574c9faf66eaa4a1`,
+`98cf6ffa48cbe11ece96195450335e5be9a3d0898d54e91396d0c2756171f169`,
+`732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
+and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
 The preserved v1 coverage and config-byte identities are
 `6c215d9eaf5581aaa146d6814a9d40621a57459c5af98ae4ca625caff10c9c8c`
 and `46f98f54ef5682ce0adc3854557ecfe8ed092fd5e916935bc27702edb4e86efa`;
@@ -459,8 +482,8 @@ claim.
 
 The near-term dependency order is:
 
-1. implement the locked 5-family/100-task remainder, beginning with
-   `jsonl-csv-enrichment-compose`, and independently review
+1. implement the locked 4-family/80-task remainder, beginning with
+   `nested-json-schema-migration`, and independently review
    the complete executable development benchmark;
 2. finish the candidate runtime, supervisor, tool-policy, and workspace-
    quiescence boundary;

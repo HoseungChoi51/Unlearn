@@ -170,9 +170,9 @@ composition, filesystem schema, solution family, and output contract—not just
 by row identifier or wording. Otherwise a paraphrased program template can
 cross the split while appearing textually different.
 
-**Implemented:** lifecycle fields and fail-closed routing contracts, plus 400
-integrated public method-development tasks with 2,000 concrete fixtures across
-eleven additive tranches. The third addition contributes 40 tasks/200 fixtures
+**Implemented:** lifecycle fields and fail-closed routing contracts, plus 420
+integrated public method-development tasks with 2,100 concrete fixtures across
+twelve additive tranches. The third addition contributes 40 tasks/200 fixtures
 from compound path queries and regex log aggregation. Its exact family-local
 types preserve the first- and second-tranche identities, and its checked
 hash-only report is
@@ -282,7 +282,24 @@ and canonical 56,202-byte report SHA-256 values are
 `f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa`,
 and `d6916730cd81170f067b0669812063fd4071102494fd56174b01672b5cad0d59`.
 
-The [v4 allocation lock](configs/executable-method-development-coverage-v4.json)
+The twelfth addition contributes 20 `jsonl-csv-enrichment-compose` tasks/100
+fixtures. Its
+[hash-only manifest](reports/executable-twelfth-tranche/manifest.json) binds
+the task set, added registry, cumulative suite, cumulative catalog,
+behavioral-discrimination evidence, and report bytes. Four mixed-codec
+layouts cross five missing-field policies with exact multiplicity, rejection,
+ordering, and input-preservation semantics. The task-set, registry,
+cumulative-suite, cumulative-catalog, discrimination, and canonical
+56,394-byte report SHA-256 values are
+`60a8ab6770bae6de43d430db9e3edf136f28f0a0ad2dacfd09b627ce19cf75c3`,
+`a9733f220a7bdfb8435841eff875c9fd7b1dbadbee6de2d2aa0646750164f862`,
+`32ec82cf193f364946def16462e52217176093d0a3f6399d574c9faf66eaa4a1`,
+`98cf6ffa48cbe11ece96195450335e5be9a3d0898d54e91396d0c2756171f169`,
+`732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94`,
+and `792bb1a4116d6698cc07cebfa6edef9c6358ccd4fe497d99703e88ed81262103`.
+
+The historical
+[v4 allocation lock](configs/executable-method-development-coverage-v4.json)
 contains 20 integrated families/400 tasks and 5 planned families/100 tasks.
 It preserves the complete immutable v3 artifact, whose semantic SHA-256 is
 `b37f48c98e7216c78ddf74d0ce6f6d74cd095575f20f53de6bf30018b2180d79`;
@@ -298,7 +315,7 @@ semantic/config-byte SHA-256 values are
 `8e36252576376d86ddb0a4f3b399dfdd66377b0ed026369bbf799edf104818a2`
 and `77820327bc105d367d8d737c110e53e8183ce786650ecb4c1699991412cb6683`
 for 4,358 canonical bytes.
-The current v4 semantic/config-byte SHA-256 values are
+The historical v4 semantic/config-byte SHA-256 values are
 `1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c`
 and `d003a5748da855257aa93e0c6e1b7a4be2de393ec5faa0dcb32d74156f40b3d7`
 for 24,590 canonical bytes. Its
@@ -308,15 +325,26 @@ values
 `667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
 and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
 for 4,701 canonical bytes.
-The lock fixes scope only; it does not implement or seal its planned entries.
+The current v5 lock promotes only `jsonl-csv-enrichment-compose`, contains 21
+integrated families/420 tasks and 4 planned families/80 tasks, appends the
+twelfth source commitment, and preserves the first two promotion records. Its
+semantic/config-byte SHA-256 values are
+`e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
+and `cfb91bef706fc1c4fd4f95d7891f42e3ec058bbaba28997a22a0f72614d6268f`
+for 25,241 canonical bytes. Its v4-to-v5 migration proves the other 24 family
+records unchanged; the migration semantic/config-byte SHA-256 values are
+`7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
+and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
+for 5,052 canonical bytes. The lock
+fixes scope only; it does not implement or seal its planned entries.
 All current assets are public, unsealed, unscored, and nonauthorizing. The
-third through eleventh manifests and the allocation lock explicitly record
+third through twelfth manifests and the allocation lock explicitly record
 `independent_human_review_attested: false`; the additive families remain
 outside the first-tranche-only V1 invocation protocol. Large generated records
 are semantic scaffolding, not complete executable or sealed suites.
 
-**Planned:** the remaining 100 method-development tasks, beginning with
-`jsonl-csv-enrichment-compose`, independent review of the complete development
+**Planned:** the remaining 80 method-development tasks, beginning with
+`nested-json-schema-migration`, independent review of the complete development
 inventory, real operator-selection and shadow
 identities, complete leakage reports, and genuinely unopened sealed ID/OOD
 suites. A file labeled `sealed_ood` in public scaffolding is not sealed evidence.
@@ -348,13 +376,16 @@ not reference-string similarity. A separate oracle construction, mutation
 testing, and stratified human review catch different classes of verifier bug.
 
 **Implemented:** a frozen response parser and diagnostic host syntax check;
-twenty integrated fixture/oracle families with mutation coverage and
+twenty-one integrated fixture/oracle families with mutation coverage and
 independently structured oracle paths where available; the hardlink family
 independently checks parsing and grouping but shares final-state assembly;
 the archive family checks bounded single-stream decoding, strict ustar
 semantics, relational reports, and complete reconstructed state; the checksum
 family checks strict multi-format parsing, no-follow classification,
 duplicate-preserving ordering, and whole-batch policy semantics;
+the enrichment-composition family checks strict mixed-codec parsing,
+duplicate-key Cartesian multiplicity, missing-field policy behavior, and
+ordered semantic JSONL;
 namespace, runtime-snapshot, and native PID1 canaries; and one exact reviewed
 Bash case connected through the local boundary.
 

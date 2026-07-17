@@ -307,9 +307,9 @@ required to establish when a prospective commitment existed.
 The repository currently contains scientific contracts, model/data/training
 canaries, public method-development task families, semantic verifiers,
 content-addressed registries, and bounded execution foundations. The committed
-coverage v4 allocation records 20 integrated families and 400 public
-method-development tasks; the next locked family,
-`jsonl-csv-enrichment-compose`, is under implementation.
+coverage v5 allocation records 21 integrated families and 420 public
+method-development tasks; the next locked family is
+`nested-json-schema-migration`.
 
 These assets are deliberately public, unsealed, unscored, and
 nonauthorizing. A passing fixed reviewed Bash canary demonstrates engineering

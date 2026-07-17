@@ -156,14 +156,14 @@ not reporting a successful specialization or compression experiment.
 - The scientific claim boundary, dense/non-MoE accounting rules, two result
   lanes, operator funnel, controls, and acceptance policy are specified.
 - The public method-development allocation is locked at 25 semantic families
-  and 500 tasks. Twenty families/400 tasks currently have concrete oracles
-  and 2,000 authenticated fixture bundles across eleven additive tranches.
+  and 500 tasks. Twenty-one families/420 tasks currently have concrete oracles
+  and 2,100 authenticated fixture bundles across twelve additive tranches.
 - These development assets are public, unsealed, unscored, and
   nonauthorizing. The coverage lock is an allocation commitment, not proof of
   implementation, independent human review, candidate execution, or model
   quality.
-- The remaining 5 families/100 tasks, beginning with
-  `jsonl-csv-enrichment-compose`, still need implementation and review.
+- The remaining 4 families/80 tasks, beginning with
+  `nested-json-schema-migration`, still need implementation and review.
 - General untrusted-candidate execution, independent human benchmark audit,
   sealed suites, claim-eligible corpus admission, backbone qualification,
   operator training, fresh-seed confirmation, and final hardware results are
@@ -171,16 +171,16 @@ not reporting a successful specialization or compression experiment.
 
 The live and more granular status is always [IMPLEMENTATION.md](IMPLEMENTATION.md).
 The current public allocation and its exact content identity are in
-[coverage v4](configs/executable-method-development-coverage-v4.json).
-Its semantic/config-byte SHA-256 values are
-`1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c`
-and `d003a5748da855257aa93e0c6e1b7a4be2de393ec5faa0dcb32d74156f40b3d7`
-for 24,590 canonical bytes. The
-[v3-to-v4 migration evidence](configs/executable-method-development-coverage-v3-to-v4-migration.json)
-has semantic/config-byte SHA-256 values
-`667e31ef974829a5114544b1f1164f25c0f7515f67ef5600c979e85a3bcc3d8b`
-and `a1a783544d76f471688afe5f45eaf0f16c30a6ce04c36d1d5a438d6c8e439b7f`
-for 4,701 canonical bytes.
+[coverage v5](configs/executable-method-development-coverage-v5.json). Its
+v4-to-v5 migration preserves the exact v4 artifact and proves that only the
+twelfth family was promoted. The v5 semantic/config-byte SHA-256 values are
+`e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9`
+and `cfb91bef706fc1c4fd4f95d7891f42e3ec058bbaba28997a22a0f72614d6268f`
+for 25,241 canonical bytes. The migration semantic/config-byte SHA-256 values
+are
+`7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea`
+and `f1d4566d17c7b51b3649000f896272ca56ec2f6d32fe5563aa4751c4a6fa563f`
+for 5,052 canonical bytes.
 The original [v1 record](configs/executable-method-development-coverage-v1.json)
 and [v2 record](configs/executable-method-development-coverage-v2.json) are
 preserved byte-for-byte. The
@@ -311,6 +311,9 @@ and `02442d60bf7d7874016fc9d50857cd49f9d8e1342ece55a42d7c8afcd852f0fb`.
 - [CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md](CHECKSUM_REPAIR_EXPERIMENT_INFRASTRUCTURE.md):
   the eleventh tranche's manifest grammars, declarative repair semantics,
   verifier, canary, and v3-to-v4 promotion.
+- [JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md](JSONL_CSV_ENRICHMENT_EXPERIMENT_INFRASTRUCTURE.md):
+  the twelfth tranche's strict mixed-codec sources, join and missing-field
+  semantics, verifier, canary, and v4-to-v5 promotion.
 - [EXPERIMENT_EVIDENCE_CHAIN.md](EXPERIMENT_EVIDENCE_CHAIN.md): how component
   outputs compose into claim-eligible evidence.
 - [RESEARCH_READINESS.md](RESEARCH_READINESS.md): compact build-state versus

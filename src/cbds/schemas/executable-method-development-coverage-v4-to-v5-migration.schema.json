@@ -1,0 +1,225 @@
+{
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://cbds.invalid/schemas/executable-method-development-coverage-v4-to-v5-migration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "This schema checks the public migration shape and frozen principal identities. Exact admission additionally requires cbds.executable_development_coverage_v4_to_v5_migration.load_executable_development_coverage_v4_to_v5_migration, which compares canonical bytes with live v4/v5 evidence.",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_execution_authorized": {
+      "const": false
+    },
+    "changed_family_count": {
+      "const": 1
+    },
+    "changed_family_id": {
+      "const": "jsonl-csv-enrichment-compose"
+    },
+    "claim_authorized": {
+      "const": false
+    },
+    "from": {
+      "const": {
+        "config_byte_count": 24590,
+        "config_bytes_sha256": "d003a5748da855257aa93e0c6e1b7a4be2de393ec5faa0dcb32d74156f40b3d7",
+        "config_relative_path": "configs/executable-method-development-coverage-v4.json",
+        "coverage_sha256": "1bd7a4b6ab721404f1d1eb7a64718ba7df783998bf16cd603afb86eb2420d67c",
+        "coverage_version": "4.0.0",
+        "git_commit": "948bbe1d0e4e0940e61ba89557f215a2a37d8194"
+      }
+    },
+    "migration_sha256": {
+      "const": "7119bbf14ae74047a555483fc7e6e3a9d74ce46cdcb741a13aa5da34a66e1cea"
+    },
+    "migration_version": {
+      "const": "1.0.0"
+    },
+    "model_selection_eligible": {
+      "const": false
+    },
+    "new_family_sha256": {
+      "const": "f6865c02a7386e85e4abd1ddbfb4dc615dd016cd3738452913d0e49e6476f49d"
+    },
+    "new_lifecycle_state": {
+      "const": "integrated"
+    },
+    "new_source_registry_commitment": {
+      "const": {
+        "added_task_count": 20,
+        "cumulative_suite_sha256": "32ec82cf193f364946def16462e52217176093d0a3f6399d574c9faf66eaa4a1",
+        "cumulative_task_count": 420,
+        "registry_sha256": "a9733f220a7bdfb8435841eff875c9fd7b1dbadbee6de2d2aa0646750164f862",
+        "tranche_id": "twelfth-tranche"
+      }
+    },
+    "old_family_sha256": {
+      "const": "bc13048228af8c3f819275855bfd9b9a0da76bd3b59fe3509382037ea7bf0441"
+    },
+    "old_lifecycle_state": {
+      "const": "planned"
+    },
+    "preserved_allowed_tools": {
+      "const": [
+        "awk",
+        "jq",
+        "mkdir",
+        "sort"
+      ]
+    },
+    "preserved_capability_tags": {
+      "const": [
+        "csv",
+        "joins",
+        "jsonl",
+        "multi-stage-composition"
+      ]
+    },
+    "preserved_filesystem_schema": {
+      "const": "mixed-jsonl-csv-sources"
+    },
+    "preserved_output_contract": {
+      "const": "composed-enriched-jsonl"
+    },
+    "preserved_parameter_axes": {
+      "const": [
+        {
+          "axis_name": "join_layout",
+          "values": [
+            "jsonl-left-csv-right",
+            "csv-left-jsonl-right",
+            "jsonl-both-with-csv-output",
+            "csv-both-with-jsonl-output"
+          ]
+        },
+        {
+          "axis_name": "missing_field_policy",
+          "values": [
+            "drop-row",
+            "empty-string",
+            "null-value",
+            "emit-reject-row",
+            "reject-source-file"
+          ]
+        }
+      ]
+    },
+    "preserved_promotion_history": {
+      "const": [
+        {
+          "discrimination_sha256": "ae95eef5802c010e70e338d257f5d0f3d01a39fa5cf471f945a8b75f554faa21",
+          "family_id": "compressed-archive-roundtrip-verify",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "tenth-tranche",
+          "task_set_sha256": "450ba507f0672e3a47ca6d495a6553d07294c605f94b3c5f03aa111d42bf771a"
+        },
+        {
+          "discrimination_sha256": "f71ba70f0a4d004bed235e897a73c1222c6d2687e4eeb842c008f7878e9457aa",
+          "family_id": "checksum-repair-plan",
+          "new_lifecycle_state": "integrated",
+          "old_lifecycle_state": "planned",
+          "source_tranche_id": "eleventh-tranche",
+          "task_set_sha256": "e52fb74ece2a94baa9bd1b2f6da25ca103839e1e9666361fe5406c34a36b9bb0"
+        }
+      ]
+    },
+    "preserved_solution_track": {
+      "const": "bash-native"
+    },
+    "promotion_evidence": {
+      "const": {
+        "discrimination_sha256": "732c1438a4337d2043ee85e2eb4e9e7c437a0051eb1a828cdac6139845db0e94",
+        "family_id": "jsonl-csv-enrichment-compose",
+        "new_lifecycle_state": "integrated",
+        "old_lifecycle_state": "planned",
+        "source_tranche_id": "twelfth-tranche",
+        "task_set_sha256": "60a8ab6770bae6de43d430db9e3edf136f28f0a0ad2dacfd09b627ce19cf75c3"
+      }
+    },
+    "public_method_development": {
+      "const": true
+    },
+    "reason_codes": {
+      "const": [
+        "planned-contract-preserved",
+        "canonical-grid-integration",
+        "jsonl-csv-enrichment-discrimination",
+        "twelfth-tranche-integration",
+        "prior-promotion-history-preserved"
+      ]
+    },
+    "record_type": {
+      "const": "cbds.executable-method-development-coverage-v4-to-v5-migration"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scored": {
+      "const": false
+    },
+    "scored_evaluation_authorized": {
+      "const": false
+    },
+    "sealed": {
+      "const": false
+    },
+    "to": {
+      "const": {
+        "config_relative_path": "configs/executable-method-development-coverage-v5.json",
+        "coverage_sha256": "e5987525654e384c2696908bf147e8224ad3bdc1fb2e0bbc3856a4f23cdca8b9",
+        "coverage_version": "5.0.0"
+      }
+    },
+    "unchanged_family_count": {
+      "const": 24
+    },
+    "unchanged_family_sha256": {
+      "items": {
+        "$ref": "#/$defs/sha256"
+      },
+      "maxItems": 24,
+      "minItems": 24,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "migration_version",
+    "record_type",
+    "from",
+    "to",
+    "changed_family_count",
+    "unchanged_family_count",
+    "changed_family_id",
+    "old_lifecycle_state",
+    "new_lifecycle_state",
+    "old_family_sha256",
+    "new_family_sha256",
+    "preserved_parameter_axes",
+    "preserved_solution_track",
+    "preserved_allowed_tools",
+    "preserved_filesystem_schema",
+    "preserved_output_contract",
+    "preserved_capability_tags",
+    "preserved_promotion_history",
+    "promotion_evidence",
+    "new_source_registry_commitment",
+    "reason_codes",
+    "unchanged_family_sha256",
+    "migration_sha256",
+    "public_method_development",
+    "sealed",
+    "scored",
+    "candidate_execution_authorized",
+    "scored_evaluation_authorized",
+    "model_selection_eligible",
+    "claim_authorized"
+  ],
+  "title": "CBDS executable development coverage v4-to-v5 migration",
+  "type": "object"
+}
