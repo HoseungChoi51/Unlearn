@@ -263,3 +263,40 @@ serialized whenever contention could alter the endpoint.
   gates as a distinct reviewed branch. Registry, catalog/report, coverage-v9
   promotion, sealing, scoring, model selection, and claims remain unauthorized
   until their own reviews.
+
+## Review: `infra-016d-symlink-implementation`
+
+- Status: `review in progress` (not a decision; no downstream work is
+  permitted from this marker).
+- Scope: the `symlink-aware-tree-reconcile` family implementation authorized by
+  the `infra-016c` `merge`, built in reviewed increments without publishing any
+  identity.
+- Predecessor: the `infra-016c` `merge` decision (commit `59b01a5`).
+- Increment 1 (this entry): the family-local *primary* semantic core in
+  `src/cbds/executable_symlink_aware_tree_reconcile.py` — the immutable leaf
+  model and exact-match equality, the four desired-state decoders (JSONL, CSV,
+  NUL records, and an in-memory directory-blueprint decoder), the one-hop
+  map-based six-condition safe-link alias rule, the union leaf/ancestor
+  invariant, the five reconciliation policies with their final-tree and
+  decision derivation, and the byte-exact `operations.tsv` serializer. Resource
+  bounds are enforced. No task contract, normalized graph, `domain_sha256`
+  commitment, registry, catalog, coverage promotion, oracle, workspace binding,
+  or Bash canary is created by this increment.
+- Increment-1 evidence: `tests.test_executable_symlink_aware_tree_reconcile`
+  passes 27/27 in normal and optimized Python. It covers four-format decode,
+  cross-format equivalence (a differential check across the four independent
+  decoders), the full per-format malformed-rejection set, exact-duplicate
+  collapse and conflict rejection, all five policies pairwise distinct on one
+  common M/X/E/A/exact state, every safe-link corner case (positive, self-link,
+  mutual cycle, chain, dangling, directory target, unequal content), the
+  cross-tree ancestor rejection, byte-exact log serialization with an empty
+  union, and representative bounds.
+- Remaining increments before this branch can receive a decision: the
+  independent reference engine with monkeypatch-enforced separation, the
+  third test-only raw-fixture derivation, the workspace-integrated directory
+  decoders and on-disk fixture construction, the custom bundle/oracle/verifier,
+  the full mutation battery, the worst-case resource witnesses, the 20 task
+  contracts and 100 fixture bundles, and the reviewed Bash feasibility canary.
+- Claim boundary: public, unsealed, unscored, nonauthorizing static synthetic
+  infrastructure. This increment establishes no identity and enables no
+  authority.
