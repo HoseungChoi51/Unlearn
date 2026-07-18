@@ -123,9 +123,10 @@ same-filesystem rename of a fully built staging root onto `output/tree`, not a
 build-then-move-inner-tree step that would leave an undeletable empty staging
 directory. Staging must live on the same filesystem as `output/` so `mv` is a
 pure rename and never degrades to a recursive copy (which could both leave
-residue and traverse a mode-0755-shielded subtree). No output regular file is
-ever owner-unreadable, so no publication step needs to read through a
-restrictive mode.
+residue and traverse a mode-0755-shielded subtree). No non-empty output regular
+file is owner-unreadable, and publication is a pure `mv` rename that reads no
+file content, so restrictive output modes — including mode-000 empty leaves —
+never block publication.
 
 This is final-state, copy-on-write reconciliation. It does not claim to
 observe destructive in-place behavior, syscall order, staging, atomicity,
@@ -143,7 +144,9 @@ Directories are implicit ancestors:
 
 - every directory is a real mode-0755 directory;
 - every non-root directory has at least one leaf descendant;
-- empty directories and non-0755 directory modes are outside this family;
+- empty non-root directories and non-0755 directory modes are outside this
+  family; the mandatory `output/tree/` root is exempt and is a real mode-0755
+  directory even when the final leaf map is empty;
 - no leaf may be an ancestor of another leaf.
 
 The final rule is not only within-state. The **union** of the actual leaf
@@ -169,7 +172,12 @@ output leaf — is owner-readable (its `0400` bit is set). A mode-000 regular
 leaf is always exactly zero bytes. Consequently every payload comparison and
 copy (`sha256sum`, `cp`) and every bounded verifier egress reads only
 owner-readable bytes and never blocks on an owner-unreadable non-empty file.
-The `partial-permissions` profile exercises mode-000 *empty* leaves and
+A mode-000 leaf carries no readable bytes, so it is handled by metadata alone:
+its zero size and mode are read from `stat`/`find`, its equality to another
+mode-000 empty leaf follows from size-zero-and-mode without reading bytes, and
+its output copy is a fresh empty file (a shell redirection built-in, not `cp`)
+followed by `chmod 000` — `sha256sum` and `cp` are never invoked on it. The
+`partial-permissions` profile exercises mode-000 *empty* leaves and
 owner-readable payloads with varied non-zero modes; it does not introduce
 owner-unreadable non-empty files.
 
@@ -348,7 +356,7 @@ bytes are determined and cannot fork:
 | keep | exact existing match | `keep` |
 | create | missing `M` | `create` |
 | replace | mismatch `X` or replaced alias `A` | `replace` |
-| remove | extra `E` or removed alias `A` | `remove` |
+| remove | extra `E` | `remove` |
 | preserve | safe alias `A` | `preserve-safe-link` |
 | defer | missing `M` | `defer-missing` |
 | defer | mismatch `X` | `defer-mismatch` |
@@ -357,9 +365,13 @@ bytes are determined and cannot fork:
 
 A deferred safe alias `A` is a present symlink standing at a desired-file
 path, i.e. a mismatch, so it is logged as `defer-mismatch` with
-`actual_kind=symlink`. The `A` column of the policy table therefore resolves
-to `preserve-safe-link`, `replace`, `remove`, or `defer-mismatch` according to
-the policy, never to an ambiguous string.
+`actual_kind=symlink`. The safe alias `A` never resolves to `remove`: the
+frozen policy table maps its `A` column only to `preserve` (preserve-safe-links),
+`replace` (replace-mismatch, strict-exact-state), or `defer` (create-missing,
+remove-extra). It therefore takes exactly one of `preserve-safe-link`,
+`replace`, or `defer-mismatch` according to the policy, never an ambiguous
+string. Extra symlinks that are *not* safe aliases are ordinary extras `E` and
+follow the `E` column.
 
 The log makes the partial-policy behavior observable, but the verifier must
 derive it independently from input state. A self-consistent log cannot
@@ -389,9 +401,10 @@ collapse, and repeated payload bytes — layered over that same non-empty
 `M`/`X`/`E`/`A` state; it never empties an entire actual or desired tree, which
 would erase `A` and collapse `preserve-safe-links` and `strict-exact-state`
 onto one outcome. The wholly-empty desired-state and wholly-empty actual-state
-grammars (a zero-byte `desired.jsonl`/`.csv`/`.nul`, an absent
-`desired-blueprint/`, or an absent `actual/`) are decode/derivation edge cases
-validated by the codec and mutation battery, not by emptying a public profile
+grammars (a zero-byte `desired.jsonl`, a header-only `desired.csv`, a zero-byte
+`desired.nul`, an absent `desired-blueprint/`, or an absent `actual/`, each per
+its own format's empty-state rule) are decode/derivation edge cases validated
+by the codec and mutation battery, not by emptying a public profile
 bundle. The four formats for a matched profile/policy must remain semantically
 equivalent.
 
@@ -441,10 +454,15 @@ The family verifier implements its own output-path and directory policy and
 does **not** reuse the generic `validate_expected_output_policy`. That generic
 validator permits only declared leaves plus their ancestor directories and
 would reject a leaf-less `output/tree/`, but this family mandates an
-always-present real `output/tree/` even when the final leaf map is empty (the
-empty-desired `strict-exact-state` and several `empty-duplicates` bundles).
-The family policy therefore admits exactly the real mode-0755 `output/` and
-`output/tree/` directories, the reconciled leaves and their real mode-0755
+always-present real `output/tree/` even when the final leaf map is empty. No
+materialized public profile bundle is leaf-less — every profile keeps at least
+its exact-match probe leaf under all five policies — so the leaf-less case
+arises only at the unit level: any empty-input derivation whose policy removes
+or defers every leaf (for example empty-desired `strict-exact-state`, or
+`remove-extra` over an empty desired state), plus the codec/mutation battery.
+The verifier must nonetheless accept a real empty `output/tree/` there rather
+than reject it as the generic validator would. The family policy admits exactly the real mode-0755 `output/`
+and `output/tree/` directories, the reconciled leaves and their real mode-0755
 ancestor directories, and `output/operations.tsv`, and rejects any other path.
 
 The verifier must:
@@ -526,6 +544,9 @@ The canary must:
   assembly must confirm the resolved `find` supports `-printf '%l'`;
 - decide regular-file payload equality with `sha256sum` and copy bytes with
   `cp`, so no arbitrary bytes — including NUL — ever enter a shell variable;
+- handle mode-000 empty leaves by metadata only — compare by `stat`/`find`
+  size-and-mode and materialize by shell-redirection create plus `chmod 000`,
+  never `sha256sum` or `cp` (which would fail `EACCES` on an unreadable leaf);
 - construct a fresh same-filesystem staged tree, create links with `ln`, apply
   file modes with `chmod`, sort deterministically, and publish by a single
   same-filesystem `mv` rename that leaves no staging residue;
@@ -587,5 +608,34 @@ No step may relabel public development data as sealed or scored evidence.
      `mv` publication rule, and the note that the family verifier does not
      reuse the generic `validate_expected_output_policy`.
 
-  Revision 2 must itself be independently reviewed before any family identity
-  is implemented or frozen.
+- **Revision 3** (`infra-016c` review): independent re-review confirmed the six
+  Revision 2 corrections closed (F0/F1/F3 and F4 unanimously; the substantive
+  design is sound), but found small textual regressions the Revision 2 edits had
+  introduced. Five were fixed, all confined to wording — no axis, tool, policy,
+  or bound changed:
+  1. **Empty-bundle over-claim (major, regression).** The verifier paragraph
+     wrongly cited "several `empty-duplicates` bundles" as leaf-less, re-opening
+     the F2 contradiction. Corrected: no materialized public profile bundle is
+     leaf-less (every profile keeps its exact-match probe leaf under all five
+     policies); the leaf-less case is unit-level only.
+  2. **Empty-CSV mislabel (major).** The empty-state summary listed a "zero-byte
+     `desired.csv`", but the CSV grammar makes empty = header-only and zero-byte
+     = a reject-mutant. Corrected to each format's own empty-state rule.
+  3. **Unreachable decision string (minor).** Dropped the "removed alias `A` →
+     `remove`" row the frozen policy table never produces.
+  4. **Mode-000 canary handling (minor).** A mode-000 leaf is owner-unreadable
+     even though empty, so `sha256sum`/`cp` cannot read it; stated it is handled
+     by metadata (`stat`/`find` + shell-redirection create + `chmod 000`).
+  5. **Empty-directory rule (minor).** Qualified "no empty directories" to
+     non-root, exempting the mandatory possibly-empty `output/tree/` root.
+
+  The four substantive corrections carry through unchanged. Revision 3's fixes
+  are textual consistency edits; the design is ready for the acceptance
+  decision, which is recorded in the rolling review log.
+- **Revision 4** (`infra-016c` final pass): the final verification found zero
+  blocker/major defects (accept / accept-with-minor-edits). Three wording
+  tightenings were applied, none affecting any axis, tool, policy, or bound:
+  the leaf-less enumeration now names the unit-level class rather than a single
+  policy; the copy-on-write publication invariant is scoped to non-empty files
+  and rests on the pure-rename mechanism; and the canary requirement list
+  restates the mode-000 metadata carve-out so it is complete when read alone.

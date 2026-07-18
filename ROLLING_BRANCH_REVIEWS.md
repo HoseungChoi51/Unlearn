@@ -211,3 +211,55 @@ serialized whenever contention could alter the endpoint.
   the design doc's revision history) must receive its own independent review
   (`infra-016c`) before any family identity is implemented or frozen. This
   decision does not authorize implementation.
+
+## Review: `infra-016c-symlink-revision2-rereview`
+
+- Status: `complete`.
+- Scope: revisions 2–4 of the corrected prospective contract in
+  [SYMLINK_TREE_RECONCILE_DESIGN.md](SYMLINK_TREE_RECONCILE_DESIGN.md).
+- Predecessor: the `infra-016b` `modify` decision (commit `3979b62`).
+- Question: do the revision-2 corrections close the `infra-016b` findings
+  without introducing new defects, leaving a design that is coherent enough to
+  freeze family identities against?
+- Acceptance criteria: the same preregistered C1–C6 as `infra-016b`, plus no
+  new blocker or major introduced by the corrections.
+- Evidence: two successive independent read-only passes. The first re-review
+  (12 agents: five reviewers — closure, two regression lenses, criteria
+  recheck, fresh defect hunt — then triage and three-refuter verification)
+  confirmed the four substantive `infra-016b` corrections closed
+  (`cmp → sha256sum` tuple subset, safe-link cycle exclusion, empty-profile
+  discrimination, cross-tree ancestor invariant) but found two `major` textual
+  regressions the revision-2 edits had themselves introduced (a verifier
+  paragraph re-asserting leaf-less public bundles, and an empty-CSV encoding
+  mislabelled zero-byte instead of header-only) plus three minors, each
+  confirmed 3/3 at high confidence. Revision 3 fixed all five. A final
+  verification pass (three reviewers — closure, whole-document empty/leaf-less
+  consistency sweep, fresh adversarial skim — then three-refuter verification)
+  returned **zero** blocker/major findings and votes of accept /
+  accept-with-minor-edits / accept-with-minor-edits; revision 4 applied its two
+  minor and one note wording tightenings.
+- Runtime, seeds, and cost: read-only source/design reviews on the recorded
+  CPython 3.14.4 / Linux 7.0.0-27-generic environment; no randomized,
+  training, or model seed applies. Background multi-agent workflows only
+  (12 + 3 agents); no shared artifact or hash was published. The one code-level
+  cross-check re-ran the coverage suites (`tests.test_executable_development_coverage`
+  and `_v8`, 35 tests) unchanged to confirm no regression, since only Markdown
+  was edited.
+- Claim boundary: design diagnosis only; no task behavior, candidate
+  feasibility, 500-task review, score, or model result. The coverage-v8 planned
+  7-tool record remains frozen and immutable; the tuple correction is exposed
+  only by the future backward-linked coverage promotion, not by this review.
+- Decision: `merge`.
+- Rationale: every preregistered criterion passes, the two blockers and two
+  majors from `infra-016b` are closed, and the final adversarial pass found no
+  surviving blocker or major. The corrected contract fully specifies the
+  codecs, five policies, safe-link semantics, final-tree and log semantics,
+  bounds, independent derivations, mutation battery, and Bash-feasibility gate
+  without widening the frozen instrument or enabling any authority.
+- Next authorized action: implement the family-local types, codecs, semantic
+  engines, fixtures, and custom verifier for `symlink-aware-tree-reconcile`
+  **without publishing identities** (design publication sequence step 2), then
+  run the mutation, equivalence, discrimination, resource, and Bash-canary
+  gates as a distinct reviewed branch. Registry, catalog/report, coverage-v9
+  promotion, sealing, scoring, model selection, and claims remain unauthorized
+  until their own reviews.
