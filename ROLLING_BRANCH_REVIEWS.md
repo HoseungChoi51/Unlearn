@@ -150,9 +150,11 @@ serialized whenever contention could alter the endpoint.
 
 ## Review: `infra-016b-symlink-revised-design`
 
-- Status: `review in progress`.
-- Scope: the corrected prospective contract in
-  [SYMLINK_TREE_RECONCILE_DESIGN.md](SYMLINK_TREE_RECONCILE_DESIGN.md).
+- Status: `complete`.
+- Scope: revision 1 of the corrected prospective contract in
+  [SYMLINK_TREE_RECONCILE_DESIGN.md](SYMLINK_TREE_RECONCILE_DESIGN.md)
+  (commit `ddb90af`).
+- Predecessor: the `infra-016a` `modify` decision.
 - Question: does the revised copy-on-write design close the codec, policy,
   safe-link, verifier, resource, and feasibility ambiguities without widening
   the research claim?
@@ -166,5 +168,46 @@ serialized whenever contention could alter the endpoint.
     and observation limits;
   - keep implementation, hash publication, candidate execution, scoring,
     sealing, model selection, and claims disabled.
-- Pending evidence: independent adversarial review of the corrected document.
-- Decision: not yet made. Family implementation remains unauthorized.
+- Evidence: an independent read-only adversarial review mapped the reusable
+  workspace/family/identity/coverage/canary/documentation contracts with six
+  parallel readers, then ran five reviewers each walking C1–C6 under a distinct
+  lens (criteria audit, semantic consistency, Bash feasibility, workspace
+  compatibility, bounds/process), deduplicated the findings, and subjected
+  every material finding to three independent refuters. Two load-bearing code
+  facts were re-verified directly against the repository rather than trusted
+  from the reviewers: `cmp` is absent from the 155-member
+  `FROZEN_BASH_NATIVE_EXECUTABLES` while `sha256sum`, `cksum`, `cp`, `awk`, and
+  `jq` are present (`src/cbds/evaluation_specs.py:112-139`), and the coverage
+  admission gate requires every family's `allowed_tools` to be a subset of that
+  frozen set (`src/cbds/executable_development_coverage.py:435-441`).
+- Findings that survived verification:
+  - **blocker** — the round-1 corrected tuple named `cmp`, which is not in the
+    frozen bash-native allowlist; admitting it would fail the coverage subset
+    gate or widen the sealed/scored tool policy;
+  - **blocker** — the map-based safe-link conditions classified self-links and
+    mutual link cycles as safe, contradicting the "cycles are not safe" prose
+    and the mandatory cyclic-alias mutant;
+  - **major** — the `empty-duplicates` profile could not both cover a wholly
+    empty actual/desired tree and distinguish all five policies (C3 conflict);
+  - **major** — final-tree semantics were undefined when an actual leaf is a
+    proper ancestor of a desired leaf (witness: actual `a/b`, desired `a/b/c`);
+  - plus one refuted candidate (mode-000 unreadable payloads) whose underlying
+    clarification was still folded in, and five minor precision gaps
+    (defer decision-string mapping, `LC_ALL=C`, `find -printf '%l'`,
+    residue-free `mv`, and non-reuse of `validate_expected_output_policy`).
+- Runtime, seeds, and cost: a read-only source/design review on the recorded
+  CPython 3.14.4 / Linux 7.0.0-27-generic environment. The one randomized
+  differential seam was not exercised; no training or model seed applies. The
+  review used a background multi-agent workflow (27 agents, no shared artifact
+  or hash published). All five reviewers independently returned `modify`.
+- Claim boundary: design diagnosis only; no task behavior, candidate
+  feasibility, 500-task review, score, or model result.
+- Decision: `modify`.
+- Rationale: two blockers made the round-1 contract unimplementable as written
+  (a disallowed tool and a self-contradictory safe-link rule) and two majors
+  left constructible inputs undefined; each is a design defect, not an
+  implementation detail.
+- Next authorized action: the corrected revision 2 of the design (recorded in
+  the design doc's revision history) must receive its own independent review
+  (`infra-016c`) before any family identity is implemented or frozen. This
+  decision does not authorize implementation.
